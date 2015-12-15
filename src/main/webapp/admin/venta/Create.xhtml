@@ -1,0 +1,83 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Usuarios" url="#" />
+        <p:menuitem value="Nuevo" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+
+            <h:form id="PedidoCreateForm">
+
+                <div class="ContainerIndent">
+                    <!-- First container -->
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-dollar"></i> Nueva venta
+                                </div>
+                                <div class="EmptyBox10" />
+                                
+                                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
+                                    
+                                   
+                                  
+                                     
+                                    <p:selectOneMenu id="mpago"  value="#{ventaController.selected.medioPago}" 
+                                         style="width: 90%"
+                                         styleClass="wid90"
+                                         effect="blind"
+                                         required="true"
+                                         requiredMessage="Ingrese medio de pago!">
+                             <f:selectItem itemLabel="Seleccione medio de pago" itemValue="" />
+                             <f:selectItem itemLabel="Efectivo" itemValue="1" />
+                             <f:selectItem itemLabel="Tarjeta" itemValue="2" />
+                            <f:selectItem itemLabel="Cheque" itemValue="3" />
+                                           
+                    </p:selectOneMenu> 
+                                    
+                                    
+                                    <p:commandButton value="Finalizar pago" action="#{ventaController.create()}"/>
+                                    
+                                 <p:outputPanel>
+                                    
+                                    <div class="Container100 Responsive Fs20 hardblue" style="text-align: right">
+                                   
+                                    
+                                        <p:outputLabel id="total" value="Total: #{pedidoController.selected.total}">
+                                          
+                                        </p:outputLabel>
+                                    
+                                </div>
+                                    
+                                </p:outputPanel>
+                                    
+                       
+                 
+                                    
+                                    
+                                </p:panelGrid>
+                         
+                            </p:panel>
+      
+                   
+                            
+                            </div>
+                    </div>
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

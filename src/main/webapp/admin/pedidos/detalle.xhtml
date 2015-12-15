@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="DetalleEditDlg" widgetVar="DetalleEditDialog" modal="true" resizable="false" appendTo="@(body)" header="DETALLE">
+            
+            <h:form id="PedidoEditForm">
+        
+                <h:panelGroup id="display">
+                    
+                     <p:panel>
+                               
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-basket-1"></i> En orden
+                                </div>
+                                <div class="EmptyBox10" />
+                    
+                    
+                             
+                        
+                          <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+
+                                    <p:selectOneMenu id="producto" 
+                                                     style="width: 90%"   
+                                                     styleClass="Wid90"
+                                                     value="#{productoController.selectedProducto}" 
+                                                     converter="productoConverter"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     effect="blind"
+                                                     >
+
+                                        <f:selectItem itemLabel="Seleccione Producto" />
+                                        <f:selectItems value="#{productoController.items}"
+                                                       var="item"
+                                                       itemValue="#{item}"
+                                                       itemLabel="#{item.nombre.toString()}"
+
+                                                       />  
+                                    </p:selectOneMenu>
+
+
+
+
+                                    <p:spinner value="#{detalleController.currentDetallePedido.cantArt}" min="1"
+                                               placeholder="Cantidad"
+                                               style=""/> 
+                                    
+                                   
+                                    
+                                    <p:commandButton id="btn_add" value="Add" update="prueba" action="#{detalleController.addShoppingCart()}" >
+                                        <p:collector value="#{detalleController.currentDetallePedido}" addTo="#{pedidoController.selected.detallepedidoList}" unique="true"/>
+                                    </p:commandButton>
+                                    
+                                </p:panelGrid>
+                                
+                                
+                                <p:outputPanel id="panelout">
+                                <p:dataTable id="datatabledetalle" var="current" value="#{pedidoController.selected.detallepedidoList}"  rows="5" 
+                                              
+                                             rowKey="#{pedidoController.selected.idPedido}">  
+
+                           <p:column headerText="Producto">
+                               <p:outputLabel value="#{current.idProducto.nombre}" />
+                                
+                                
+                            </p:column>      
+                      
+                             <p:column headerText="cantidad">
+                                 <p:outputLabel value="#{current.cantArt}" />
+                                
+                                
+                            </p:column>    
+                            
+                             <p:column headerText="Hora ingresa">
+                                 <p:outputLabel value="#{current.horaIng}" />
+                                
+                                
+                            </p:column> 
+                      
+                      
+                          <p:column headerText="Precio">
+                                <p:outputLabel value="#{current.precioTotal}" />
+                                
+                            </p:column>
+                        
+                            
+                          <p:column headerText="Total">
+                              <p:outputLabel value="#{current.precioTotal}" />
+                                
+                                
+                            </p:column>
+                            
+                            
+                            
+                   
+                      </p:dataTable>  
+                        
+                        </p:outputPanel>
+                        
+                        </p:panel>
+                    
+                    
+                    
+                    
+                 
+                    
+                    
+                        <p:commandButton value="Actualizar Pedido" action="#{pedidoController.update()}" />
+                        <p:commandButton value="Cancelar"/>
+                        
+                        
+                                 <p:outputPanel id="prueba">
+                                     <p:dataTable id="table" var="current" value="#{detalleController.currentItems}"  rows="5" 
+                                              
+                                                  rowKey="#{detalleController.currentDetallePedido.idDetalle}">  
+
+                           <p:column headerText="Producto">
+                               <p:outputLabel value="#{current.idProducto.nombre}" />
+                                
+                                
+                            </p:column>      
+                      
+                             <p:column headerText="cantidad">
+                                 <p:outputLabel value="#{current.cantArt}" />
+                                
+                                
+                            </p:column>    
+                            
+                             <p:column headerText="Hora ingresa">
+                                 <p:outputLabel value="#{current.horaIng}" />
+                                
+                                
+                            </p:column> 
+                      
+                      
+                          <p:column headerText="Precio">
+                                <p:outputLabel value="#{current.precioTotal}" />
+                                
+                            </p:column>
+                        
+                            
+                          <p:column headerText="Total">
+                              <p:outputLabel value="#{current.precioTotal}" />
+                                
+                                
+                            </p:column>
+                            
+                            
+                            
+                   
+                      </p:dataTable>  
+                        
+                        </p:outputPanel>
+                        
+          
+                 
+                </h:panelGroup>
+                
+            </h:form>
+            
+            
+        </p:dialog>
+
+    </ui:composition>
+</html>

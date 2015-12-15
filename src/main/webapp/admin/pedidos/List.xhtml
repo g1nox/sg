@@ -1,0 +1,146 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedidos" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+        
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces"
+                        target="head" />
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Pedidos
+                        </div>
+                        <div class="EmptyBox10" />
+                        <!-- Users List -->
+
+                        <h:form id="PedidoListForm">
+                        
+                            <p:dataTable id="datatable" var="current" value="#{pedidoController.itemsOrderBy}"
+                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                          selection="#{pedidoController.selected}" selectionMode="single"
+                                          rowKey="#{current.idPedido}"
+                                          emptyMessage="No se encontraron registros"
+                                          reflow="true">  
+             
+                        <p:column headerText="Mesa">
+                            <h:outputText value="#{current.mesa}"/>
+                        </p:column>
+                                
+                        <p:column headerText="Usuario">
+                            <h:outputText value="#{current.idUsuario.nombre}"/>
+                        </p:column> 
+              
+                          <p:column headerText="Total">
+                              <h:outputText value="#{current.total}"/>
+                          </p:column> 
+                       
+                             
+                                
+                                       <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Estado"/>
+                            </f:facet>
+                                     
+                                           <h:outputText value="Pagado" styleClass="clase-parto-no" rendered="#{current.estado == true}"/>
+                                      
+                                     
+                                       <h:outputText value="Pendiente" styleClass="clase-parto-si" rendered="#{current.estado == false}" />
+                                      
+                                      
+                         </p:column>
+                                
+                                
+                       
+                              
+                         <p:column headerText="Acción">
+                            <p:menuButton value="Opciones">
+                                <p:menuitem id="movieBtn" value="Abrir mesa"  action="#{detalleController.goDetalleEdit()}" icon="ui-icon-clipboard">
+                                    <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                </p:menuitem>
+                                     
+                                <p:menuitem value="Ver detalle"  icon="ui-icon-circle-zoomout"
+                                            oncomplete="PF('detalleOP').show('#{pedidoController.selected}')" update="PedidoListForm:datatable1">
+                                    <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                </p:menuitem>
+                                
+                                <p:menuitem value="Realizar pago" action="#{ventaController.goVentaCreate()}">
+                                    <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                               </p:menuitem>
+                                
+                            </p:menuButton>
+                        </p:column>
+            
+                                       
+                             </p:dataTable>
+                            
+                  
+                <p:overlayPanel widgetVar="detalleOP" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true" dynamic="true" style="width:400px">
+                                
+                     <p:outputPanel id="pdetail">
+                                
+                                
+                         <p:dataTable id="datatable1" var="current" value="#{pedidoController.selected.detallepedidoList}"  rows="10" 
+                                              
+                                      rowKey="#{pedidoController.selected.idPedido}">  
+
+                           <p:column headerText="Producto">
+                               <p:outputLabel value="#{current.idProducto.nombre}" /> 
+                            </p:column>      
+                      
+                            
+                             <p:column headerText="cantidad">
+                                 <p:outputLabel value="#{current.cantArt}" />  
+                            </p:column>    
+                            
+                            
+                             <p:column headerText="Hora ingresa">
+                                 <p:outputLabel value="#{current.horaIng}" /> 
+                            </p:column> 
+                      
+                      
+                          <p:column headerText="Precio">
+                                <p:outputLabel value="#{current.precioTotal}" />
+                          </p:column>
+                        
+                            
+                          <p:column headerText="Total">
+                              <p:outputLabel value="#{current.precioTotal}" />
+                          </p:column>
+                            
+                     
+                         </p:dataTable>  
+                            
+                    </p:outputPanel>
+                                
+                  </p:overlayPanel>
+                            
+                       
+                        </h:form>
+
+                    <ui:include src="detalle.xhtml"/>
+                
+                    
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>

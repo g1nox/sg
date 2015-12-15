@@ -1,0 +1,60 @@
+package com.egs.webapp.converter;
+
+import com.egs.webapp.entities.Ingrediente;
+import com.egs.webapp.sessionBeans.IngredienteFacade;
+import com.egs.webapp.util.JsfUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
+
+/**
+ *
+ * @author EduardoAlexis
+ */
+@FacesConverter(value = "ingredienteConverter")
+public class IngredienteConverter implements Converter{
+@Inject
+    private IngredienteFacade ejbFacade;
+    @Override
+    
+    public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
+        if (value == null || value.length() == 0 || JsfUtil.isDummySelectItem(component, value)) {
+            return null;
+        }
+        return this.ejbFacade.find(getKey(value));
+    }
+    
+    java.lang.Long getKey(String value) {
+        java.lang.Long key;
+        key = Long.parseLong(value);
+        return key;
+    }
+
+    String getStringKey(java.lang.Long value) {
+        StringBuffer sb = new StringBuffer();
+        sb.append(value);
+        return sb.toString();
+    }
+
+    @Override
+    public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
+        if (object == null
+                || (object instanceof String && ((String) object).length() == 0)) {
+            return null;
+        }
+        if (object instanceof Ingrediente) {
+            Ingrediente o = (Ingrediente) object;
+            return getStringKey(o.getIdIngrediente());
+        } else {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), Ingrediente.class.getName()});
+            return null;
+        }
+    }
+
+    
+    
+}

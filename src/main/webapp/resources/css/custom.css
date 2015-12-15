@@ -1,0 +1,23 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 04-dic-2015, 3:18:14
+    Author     : g1nox
+*/
+.clase-parto-no{
+    background-color: #009700;
+    padding: 2px 4px 2px 4px;
+    border-radius: 2px;
+    color:#fff!important;
+        
+}
+.clase-parto-si{
+    background-color: #970000;
+    padding: 2px 6px 2px 6px;
+    border-radius: 2px;
+    color:#fff!important;
+        
+}

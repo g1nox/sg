@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="LogViewDlg" widgetVar="LogViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.ViewLogTitle}">
+            <h:form id="LogViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{logController.selected != null}">
+                        <h:outputText value="#{bundle.ViewLogLabel_idLog}"/>
+                        <h:outputText value="#{logController.selected.idLog}" title="#{bundle.ViewLogTitle_idLog}"/>
+                        <h:outputText value="#{bundle.ViewLogLabel_fecha}"/>
+                        <h:outputText value="#{logController.selected.fecha}" title="#{bundle.ViewLogTitle_fecha}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewLogLabel_hora}"/>
+                        <h:outputText value="#{logController.selected.hora}" title="#{bundle.ViewLogTitle_hora}">
+                            <f:convertDateTime pattern="HH:mm:ss" />
+                        </h:outputText>
+                        <h:outputText value="#{bundle.ViewLogLabel_detalle}"/>
+                        <h:outputText value="#{logController.selected.detalle}" title="#{bundle.ViewLogTitle_detalle}"/>
+                        <h:outputText value="#{bundle.ViewLogLabel_idUsuario}"/>
+                        <h:outputText value="#{logController.selected.idUsuario}" title="#{bundle.ViewLogTitle_idUsuario}"/>
+                        <h:outputText value="#{bundle.ViewLogLabel_idMovimiento}"/>
+                        <h:outputText value="#{logController.selected.idMovimiento}" title="#{bundle.ViewLogTitle_idMovimiento}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{bundle.Close}" onclick="LogViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

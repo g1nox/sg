@@ -1,0 +1,108 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+        <ui:define name="breadcrumb">
+        <p:menuitem value="Ingrediente" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+
+    </ui:define>
+    
+    <ui:define name="content">
+    
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+    
+    
+    <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Ingrediente
+                        </div>
+                        <div class="EmptyBox10" />
+                        
+            <h:form id="ingredienteListForm">
+                
+                 
+                       
+                       <p:dataTable id="datatable" var="current" value="#{ingredienteController.items}" 
+                                    paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                    selection="#{ingredienteController.selected}" selectionMode="single"
+                                    rowKey="#{current.idIngrediente}"
+                                    emptyMessage="No se encontraron registros"
+                                    reflow="true">
+             
+                   <p:column sortBy="#{current.nombre}">
+                            <f:facet name="header">
+                                <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{current.nombre}"/>
+                            <br />
+                        </p:column>
+                       
+                      <p:column sortBy="#{current.cantidad}">
+                            <f:facet name="header">
+                                <h:outputText value="Cantidad"/>
+                            </f:facet>
+                            <h:outputText value="#{current.cantidad}"/>
+                            <br />
+                        </p:column>
+                       
+                       <p:column sortBy="#{current.tipo}">
+                            <f:facet name="header">
+                                <h:outputText value="Tipo"/>
+                            </f:facet>
+                            <h:outputText value="#{current.tipo}"/>
+                            <br />
+                        </p:column>
+                       
+                       <p:column sortBy="#{current.disponibilidad}">
+                            <f:facet name="header">
+                                <h:outputText value="Disponibilidad"/>
+                            </f:facet>
+                            <h:outputText value="#{current.disponibilidad}"/>
+                            <br />
+                        </p:column>
+                       
+                     
+                           
+                           
+                         <p:column>
+                <f:facet name="header">
+                    <h:outputText value="Modificar"/>
+                </f:facet>
+                        <p:commandButton update=":IngredienteEditForm" oncomplete="PF('IngredienteEditDialog').show()" 
+                              icon="ui-icon-pencil" title="Modificar">
+                    <f:setPropertyActionListener value="#{current}" target="#{ingredienteController.selected}"/>
+                        </p:commandButton>
+                        </p:column>
+                   
+                   
+                   
+                   </p:dataTable>
+                  
+                
+                
+            </h:form>
+
+             <ui:include src="Edit.xhtml"/>
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>

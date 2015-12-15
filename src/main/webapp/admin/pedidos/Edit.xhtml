@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedidos" url="#" />
+        <p:menuitem value="Actualizar" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+
+            <h:form id="PedidoEditForm">
+
+                <div class="ContainerIndent">
+                    <!-- First container -->
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-search-outline"></i> Buscar Producto
+                                </div>
+                                <div class="EmptyBox10" />
+                                
+                                
+                                 <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+
+                                    <p:selectOneMenu id="producto" 
+                                                     style="width: 90%"   
+                                                     styleClass="Wid90"
+                                                     value="#{productoController.selectedProducto}" 
+                                                     converter="productoConverter"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     effect="blind"
+                                                     >
+
+                                        <f:selectItem itemLabel="Seleccione Producto" />
+                                        <f:selectItems value="#{productoController.items}"
+                                                       var="item"
+                                                       itemValue="#{item}"
+                                                       itemLabel="#{item.nombre.toString()}"
+
+                                                       />  
+                                    </p:selectOneMenu>
+
+
+
+
+                                    <p:spinner value="#{detalleController.currentDetallePedido.cantArt}"
+                                               placeholder="Cantidad"
+                                               style=""/> 
+                                    
+                                   
+                                   
+                                    <p:commandButton id="btnadd" value="Add" action="#{detalleController.addShoppingCart()}" 
+                                                     update="PedidoEditForm:salidaItems">
+                                     
+                                        <p:ajax   update="btn_update"/>
+                                        <p:collector value="#{detalleController.currentDetallePedido}" addTo="#{detalleController.currentItems}" unique="true"/>
+                                    
+                                    </p:commandButton>
+                                    
+                                    <p:commandButton id="btn_update" value="Actualizar mesa" update="tabledetalle Items total" 
+                                                     action="#{pedidoController.update()}"  
+                                                    />
+                                      
+                                    
+                                </p:panelGrid>
+                                
+                                       <p:outputPanel id="salidaItems">
+                                    <p:dataTable  id="Items" value="#{detalleController.currentItems}" var="current"  editable="true" editMode="cell">
+
+                                        <p:column headerText="Producto">
+                                            <h:outputText value="#{current.idProducto.nombre}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cantidad">
+                                            
+                                                <h:outputText value="#{current.cantArt}" />
+                                        </p:column>
+                                        
+                                        <p:column headerText="Hora ingreso">
+                                            
+                                            <h:outputText value="#{current.horaIng}" />
+                                            
+                                        </p:column>
+                                        <p:column headerText="Precio uni">     
+                                            
+                                            <h:outputText value="#{current.precioUni}" />     
+                                            
+                                        </p:column>
+                                        
+                                        <p:column headerText="Action">
+                                            
+                                            <p:commandLink value="Eliminar" update="Items">
+                                              <p:collector value="#{current}" removeFrom="#{detalleController.currentItems}" unique="true" />
+                                           </p:commandLink>
+                                            
+                                        </p:column>
+
+
+
+                                    </p:dataTable>
+                                    
+                                    <br/>
+                                
+                                
+                                </p:outputPanel>
+                                
+                <p:outputPanel id="panelout">
+                    <p:dataTable id="tabledetalle" var="pedido" value="#{pedidoController.selected.detallepedidoList}" sortBy=""
+                                 rowKey="#{pedidoController.selected.idPedido}">  
+
+                           <p:column headerText="Producto">
+                               <p:outputLabel value="#{pedido.idProducto.nombre}" />   
+                            </p:column>      
+                      
+                                    
+                             <p:column headerText="cantidad">
+                                 <p:outputLabel value="#{pedido.cantArt}" />   
+                            </p:column>    
+                            
+                                    
+                             <p:column headerText="Hora ingresa">
+                                 <p:outputLabel value="#{pedido.horaIng}" />
+                             </p:column> 
+                      
+                      
+                          <p:column headerText="Precio unidad">
+                              <p:outputLabel value="#{pedido.precioUni}" />
+                                
+                            </p:column>
+                        
+                            
+                          <p:column headerText="Total">
+                              <p:outputLabel value="#{pedido.precioTotal}" />
+                          </p:column>
+                        
+                        <f:facet name="footer"  >
+        Total: $#{pedidoController.selected.total}
+    </f:facet>
+                
+                                 
+                      </p:dataTable>  
+                        
+                </p:outputPanel>
+                                
+                                <p:outputPanel>
+                                    
+                                    <div class="Container100 Responsive Fs20 hardblue" style="text-align: right">
+                                   
+                                    
+                                        <p:outputLabel id="total" value="Total: #{pedidoController.selected.total}">
+                                          
+                                        </p:outputLabel>
+                                    
+                                </div>
+                                    
+                                </p:outputPanel>
+                                
+                                
+                                
+                                
+                                
+                            </p:panel>
+                         
+                                 </div>
+                    </div>
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

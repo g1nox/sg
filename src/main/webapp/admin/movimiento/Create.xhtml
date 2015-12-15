@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="MovimientoCreateDlg" widgetVar="MovimientoCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{bundle.CreateMovimientoTitle}">
+            <h:form id="MovimientoCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{movimientoController.selected != null}">
+                        <p:outputLabel value="#{bundle.CreateMovimientoLabel_idMovimiento}" for="idMovimiento" />
+                        <p:inputText id="idMovimiento" value="#{movimientoController.selected.idMovimiento}" title="#{bundle.CreateMovimientoTitle_idMovimiento}" required="true" requiredMessage="#{bundle.CreateMovimientoRequiredMessage_idMovimiento}"/>
+                        <p:outputLabel value="#{bundle.CreateMovimientoLabel_descripcion}" for="descripcion" />
+                        <p:inputText id="descripcion" value="#{movimientoController.selected.descripcion}" title="#{bundle.CreateMovimientoTitle_descripcion}" required="true" requiredMessage="#{bundle.CreateMovimientoRequiredMessage_descripcion}"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{movimientoController.create}" value="#{bundle.Save}" update="display,:MovimientoListForm:datalist,:growl" oncomplete="handleSubmit(args,'MovimientoCreateDialog');"/>
+                    <p:commandButton value="#{bundle.Cancel}" onclick="MovimientoCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,145 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" 
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Productos" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+        
+    </ui:define>
+
+        <ui:define name="content">
+            
+        <h:outputScript name="jquery/jquery.js" 
+                        library="primefaces"
+                        target="head" />
+        
+  <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Productos
+                        </div>
+                        <div class="EmptyBox10" />
+                        
+   <h:form id="ProductoListForm">
+    
+       
+ 
+       <p:dataTable id="datatableList" var="current" value="#{productoController.items}" 
+                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                 selection="#{productoController.selectedProducto}" selectionMode="single"
+                 rowKey="#{current.idProducto}"
+                 emptyMessage="No se encontraron registros"
+                 reflow="true">
+        
+                      
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nombre"/>
+                            </f:facet>
+                                <h:outputText value="#{current.nombre}"/>
+                            
+                        </p:column>
+        
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock máximo"/>
+                            </f:facet>
+                            <h:outputText value="#{current.stockMaximo}"/>
+                            
+                        </p:column>
+                        
+                          <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock mínimo"/>
+                            </f:facet>
+                            <h:outputText value="#{current.stockMinimo}"/>
+                            
+                        </p:column>
+                        
+                          <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Disponibilidad"/>
+                            </f:facet>
+                              <h:outputText value="#{current.disponible}"/>
+                            
+                        </p:column>
+                        
+                          <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock actual"/>
+                            </f:facet>
+                            <h:outputText value="#{current.stockActual}"/>
+                         
+                        </p:column>
+                                  
+                                  <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Categoria"/>
+                            </f:facet>
+                                      <h:outputText value="#{current.idCategoria.nombre}"/>
+                         
+                        </p:column>
+                                  
+                                  <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Proveedor"/>
+                            </f:facet>
+                                      <h:outputText value="#{current.idProveedor.nombre}"/>
+                         </p:column>
+           
+          
+                                  
+                                  <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Reponer"/>
+                            </f:facet>
+                                     
+                                       <h:outputText value="si" styleClass="clase-parto-si" rendered="#{current.stockActual lt current.stockMinimo}"/>
+                                      
+                                     
+                                       <h:outputText value="no" styleClass="clase-parto-no" rendered="#{current.stockActual ge current.stockMinimo}" />
+                                      
+                                      
+                         </p:column>
+       
+     
+        <p:column>
+            
+            <f:facet name="header">
+                    <h:outputText value="Modificar"/>
+             </f:facet>
+            
+            <p:commandButton  update=":ProductoEditForm" oncomplete="PF('ProductoEditDialog').show()" 
+                              icon="ui-icon-pencil" title="Modificar">
+                <f:setPropertyActionListener value="#{current}" target="#{productoController.selectedProducto}"/>
+            </p:commandButton>
+        </p:column>
+    
+    
+    </p:dataTable>
+                
+            </h:form>
+                        
+                     <ui:include src="Edit.xhtml"/> 
+                        
+                </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+        </ui:define>
+    </ui:composition>

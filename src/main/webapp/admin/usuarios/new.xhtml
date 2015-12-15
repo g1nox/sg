@@ -1,0 +1,131 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Usuarios" url="#" />
+        <p:menuitem value="Nuevo" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-user-add"></i> Nuevo Usuario
+                        </div>
+                        <div class="EmptyBox20" />
+                        <!-- Users List -->
+
+                        <h:form id="UsuarioCreateForm">
+                            <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none">            
+
+                                <p:inputText value="#{usuariosController.selectedUser.username}"
+                                             styleClass="Wid90"
+                                             required="true"
+                                             requiredMessage="Ingrese Usuario!"
+                                             placeholder="Usuario"/>
+                                <p:inputText value="#{usuariosController.selectedUser.nombre}"
+                                             required="true"
+                                             requiredMessage="Ingrese Nombre!"
+                                             styleClass="Wid90"
+                                             placeholder="Nombre"/>
+
+                                <p:inputText value="#{usuariosController.selectedUser.apellidoPat}"
+                                             required="true"
+                                             requiredMessage="Ingrese Apellido Paterno"
+                                             styleClass="Wid90"
+                                             placeholder="Apellido Paterno"/>
+
+                                <p:inputText value="#{usuariosController.selectedUser.apellidoMat}"
+                                             required="true"
+                                             requiredMessage="Ingrese Apellido Materno!"
+                                             styleClass="Wid90"
+                                             placeholder="Apellido Materno"/>
+
+                                <p:inputText value="#{usuariosController.selectedUser.mail}"
+                                             required="true"
+                                             requiredMessage="Ingrese Correo!"
+                                             styleClass="Wid90"
+                                             placeholder="Correo"
+                                             validatorMessage="Formato correo invalido">
+                                             	
+                                           
+                                             <f:validateRegex
+                                             pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                             
+                                             
+                                             </p:inputText>
+
+                             
+                                
+                                <p:password value="#{usuariosController.selectedUser.pass}"
+                                             id="pass1"
+                                             match="pass2"
+                                             required="true"
+                                             requiredMessage="Ingrese Password!"
+                                             validatorMessage="Passwords no coinciden!"
+                                             styleClass="Wid90"
+                                             placeholder="Password"/>    
+                                <p:password value="#{usuariosController.selectedUser.pass}"
+                                            id="pass2"
+                                            required="true"
+                                            requiredMessage="Confirme Password!"
+                                            styleClass="Wid90"
+                                            placeholder="Confirme Password"/>    
+                                
+                                <p:selectOneMenu id="rol" 
+                                                 style="width: 90%"   
+                                                 styleClass="Wid90"
+                                                 value="#{rolController.selected}" 
+                                                 converter="rolConverter"
+                                                 filter="true" filterMatchMode="startsWith"
+                                                 effect="blind"
+                                                 required="true"
+                                                 requiredMessage="Seleccione rol!"
+                                                 >
+
+                                    <f:selectItem itemLabel="Seleccione Rol" />
+                                    <f:selectItems value="#{rolController.items}"
+                                                   var="item"
+                                                   itemValue="#{item}"
+                                                   itemLabel="#{item.descripcion.toString()}"
+
+                                                   />  
+                                    </p:selectOneMenu>
+                                
+                                
+                                
+                            </p:panelGrid>
+                       
+                            <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+                                <p:commandButton update="UsuarioCreateForm" value="Aceptar" action="#{usuariosController.create}"/>
+                            </p:panelGrid>
+                            <div class="EmptyBox10"/>
+                            
+                        </h:form>
+
+
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </ui:define>
+
+</ui:composition>

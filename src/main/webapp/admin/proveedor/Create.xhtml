@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Proveedor" url="#" />
+        <p:menuitem value="Nueva" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+                    <h:form id="ProveedorCreateForm">
+
+                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+
+
+                            <p:inputText value="#{proveedorController.selected.nombre}"
+                                         styleClass="Wid90"
+                                         required="true"
+                                         requiredMessage="Ingrese proveedor!"
+                                         placeholder="Nombre"/>
+                            
+                            <p:inputText value="#{proveedorController.selected.telefono}"
+                                         styleClass="Wid90"
+                                         required="true"
+                                         requiredMessage="Ingrese teléfono!"
+                                         placeholder="Telefono"/>
+                         
+ 
+                        </p:panelGrid>
+                        
+                        
+                        
+                        <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none">
+
+                            <p:commandButton update="ProveedorCreateForm" 
+                                             value="Aceptar" 
+                                             action="#{proveedorController.create()}"/>
+
+
+                        </p:panelGrid>
+
+                    </h:form>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+    </ui:define>
+</ui:composition>

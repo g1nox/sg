@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    
+    <navigation-rule>
+        
+          <navigation-case>
+            <from-outcome>login</from-outcome>    
+            <to-view-id>/login.xhtml</to-view-id>
+            <redirect/>
+          </navigation-case>
+    
+    
+        <navigation-case>
+            <from-outcome>welcome-admin</from-outcome>    
+            <to-view-id>/admin/welcome-admin.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+             <navigation-case>
+            <from-outcome>usuarios-list</from-outcome>    
+            <to-view-id>/admin/usuarios/list.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    
+    
+         <navigation-case>
+            <from-outcome>usuario-create</from-outcome>    
+            <to-view-id>/admin/usuarios/new.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+    
+         <navigation-case>
+            <from-outcome>producto-create</from-outcome>    
+            <to-view-id>/admin/producto/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+        <navigation-case>
+            <from-outcome>producto-list</from-outcome>    
+            <to-view-id>/admin/producto/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>stock-create</from-outcome>    
+            <to-view-id>/admin/stock/CreateStock.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>stock-update</from-outcome>    
+            <to-view-id>/admin/stock/UpdateStock.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>stock-list</from-outcome>    
+            <to-view-id>/admin/stock/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+          <navigation-case>
+            <from-outcome>ingrediente-create</from-outcome>    
+            <to-view-id>/admin/ingrediente/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>ingrediente-list</from-outcome>    
+            <to-view-id>/admin/ingrediente/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+        <navigation-case>
+            <from-outcome>categoria-create</from-outcome>    
+            <to-view-id>/admin/categoria/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>categoria-list</from-outcome>    
+            <to-view-id>/admin/categoria/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pedido-create</from-outcome>    
+            <to-view-id>/admin/pedidos/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pedido-list</from-outcome>    
+            <to-view-id>/admin/pedidos/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pedido-update</from-outcome>    
+            <to-view-id>/admin/pedidos/Update.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+         <navigation-case>
+            <from-outcome>proveedor-create</from-outcome>    
+            <to-view-id>/admin/proveedor/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>proveedor-list</from-outcome>    
+            <to-view-id>/admin/proveedor/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>ingrediente-new</from-outcome>    
+            <to-view-id>/admin/receta/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>venta-create</from-outcome>    
+            <to-view-id>/admin/venta/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>venta-list</from-outcome>    
+            <to-view-id>/admin/venta/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         
+        
+   
+    </navigation-rule>
+    
+    
+    
+</faces-config>
