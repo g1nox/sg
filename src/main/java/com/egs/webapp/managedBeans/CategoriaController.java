@@ -78,7 +78,7 @@ public class CategoriaController implements Serializable {
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
              flash.setRedirect(true);
-             prepareCreate();
+          
              return goCategoriaCreate();
         }
         return null;

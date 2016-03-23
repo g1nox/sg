@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -26,64 +25,54 @@ import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
+/**
+ *
+ * @author g1nox
+ */
 @Entity
 @Table(name = "pedido")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pedido.findAll", query = "SELECT v FROM Pedido v"),
-    @NamedQuery(name = "Pedido.findByIdPedido", query = "SELECT v FROM Pedido v WHERE v.idPedido = :idPedido"),
-    @NamedQuery(name = "Pedido.findByMesa", query = "SELECT v FROM Pedido v WHERE v.mesa = :mesa"),
-    @NamedQuery(name = "Pedido.findBydatetime", query = "SELECT v FROM Pedido v WHERE v.datetime = :datetime"),
-    @NamedQuery(name = "Pedido.findByTotal", query = "SELECT v FROM Pedido v WHERE v.total = :total")})
-    
+    @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p"),
+    @NamedQuery(name = "Pedido.findByIdPedido", query = "SELECT p FROM Pedido p WHERE p.idPedido = :idPedido"),
+    @NamedQuery(name = "Pedido.findByDatetime", query = "SELECT p FROM Pedido p WHERE p.datetime = :datetime"),
+    @NamedQuery(name = "Pedido.findByTotal", query = "SELECT p FROM Pedido p WHERE p.total = :total"),
+    @NamedQuery(name = "Pedido.findByEstado", query = "SELECT p FROM Pedido p WHERE p.estado = :estado")})
 public class Pedido implements Serializable {
-    @OneToMany(mappedBy = "idPedido")
-    private List<Mesa> mesaList;
-    @OneToMany(mappedBy = "idPedido")
-    private List<Venta> ventaList;
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    
     @Column(name = "id_pedido")
     private Integer idPedido;
-    
-    @Column(name = "total")
-    private Integer total;
-    
-    @Column(name = "mesa")
-    private Integer mesa;
-    
     @Column(name = "datetime")
     @Temporal(TemporalType.DATE)
     private Date datetime;
-    
+    @Column(name = "total")
+    private Integer total;
     @Column(name = "estado")
     private Boolean estado;
-    
     @OneToMany(mappedBy = "idPedido")
     private List<Detallepedido> detallepedidoList;
-    
+    @JoinColumn(name = "id_mesa", referencedColumnName = "id_mesa")
+    @ManyToOne
+    private Mesa idMesa;
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @ManyToOne
     private Usuario idUsuario;
 
     public Pedido() {
-        
     }
 
     public Pedido(Integer idPedido) {
         this.idPedido = idPedido;
     }
 
-    public Integer getidPedido() {
+    public Integer getIdPedido() {
         return idPedido;
     }
 
-    public void setidPedido(Integer idPedido) {
+    public void setIdPedido(Integer idPedido) {
         this.idPedido = idPedido;
     }
 
@@ -103,14 +92,6 @@ public class Pedido implements Serializable {
         this.total = total;
     }
 
-    public Integer getMesa() {
-        return mesa;
-    }
-
-    public void setMesa(Integer mesa) {
-        this.mesa = mesa;
-    }
-
     public Boolean getEstado() {
         return estado;
     }
@@ -118,7 +99,7 @@ public class Pedido implements Serializable {
     public void setEstado(Boolean estado) {
         this.estado = estado;
     }
-   
+
     @XmlTransient
     public List<Detallepedido> getDetallepedidoList() {
         return detallepedidoList;
@@ -128,6 +109,14 @@ public class Pedido implements Serializable {
         this.detallepedidoList = detallepedidoList;
     }
 
+    public Mesa getIdMesa() {
+        return idMesa;
+    }
+
+    public void setIdMesa(Mesa idMesa) {
+        this.idMesa = idMesa;
+    }
+
     public Usuario getIdUsuario() {
         return idUsuario;
     }
@@ -135,16 +124,6 @@ public class Pedido implements Serializable {
     public void setIdUsuario(Usuario idUsuario) {
         this.idUsuario = idUsuario;
     }
-
-    public Integer getIdPedido() {
-        return idPedido;
-    }
-
-    public void setIdPedido(Integer idPedido) {
-        this.idPedido = idPedido;
-    }
-    
-    
 
     @Override
     public int hashCode() {
@@ -170,24 +149,5 @@ public class Pedido implements Serializable {
     public String toString() {
         return "com.egs.webapp.entities.Pedido[ idPedido=" + idPedido + " ]";
     }
-
-    @XmlTransient
-    public List<Venta> getVentaList() {
-        return ventaList;
-    }
-
-    public void setVentaList(List<Venta> ventaList) {
-        this.ventaList = ventaList;
-    }
-
-    @XmlTransient
-    public List<Mesa> getMesaList() {
-        return mesaList;
-    }
-
-    public void setMesaList(List<Mesa> mesaList) {
-        this.mesaList = mesaList;
-    }
-    
     
 }

@@ -6,19 +6,20 @@
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -31,8 +32,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Mesa.findAll", query = "SELECT m FROM Mesa m"),
     @NamedQuery(name = "Mesa.findByIdMesa", query = "SELECT m FROM Mesa m WHERE m.idMesa = :idMesa"),
     @NamedQuery(name = "Mesa.findByNombre", query = "SELECT m FROM Mesa m WHERE m.nombre = :nombre"),
-    @NamedQuery(name = "Mesa.findByEstado", query = "SELECT m FROM Mesa m WHERE m.estado = :estado")})
+    @NamedQuery(name = "Mesa.findByEstado", query = "SELECT m FROM Mesa m WHERE m.estado = :estado"),
+    @NamedQuery(name = "Mesa.findByCapacidad", query = "SELECT m FROM Mesa m WHERE m.capacidad = :capacidad")})
 public class Mesa implements Serializable {
+    @OneToMany(mappedBy = "idMesa")
+    private List<Pedido> pedidoList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,11 +48,13 @@ public class Mesa implements Serializable {
     private String nombre;
     @Column(name = "estado")
     private Boolean estado;
-    @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")
-    @ManyToOne
-    private Pedido idPedido;
+    @Column(name = "capacidad")
+    private Integer capacidad;
 
     public Mesa() {
+        
+        this.estado = false;
+        
     }
 
     public Mesa(Integer idMesa) {
@@ -79,12 +85,12 @@ public class Mesa implements Serializable {
         this.estado = estado;
     }
 
-    public Pedido getIdPedido() {
-        return idPedido;
+    public Integer getCapacidad() {
+        return capacidad;
     }
 
-    public void setIdPedido(Pedido idPedido) {
-        this.idPedido = idPedido;
+    public void setCapacidad(Integer capacidad) {
+        this.capacidad = capacidad;
     }
 
     @Override
@@ -110,6 +116,15 @@ public class Mesa implements Serializable {
     @Override
     public String toString() {
         return "com.egs.webapp.entities.Mesa[ idMesa=" + idMesa + " ]";
+    }
+
+    @XmlTransient
+    public List<Pedido> getPedidoList() {
+        return pedidoList;
+    }
+
+    public void setPedidoList(List<Pedido> pedidoList) {
+        this.pedidoList = pedidoList;
     }
     
 }

@@ -19,7 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
 
 @Named("mesaController")
 @SessionScoped
@@ -28,22 +27,12 @@ public class MesaController implements Serializable {
     @EJB
     private com.egs.webapp.sessionBeans.MesaFacade ejbFacade;
     private List<Mesa> items = null;
+    private List<Mesa> itemsDisponibles = null;
     private Mesa selected;
     
     @EJB
     private MesaFacade mesaFacade;
-    
-    @Inject
-    private PedidoController currentpedido;
 
-    public PedidoController getCurrentpedido() {
-        return currentpedido;
-    }
-
-    public void setCurrentpedido(PedidoController currentpedido) {
-        this.currentpedido = currentpedido;
-    }
-    
     public MesaController() {
     }
 
@@ -64,7 +53,6 @@ public class MesaController implements Serializable {
         this.mesaFacade = mesaFacade;
     }   
 
-    
 
     protected void setEmbeddableKeys() {
     }
@@ -81,11 +69,17 @@ public class MesaController implements Serializable {
         initializeEmbeddableKey();
         return selected;
     }
+    
+    public void init(){
+        //actualiza lista de items con los valores de la bd
+        itemsDisponibles = getFacade().findbyDisponible();
+    }
 
     public String create() {
-            persist(PersistAction.CREATE,  "");
+            persist(PersistAction.CREATE,  "la mesa se ha creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsDisponibles = null;
             FacesContext facesContext = FacesContext.getCurrentInstance();
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
@@ -105,6 +99,8 @@ public class MesaController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsDisponibles = null;
+                 
         }
     }
 
@@ -114,6 +110,28 @@ public class MesaController implements Serializable {
         }
         return items;
     }
+    
+
+    public List<Mesa> getItemsDisponibles() {
+        
+        
+        if (itemsDisponibles ==  null){
+
+            // no tiene que encontrarlos a todas las mesas  
+            itemsDisponibles = getFacade().findbyDisponible();
+        
+        }
+        
+        return itemsDisponibles;
+    }
+
+    public void setItemsDisponibles(List<Mesa> itemsDisponibles) {
+        this.itemsDisponibles = itemsDisponibles;
+    }
+    
+    
+    
+    
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -122,13 +140,7 @@ public class MesaController implements Serializable {
                 if (persistAction != PersistAction.DELETE) {
                     
                     
-                    int num = 0;
-
-                
-                    items.add(selected);
-                
-               
-                selected = new Mesa();  
+                    
                     
                     getFacade().edit(selected);
                 } else {
@@ -214,14 +226,23 @@ public class MesaController implements Serializable {
                return "mesa-list";
     }
                
-          public void llamarEditarMesa(){
-        
-        if (selected != null)  {
-        
-        editarMesa(selected, "editado Correctamente");
-        
-        } else{JsfUtil.addErrorMessage("Error al editar ");}
-    }
+               
+               
+            public void llamarEditarMesa(){
+
+          getFacade().edit(selected);
+          
+        }
+               
+               
+//          public void llamarEditarMesa(){
+//        
+//        if (selected != null)  {
+//        
+//        editarMesa(selected, "editado Correctamente");
+//        
+//        } else{JsfUtil.addErrorMessage("Error al editar ");}
+//    }
         
          public void editarMesa(Mesa currentMesa, String successMessage) {
         if (currentMesa != null) {
@@ -236,15 +257,6 @@ public class MesaController implements Serializable {
             }
         }
    }        
-         
-         public void llamarEdit(){
-
-          getFacade().edit(selected);
-          
-        }
-         
-         
-        
                
                
                

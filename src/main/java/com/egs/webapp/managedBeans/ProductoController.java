@@ -1,6 +1,8 @@
 package com.egs.webapp.managedBeans;
 
+import com.egs.webapp.entities.Categoria;
 import com.egs.webapp.entities.Producto;
+import com.egs.webapp.entities.Proveedor;
 import com.egs.webapp.entities.Receta;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
@@ -37,9 +39,9 @@ public class ProductoController implements Serializable {
     
     private boolean disponible;
     
-    private Producto producto;
+   // private Producto producto;
      
-    private List<Producto> productos;
+   // private List<Producto> productos;
     
     
     @EJB
@@ -128,13 +130,13 @@ public class ProductoController implements Serializable {
         this.selectedProducto = selectedProducto;   
     }
     
-       public Producto getProducto() {
-        return producto;
-    }
- 
-    public List<Producto> getProductos() {
-        return productos;
-    }
+//       public Producto getProducto() {
+//        return producto;
+//    }
+// 
+//    public List<Producto> getProductos() {
+//        return productos;
+//    }
     
     public boolean isDisponible() {
         return disponible;
@@ -157,36 +159,34 @@ public class ProductoController implements Serializable {
 
     public Producto prepareCreate() {
         selectedProducto = new Producto();
-//        currentDetalle.init();
         
-        currentingrediente.setSelected(null);
-        currentcategoria.setSelected(null);
-        currentproveedor.setSelected(null);
-        currentreceta.setSelected(null);
-        currentreceta.init();
+        //currentingrediente.setSelected(null);
+      currentcategoria.setSelected(null);
+      currentproveedor.setSelected(null);
+        //currentreceta.setSelected(null);
+        
+        //currentreceta.init();
+        
         return selectedProducto;
     }
 
     public String create() {
         persist(PersistAction.CREATE, "Producto creado correctamente");
-        
-    
         if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
+            items = null;    // Invalidate list of items to trigger re-query. 
             FacesContext facesContext = FacesContext.getCurrentInstance();
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
              flash.setRedirect(true);
-             prepareCreate();
+             
              return goProductoCreate();
+            
         }
         return null;
     }
     
         public String createCompuesto() {
         persist(PersistAction.CREATE, "Producto compuesto creado correctamente");
-        
-    
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -231,33 +231,26 @@ public class ProductoController implements Serializable {
             try {
                 if (persistAction != PersistAction.DELETE) {
                     
-                   if(selectedProducto.getCompuesto()){
-                   selectedProducto.setRecetaList(currentreceta.getCurrentItems());
-                   selectedProducto.setCompuesto(Boolean.TRUE);
-                   selectedProducto.setIdCategoria(currentcategoria.getSelected());
-                   
-//                    //esta wea es maldad
-//                   selectedProducto.setIdProducto(getFacade().findLastProducto().getIdProducto()+1);
-                   
-                   for (Receta dv: currentreceta.getCurrentItems()){
-                     dv.setIdProducto(selectedProducto);
-                   }
-                   
-               
-                   
-                   
-                    }else{
-                    this.selectedProducto.setIdCategoria(currentcategoria.getSelected());
-                    this.selectedProducto.setIdProveedor(currentproveedor.getSelected());
-                    
-                    selectedProducto.setStockActual(0);
-                    selectedProducto.setStockIdeal(0);
-                    selectedProducto.setStockMaximo(0);
-                    selectedProducto.setStockMinimo(0);
-                    
+                   if(selectedProducto.getCompuesto())
+                   {
+                        selectedProducto.setRecetaList(currentreceta.getCurrentItems());
+                        selectedProducto.setCompuesto(Boolean.TRUE);
+                        selectedProducto.setIdCategoria(currentcategoria.getSelected());
+                        
+                        for (Receta dv: currentreceta.getCurrentItems())
+                        {
+                          dv.setIdProducto(selectedProducto);
+                        }
+                   }else{
+                        this.selectedProducto.setIdCategoria(currentcategoria.getSelected());
+                        this.selectedProducto.setIdProveedor(currentproveedor.getSelected());
+
+                        selectedProducto.setStockActual(0);
+                        selectedProducto.setStockIdeal(0);
+                        selectedProducto.setStockMaximo(0);
+                        selectedProducto.setStockMinimo(0);                    
                     }
-                    getFacade().edit(selectedProducto);
-                    
+                    getFacade().edit(selectedProducto);                   
                     
                 } else {
                     getFacade().remove(selectedProducto);
@@ -347,14 +340,14 @@ public class ProductoController implements Serializable {
     }
     
             public String goProductoCreate(){
-            prepareCreate();
+            prepareCreate();    
             return "producto-create";
             }
             
             public String goProductoCreateCompuesto(){
             prepareCreate();
             selectedProducto.setCompuesto(true);
-            return "ingrediente-new";
+            return "receta-create";
             }
 
             public String goProductoList(){
@@ -387,25 +380,35 @@ public class ProductoController implements Serializable {
             } else{JsfUtil.addErrorMessage("Error al editar ");}
         }
         
-         public void editarProducto(Producto currentProducto) {
-        if (currentProducto != null) {
-            
-            try {
-                getProductoFacade().edit(currentProducto);
-              //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-            JsfUtil.addSuccessMessage("Producto editado correctamente ");
-            
-            
-            
+        public void editarProducto(Producto currentProducto) {   
+            try{
+                if (currentProducto != null) {
+                    getProductoFacade().edit(currentProducto);
+                    //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                    JsfUtil.addSuccessMessage("Producto editado correctamente ");  
+                }else{
+                    getProductoFacade().edit(selectedProducto);
+                    //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                    JsfUtil.addSuccessMessage("Producto editado correctamente ");  
+                }
             } 
              catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
         }
-   }
          
-
+    public void actualizarStock(){
+        try{
+                getProductoFacade().edit(selectedProducto);
+                JsfUtil.addSuccessMessage("Stock de producto actualizado");  
+                
+            } 
+             catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            }
+    }
     
     public void init() {
         if (selectedProducto==null){
@@ -416,10 +419,9 @@ public class ProductoController implements Serializable {
          }
          
     } 
-    public String reinit() {
-        producto = new Producto();
+    public void reinit() {
+        itemsActivos = getFacade().findbyActivo();
          
-        return null;
     }
         
  

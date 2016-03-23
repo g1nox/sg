@@ -122,10 +122,11 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>ingrediente-new</from-outcome>    
+            <from-outcome>receta-create</from-outcome>    
             <to-view-id>/admin/receta/Create.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        
         
         <navigation-case>
             <from-outcome>venta-create</from-outcome>    
@@ -139,7 +140,11 @@
             <redirect/>
         </navigation-case>
         
-         
+         <navigation-case>
+            <from-outcome>mesa-create</from-outcome>    
+            <to-view-id>/admin/mesa/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
         
    
     </navigation-rule>

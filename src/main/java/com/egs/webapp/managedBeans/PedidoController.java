@@ -71,6 +71,18 @@ public class PedidoController implements Serializable {
         this.currentmesa = currentmesa;
     }
     
+    @Inject
+    private ProductoController currentproducto;
+
+    public ProductoController getCurrentproducto() {
+        return currentproducto;
+    }
+
+    public void setCurrentproducto(ProductoController currentproducto) {
+        this.currentproducto = currentproducto;
+    }
+        
+            
     public PedidoController() {
     }
 
@@ -83,6 +95,13 @@ public class PedidoController implements Serializable {
             items = getEjbFacade().findAll();
         }
         return items;
+    }
+    
+     public List<Pedido> getItemsOrderBy() {
+        if (itemsOrderBy == null) {
+            itemsOrderBy = getEjbFacade().findOrderBy();
+        }
+        return itemsOrderBy;
     }
 
     public Pedido getSelected() {
@@ -101,23 +120,24 @@ public class PedidoController implements Serializable {
         this.items = items;
     }
 
-    public List<Pedido> getItemsOrderBy() {
-        if (itemsOrderBy == null) {
-            itemsOrderBy = getEjbFacade().findOrderBy();
-        }
-        return itemsOrderBy;
-    }
+   
 
-    public void setItemsOrderBy(List<Pedido> itemsOrderBy) {
-        this.itemsOrderBy = itemsOrderBy;
-    }
+  public void init (){
+         
+        if (itemsOrderBy == null){
+         itemsOrderBy = new ArrayList<Pedido>();
+         }
+         
+         
+     }
 
     
     public Pedido prepareCreate() {
         selected = new Pedido();
-        
+        currentproducto.reinit();
         currentDetallePedido.init();
-      
+        currentmesa.setSelected(null);
+        currentmesa.init();
         return selected;
     }
      
@@ -135,13 +155,13 @@ public class PedidoController implements Serializable {
     public String create() {
         persist(JsfUtil.PersistAction.CREATE,  "el pedido se creo");
         if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
+            itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
              FacesContext facesContext = FacesContext.getCurrentInstance();
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
              flash.setRedirect(true);
              prepareCreate();
-             return goPedidoCreate();
+             return goPedidoList();
         }
         return null;
     }
@@ -178,39 +198,42 @@ public class PedidoController implements Serializable {
                 if (persistAction != JsfUtil.PersistAction.DELETE) {
                     if(persistAction == JsfUtil.PersistAction.CREATE){
                         
-                    Date d = new Date();
-                    selected.setDatetime(d);
-//                    
+                        Date d = new Date();
+                        selected.setDatetime(d);                 
+
+                        selected.setEstado(Boolean.FALSE);
+                        
+                       // ingresar mesa a bd
+                       selected.setIdMesa(currentmesa.getSelected());
+                        
+                       // ingresar usuario a bd
+                        selected.setIdUsuario(contextUsuario.getCurrentUser());
+                    
+                        int total = 0;                 
+                        for (Detallepedido dv: currentDetallePedido.getCurrentItems()){                    
+                            dv.setIdPedido(selected);
+                            total += dv.getPrecioTotal();
+                        }
+                        selected.setTotal(total);
+                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());                    
+
+                        
+//                        //modificar estado mesa
+                       currentmesa.getSelected().setEstado(Boolean.TRUE);
+                       currentmesa.llamarEditarMesa();
+                     
+                        
+                        getEjbFacade().edit(selected);
+
+                        //prepareCreate();
+                        currentDetallePedido.reinit();
+                        JsfUtil.addSuccessMessage(successMessage);
+                                      
 //                    SimpleDateFormat hora = new SimpleDateFormat("HH:mm:ss");
 //                    selected.setHora(hora.format(d));
 //                    
 //                    SimpleDateFormat fecha = new SimpleDateFormat("dd/MM/yyyy");
-//                    selected.setFecha(fecha.format(d));
-                    
-
-                    selected.setEstado(Boolean.FALSE);
-                    
-                    selected.setIdUsuario(contextUsuario.getCurrentUser());
-                 //   selected.setidPedido(getEjbFacade().findLastPedido().getidPedido()+1);
-                    int total = 0;
-                 
-                    for (Detallepedido dv: currentDetallePedido.getCurrentItems()){
-                    
-                     dv.setIdPedido(selected);
-                     total += dv.getPrecioTotal();
-                    }
-                  
-                    
-                    selected.setTotal(total);
-                    selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
-                    
-                    
-                    getEjbFacade().edit(selected);
-                    
-                     prepareCreate();
-                     currentDetallePedido.reinit();
-                     JsfUtil.addSuccessMessage(successMessage);
-                    
+//                    selected.setFecha(fecha.format(d));  
                     }
                     
                     if(persistAction == JsfUtil.PersistAction.UPDATE){
@@ -232,9 +255,7 @@ public class PedidoController implements Serializable {
                      
                          getEjbFacade().edit(selected);
                          
-                         //cambia estado de la mesa
-                         currentmesa.getSelected().setEstado(Boolean.TRUE);
-                         currentmesa.llamarEdit();
+
                          
                          JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
                          
@@ -317,7 +338,7 @@ public class PedidoController implements Serializable {
             }
             if (object instanceof Pedido) {
                 Pedido o = (Pedido) object;
-                return getStringKey(o.getidPedido());
+                return getStringKey(o.getIdPedido());
             } else {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "object {0} is of type {1}; expected type: {2}", new Object[]{object, object.getClass().getName(), Pedido.class.getName()});
                 return null;
@@ -332,10 +353,11 @@ public class PedidoController implements Serializable {
     }
     
     public String goPedidoList(){
+      
     return "pedido-list";
     }
     
-       public void llamarEdit(){
+       public void llamarEditarPedido(){
 
           getEjbFacade().edit(selected);
           

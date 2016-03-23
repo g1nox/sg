@@ -45,9 +45,9 @@ public class PedidoFacade extends AbstractFacade<Pedido> {
     
     public List<Pedido> findOrderBy() {
           
-          List <Pedido> items  = null;
-          items = (List<Pedido>)getEntityManager().createQuery ("SELECT  p  FROM  Pedido p ORDER BY p.idPedido DESC ").getResultList();
-         return items;
+          List <Pedido> p  = null;
+          p = (List<Pedido>)getEntityManager().createQuery ("SELECT  p  FROM  Pedido p ORDER BY p.idPedido DESC ").getResultList();
+         return p;
       
       }
   

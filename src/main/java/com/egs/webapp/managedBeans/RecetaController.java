@@ -127,7 +127,7 @@ public class RecetaController implements Serializable {
      // currentcategoria.setSelected(null);
       currentingrediente.setSelected(null);
      // currentproducto.init();
-     currentingrediente.init();
+     //currentingrediente.init();
       return currentReceta;
     }
     

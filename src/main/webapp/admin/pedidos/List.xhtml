@@ -35,7 +35,7 @@
                                           reflow="true">  
              
                         <p:column headerText="Mesa">
-                            <h:outputText value="#{current.mesa}"/>
+                            <h:outputText value="#{current.idMesa.nombre}"/>
                         </p:column>
                                 
                         <p:column headerText="Usuario">
@@ -44,6 +44,10 @@
               
                           <p:column headerText="Total">
                               <h:outputText value="#{current.total}"/>
+                          </p:column> 
+                                
+                           <p:column headerText="Fecha">
+                               <h:outputText value="#{current.datetime}"/>
                           </p:column> 
                        
                              
@@ -74,11 +78,11 @@
                                             oncomplete="PF('detalleOP').show('#{pedidoController.selected}')" update="PedidoListForm:datatable1">
                                     <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
                                 </p:menuitem>
-                                
-                                <p:menuitem value="Realizar pago" action="#{ventaController.goVentaCreate()}">
+                               
+                                <p:menuitem value="Realizar pago" action="#{ventaController.goVentaCreate()}" rendered="#{current.estado == false}">
                                     <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
                                </p:menuitem>
-                                
+                               
                             </p:menuButton>
                         </p:column>
             

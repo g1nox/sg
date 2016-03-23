@@ -105,6 +105,15 @@
                     
                     
                 </p:submenu>
+                
+                <p:submenu id="mesa" label="Mesa" icon="icon-add">
+                    <p:menuitem id="mesa_lnk" value="Nueva"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/mesa/Create')?'active':'' } " 
+                                action="#{mesaController.goMesaCreate()}"/>
+                    
+                    
+                    
+                </p:submenu>
 
 
             </ps:menu>

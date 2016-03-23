@@ -31,10 +31,29 @@
                     
                     <h:form id="MesaCreateForm">
                         
-                        <p:inputText value="" placeholder="Ingrese numero de mesas"/>
-                        <p:commandButton value="Aceptar" action="#{mesaController}"/>
+                     <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
                         
-                    
+                         <p:inputText value="#{mesaController.selected.nombre}"
+                                         styleClass="Wid90"
+                                         required="true"
+                                         requiredMessage="Ingrese numero de mesa"
+                                         placeholder="Número mesa"/>
+                        
+                         <p:inputText value="#{mesaController.selected.capacidad}"
+                                         styleClass="Wid90"
+                                         required="true"
+                                         requiredMessage="Ingrese capacidad de asientos"
+                                         placeholder="Número de asientos"/>
+                        
+                        </p:panelGrid>
+                        
+                        
+                          <p:panelGrid columns="1" layout="grid" style="border:0px none;background:none">
+
+                            <p:commandButton update="MesaCreateForm" 
+                                             value="Aceptar" 
+                                             action="#{mesaController.create()}"/>
+                        </p:panelGrid>
                     
                     </h:form>
                     

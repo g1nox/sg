@@ -1,6 +1,7 @@
 package com.egs.webapp.sessionBeans;
 
 import com.egs.webapp.entities.Mesa;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,5 +19,14 @@ public class MesaFacade extends AbstractFacade<Mesa> {
     public MesaFacade() {
         super(Mesa.class);
     }
+    
+    public List<Mesa> findbyDisponible() {
+          
+        List <Mesa> m  = null;
+        m = (List<Mesa>)getEntityManager().createQuery ("SELECT  p  FROM  Mesa  p WHERE p.estado = FALSE").getResultList();
+    
+        return m;
+      
+      }
     
 }

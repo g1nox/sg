@@ -54,6 +54,17 @@ public class VentaController implements Serializable {
     public void setCurrentpedido(PedidoController currentpedido) {
         this.currentpedido = currentpedido;
     }
+    
+    @Inject
+    private MesaController currentmesa;
+
+    public MesaController getCurrentmesa() {
+        return currentmesa;
+    }
+
+    public void setCurrentmesa(MesaController currentmesa) {
+        this.currentmesa = currentmesa;
+    }
 
     @EJB
     private VentaFacade ventaFacade;
@@ -92,21 +103,34 @@ public class VentaController implements Serializable {
 
     public Venta prepareCreate() {
         selected = new Venta();
+        currentmesa.setSelected(null);
         initializeEmbeddableKey();
         return selected;
     }
+    
+    public void init(){
+    
+        
+    
+    }
 
     public String create() {
-            persist(PersistAction.CREATE,  "venta pagada correctamente");
-        if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goVentaCreate();
-        }
+       if(currentpedido.getSelected().getEstado() == false){
+               persist(PersistAction.CREATE,  "venta pagada correctamente");
+            if (!JsfUtil.isValidationFailed()) {
+                items = null;  // Invalidate list of items to trigger re-query.
+                //currentmesa.setItemsDisponibles(null); //limpar variable para consultar bd
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                 Flash flash = facesContext.getExternalContext().getFlash();
+                 flash.setKeepMessages(true);
+                 flash.setRedirect(true);
+                 prepareCreate();
+                 return currentpedido.goPedidoList();
+            }
+       }else{
+           return currentpedido.goPedidoList();
+       }
+        
         return null;
     }
 
@@ -140,12 +164,18 @@ public class VentaController implements Serializable {
                     selected.setIdUsuario(contextUsuario.getCurrentUser());
                     selected.setTotal(currentpedido.getSelected().getTotal());
                     selected.setIdPedido(currentpedido.getSelected());
-                    
-                    currentpedido.getSelected().setEstado(Boolean.TRUE);
-                    currentpedido.llamarEdit();
-                  
-                    
+             
                     getFacade().edit(selected);
+                    
+                    
+                      //modificar estado pedido
+                    currentpedido.getSelected().setEstado(Boolean.TRUE);
+                    currentpedido.llamarEditarPedido();
+                    
+                     //traer mesa seleccionada del pedido
+                    currentmesa.setSelected(currentpedido.getSelected().getIdMesa());
+                    currentmesa.getSelected().setEstado(Boolean.FALSE);
+                    currentmesa.llamarEditarMesa();
                     
                     
                 } else {

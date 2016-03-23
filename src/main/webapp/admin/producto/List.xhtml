@@ -104,10 +104,10 @@
                                 <h:outputText value="Reponer"/>
                             </f:facet>
                                      
-                                       <h:outputText value="si" styleClass="clase-parto-si" rendered="#{current.stockActual lt current.stockMinimo}"/>
+                                       <h:outputText value="si" styleClass="clase-parto-si" rendered="#{current.stockActual le current.stockMinimo}"/>
                                       
                                      
-                                       <h:outputText value="no" styleClass="clase-parto-no" rendered="#{current.stockActual ge current.stockMinimo}" />
+                                       <h:outputText value="no" styleClass="clase-parto-no" rendered="#{current.stockActual gt current.stockMinimo}" />
                                       
                                       
                          </p:column>

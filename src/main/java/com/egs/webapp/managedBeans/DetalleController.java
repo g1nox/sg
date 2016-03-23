@@ -121,10 +121,11 @@ public class DetalleController implements Serializable {
     }
     
     public void init (){
-         if (currentDetallePedido==null){
+         
+        if (currentDetallePedido == null){
          currentDetallePedido = new Detallepedido();
          }
-         if (currentItems ==null){
+         if (currentItems == null){
          currentItems = new ArrayList <Detallepedido>();
          }
          
@@ -134,7 +135,7 @@ public class DetalleController implements Serializable {
          currentItems = new ArrayList <Detallepedido>();
          currentDetallePedido = new Detallepedido(); // setea el objeto detallepedido para usarlo de nuevo
          currentproducto.setSelectedProducto(null); // setea el campo de producto del command button
-
+         
          return null;
      }
     
@@ -147,22 +148,35 @@ public class DetalleController implements Serializable {
     public void addShoppingCart() {
      //   int stockActual = currentproducto.getSelectedProducto().getStockActual();
         Date d = new Date();
+        int stockActual = currentproducto.getSelectedProducto().getStockActual();
         
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-    //    if(stockActual >= currentDetallePedido.getCantArt()){
-      //  currentproducto.getSelectedProducto().setStockActual(stockActual - currentDetallePedido.getCantArt());
-        currentDetallePedido.setHoraIng(sdf.format(d)); 
-        currentDetallePedido.setPrecioUni(currentproducto.getSelectedProducto().getPrecio_venta());
-        currentDetallePedido.setPrecioTotal(currentDetallePedido.getPrecioUni()*currentDetallePedido.getCantArt());
-        currentDetallePedido.setIdProducto(currentproducto.getSelectedProducto());
         
-        currentItems.add(currentDetallePedido);
-        currentDetallePedido = new Detallepedido();  
-//        }else{
-//         //chantarle un mensaje aqui de que falta stock
-//        }
+        if(stockActual >= currentDetallePedido.getCantArt()){
+            currentproducto.getSelectedProducto().setStockActual(stockActual - currentDetallePedido.getCantArt());
+            currentproducto.actualizarStock();
+            currentDetallePedido.setHoraIng(sdf.format(d)); 
+            currentDetallePedido.setPrecioUni(currentproducto.getSelectedProducto().getPrecio_venta());
+            currentDetallePedido.setPrecioTotal(currentDetallePedido.getPrecioUni()*currentDetallePedido.getCantArt());
+            currentDetallePedido.setIdProducto(currentproducto.getSelectedProducto());
+
+            currentItems.add(currentDetallePedido);
+            currentDetallePedido = new Detallepedido();  
+            
+            
+        }else{
+         //chantarle un mensaje aqui de que falta stock
+           
+            JsfUtil.addErrorMessage("Stock insuficiente");
+        }
     }
-    
+    public void removeShoppingCart() {
+        int stockActual = currentproducto.getSelectedProducto().getStockActual();
+        
+        currentproducto.getSelectedProducto().setStockActual(stockActual + currentDetallePedido.getCantArt());
+        currentproducto.actualizarStock();       
+       
+    }
     
     
     

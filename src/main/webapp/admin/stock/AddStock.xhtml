@@ -15,7 +15,7 @@
 
         <div class="Container100">
 
-            <h:form id="PedidoCreateForm">
+            <h:form id="PedidoAddForm">
 
                 <div class="ContainerIndent">
                     <!-- First container -->
@@ -31,23 +31,7 @@
                                 <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none"> 
 
                                  
-                                            <p:selectOneMenu id="mesa" 
-                                                     style="width: 90%"   
-                                                     styleClass="Wid90"
-                                                     value="#{mesaController.selected}" 
-                                                     converter="mesaConverter"
-                                                     filter="true" filterMatchMode="startsWith"
-                                                     effect="blind"
-                                                     >
-
-                                        <f:selectItem itemLabel="Seleccione Mesa" />
-                                        <f:selectItems value="#{mesaController.itemsDisponibles}"
-                                                       var="item"
-                                                       itemValue="#{item}"
-                                                       itemLabel="#{item.nombre.toString()}"
-
-                                                       />  
-                                    </p:selectOneMenu>
+                                       
                                     
                                     
                                     <p:selectOneMenu id="producto" 
@@ -60,10 +44,10 @@
                                                      >
 
                                         <f:selectItem itemLabel="Seleccione Producto" />
-                                        <f:selectItems value="#{productoController.itemsActivos}"
+                                        <f:selectItems value="#{productoController.items}"
                                                        var="item"
-                                                       itemValue="#{item}"
-                                                       itemLabel="#{item.nombre.toString().concat(' [').concat(item.stockActual.toString()).concat(']')}"
+                                                       itemValue="#{items}"
+                                                       itemLabel="#{items.nombre.toString()}"
 
                                                        />  
                                     </p:selectOneMenu>
