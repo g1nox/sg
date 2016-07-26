@@ -55,17 +55,11 @@ public class Receta implements Serializable {
     private Producto idProducto;
 
     public Receta() {
-        this.cantidad = new Double("0");
-         
     }
 
     public Receta(Integer idReceta) {
         this.idReceta = idReceta;
     }
-
-//    public Receta() {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
 
     public Integer getIdReceta() {
         return idReceta;
@@ -121,20 +115,15 @@ public class Receta implements Serializable {
             return false;
         }
         Receta other = (Receta) object;
-//        if (this.idIngrediente.getIdIngrediente().equals(other.idIngrediente.getIdIngrediente())){
-//        return true;
-//        }
-         if (this.idIngrediente.getIdIngrediente().equals(other.idIngrediente.getIdIngrediente())){
-        return true;
-        
+        if ((this.idReceta == null && other.idReceta != null) || (this.idReceta != null && !this.idReceta.equals(other.idReceta))) {
+            return false;
         }
-        
-        return false;
+        return true;
     }
 
     @Override
     public String toString() {
         return "com.egs.webapp.entities.Receta[ idReceta=" + idReceta + " ]";
     }
-
+    
 }

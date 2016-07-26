@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Buscar" url="#" disabled="true"/>
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Ventas
+                        </div>
+                        <div class="EmptyBox10" />
+
+                        <h:form id="searchListForm2">
+
+
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputScript name="spanish.js" library="js"/>
+
+                                <p:calendar id="name" value="#{ventaController.fechaConsulta}" pattern="yyyy-MM-dd" locale="es">
+                                    <p:ajax  event="dateSelect" oncomplete="#{ventaController.searchfordate()}" update="searchListForm2"/>
+                                </p:calendar>
+
+                            </h:panelGrid>
+
+                            <p:panel>
+
+                                <p:dataTable id="datatable" var="current" value="#{ventaController.itemsFiltrados}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                             selection="#{ventaController.selected}" selectionMode="single"
+                                             rowKey="#{current.idVenta}"
+                                             emptyMessage="No se encontraron registros"
+                                             reflow="true">  
+
+
+                                    <p:column headerText="Id">
+                                        <h:outputText value="#{current.idVenta}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Usuario">
+                                        <h:outputText value="#{current.idUsuario.nombre}"/>
+                                    </p:column> 
+
+                                    <p:column headerText="Total">
+                                        <h:outputText value="#{current.total}"/>
+                                    </p:column> 
+
+
+                                    <f:facet name="{Exporters}">
+                                        <h:commandLink>
+                                            <p:graphicImage name="png/xls.png" width="24"/>
+                                            <p:dataExporter type="xls" target="datatable" fileName="exel" id="dt1"  />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="png/pdf.png" width="24"/>
+                                            <p:dataExporter type="pdf" target="datatable" fileName="pdf" id="dt2" />
+                                        </h:commandLink>
+                                    </f:facet>  
+
+                                </p:dataTable>
+                            </p:panel>
+
+
+                        </h:form>
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </ui:define>
+</ui:composition>

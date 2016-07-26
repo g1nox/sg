@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,28 +36,39 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p"),
     @NamedQuery(name = "Pedido.findByIdPedido", query = "SELECT p FROM Pedido p WHERE p.idPedido = :idPedido"),
-    @NamedQuery(name = "Pedido.findByDatetime", query = "SELECT p FROM Pedido p WHERE p.datetime = :datetime"),
+    @NamedQuery(name = "Pedido.findByFecha", query = "SELECT p FROM Pedido p WHERE p.fecha = :fecha"),
     @NamedQuery(name = "Pedido.findByTotal", query = "SELECT p FROM Pedido p WHERE p.total = :total"),
     @NamedQuery(name = "Pedido.findByEstado", query = "SELECT p FROM Pedido p WHERE p.estado = :estado")})
 public class Pedido implements Serializable {
+   
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+    
     @Column(name = "id_pedido")
     private Integer idPedido;
-    @Column(name = "datetime")
+    
+    @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
-    private Date datetime;
+    private Date fecha;
+    
     @Column(name = "total")
     private Integer total;
+    
+    @Column ( name = "hora")
+    private String hora;
+    
     @Column(name = "estado")
     private Boolean estado;
+    
     @OneToMany(mappedBy = "idPedido")
-    private List<Detallepedido> detallepedidoList;
+    private List<DetallePedido> detallepedidoList;
+    
     @JoinColumn(name = "id_mesa", referencedColumnName = "id_mesa")
     @ManyToOne
     private Mesa idMesa;
+    
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     @ManyToOne
     private Usuario idUsuario;
@@ -76,12 +88,12 @@ public class Pedido implements Serializable {
         this.idPedido = idPedido;
     }
 
-    public Date getDatetime() {
-        return datetime;
+    public Date getFecha() {
+        return fecha;
     }
 
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
     public Integer getTotal() {
@@ -92,6 +104,14 @@ public class Pedido implements Serializable {
         this.total = total;
     }
 
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
+    
     public Boolean getEstado() {
         return estado;
     }
@@ -101,11 +121,11 @@ public class Pedido implements Serializable {
     }
 
     @XmlTransient
-    public List<Detallepedido> getDetallepedidoList() {
+    public List<DetallePedido> getDetallepedidoList() {
         return detallepedidoList;
     }
 
-    public void setDetallepedidoList(List<Detallepedido> detallepedidoList) {
+    public void setDetallepedidoList(List<DetallePedido> detallepedidoList) {
         this.detallepedidoList = detallepedidoList;
     }
 
@@ -149,5 +169,7 @@ public class Pedido implements Serializable {
     public String toString() {
         return "com.egs.webapp.entities.Pedido[ idPedido=" + idPedido + " ]";
     }
+
+
     
 }

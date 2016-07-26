@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -9,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,49 +25,34 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "detallepedido")
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Detallepedido.findAll", query = "SELECT d FROM Detallepedido d"),
-    @NamedQuery(name = "Detallepedido.findByIdDetalle", query = "SELECT d FROM Detallepedido d WHERE d.idDetalle = :idDetalle"),
-    @NamedQuery(name = "Detallepedido.findByCantArt", query = "SELECT d FROM Detallepedido d WHERE d.cantArt = :cantArt"),
-    @NamedQuery(name = "Detallepedido.findByPrecioUni", query = "SELECT d FROM Detallepedido d WHERE d.precioUni = :precioUni"),
-    @NamedQuery(name = "Detallepedido.findByPrecioTotal", query = "SELECT d FROM Detallepedido d WHERE d.precioTotal = :precioTotal"),
-    @NamedQuery(name = "Detallepedido.findByHoraIng", query = "SELECT d FROM Detallepedido d WHERE d.horaIng = :horaIng")})
 
-public class Detallepedido implements Serializable {
-    
+public class DetallePedido implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    
     @Column(name = "id_detalle")
     private Integer idDetalle;
-    
     @Column(name = "cant_art")
     private Integer cantArt;
-    
     @Column(name = "precio_uni")
     private Integer precioUni;
-    
     @Column(name = "precio_total")
     private Integer precioTotal;
     @Size(max = 2147483647)
-    
     @Column(name = "hora_ing")
     private String horaIng;
-    
     @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")
     @ManyToOne
     private Pedido idPedido;
-    
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
     @ManyToOne
     private Producto idProducto;
 
-    public Detallepedido() {
+    public DetallePedido() {
     }
 
-    public Detallepedido(Integer idDetalle) {
+    public DetallePedido(Integer idDetalle) {
         this.idDetalle = idDetalle;
     }
 
@@ -134,10 +122,10 @@ public class Detallepedido implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Detallepedido)) {
+        if (!(object instanceof DetallePedido)) {
             return false;
         }
-        Detallepedido other = (Detallepedido) object;
+        DetallePedido other = (DetallePedido) object;
         if ((this.idDetalle == null && other.idDetalle != null) || (this.idDetalle != null && !this.idDetalle.equals(other.idDetalle))) {
             return false;
         }

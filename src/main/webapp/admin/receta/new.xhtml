@@ -1,0 +1,28 @@
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+    <body>
+        
+            
+            
+               <h:form> 
+                            <p:growl id="growl" showDetail="true" sticky="true" />  
+
+                            <p:panel header="Growl">  
+                                <h:panelGrid columns="2" cellpadding="5">  
+                                    <p:outputLabel for="msg" value="Message:" />   
+                                    <p:inputText id="msg" value="#{growlView.message}" required="true" />  
+                                </h:panelGrid>  
+
+                                <p:commandButton value="Save" actionListener="#{growlView.saveMessage}" update="growl" />  
+                            </p:panel> 
+                        </h:form>  
+        
+        
+        
+        
+    </body>
+</html>

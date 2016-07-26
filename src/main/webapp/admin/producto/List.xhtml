@@ -119,7 +119,7 @@
                     <h:outputText value="Modificar"/>
              </f:facet>
             
-            <p:commandButton  update=":ProductoEditForm" oncomplete="PF('ProductoEditDialog').show()" 
+            <p:commandButton   oncomplete="PF('ProductoEditDialog').show()" 
                               icon="ui-icon-pencil" title="Modificar">
                 <f:setPropertyActionListener value="#{current}" target="#{productoController.selectedProducto}"/>
             </p:commandButton>
@@ -127,6 +127,8 @@
     
     
     </p:dataTable>
+       
+       
                 
             </h:form>
                         

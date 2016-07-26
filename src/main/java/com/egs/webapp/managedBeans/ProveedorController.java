@@ -1,5 +1,6 @@
 package com.egs.webapp.managedBeans;
 
+import com.egs.webapp.entities.Producto;
 import com.egs.webapp.entities.Proveedor;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
@@ -19,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.context.Flash;
+import javax.inject.Inject;
 
 @Named("proveedorController")
 @SessionScoped
@@ -29,9 +31,32 @@ public class ProveedorController implements Serializable {
     private List<Proveedor> items = null;
     private Proveedor selected;
     
+    private Proveedor nombreprov;
+    private List <Producto> prodconproveedor;
+    
     @EJB
     private ProveedorFacade proveedorFacade;
 
+    public ProveedorFacade getProveedorFacade() {
+        return proveedorFacade;
+    }
+
+    public void setProveedorFacade(ProveedorFacade proveedorFacade) {
+        this.proveedorFacade = proveedorFacade;
+    }
+      
+    @Inject
+      
+    private ProductoController currentproducto;
+
+    public ProductoController getCurrentproducto() {
+        return currentproducto;
+    }
+
+    public void setCurrentproducto(ProductoController currentproducto) {
+        this.currentproducto = currentproducto;
+    }
+    
     public ProveedorController() {
     }
 
@@ -42,16 +67,22 @@ public class ProveedorController implements Serializable {
     public void setSelected(Proveedor selected) {
         this.selected = selected;
     }
-    
-    public ProveedorFacade getProveedorFacade() {
-        return proveedorFacade;
+
+    public Proveedor getNombreprov() {
+        return nombreprov;
     }
-      
-      public void setProveedorFacade(ProveedorFacade proveedorFacade) {
-        this.proveedorFacade = proveedorFacade;
-    }   
-    
-    
+
+    public void setNombreprov(Proveedor nombreprov) {
+        this.nombreprov = nombreprov;
+    }
+
+    public List<Producto> getProdconproveedor() {
+        return prodconproveedor;
+    }
+
+    public void setProdconproveedor(List<Producto> prodconproveedor) {
+        this.prodconproveedor = prodconproveedor;
+    }
 
     protected void setEmbeddableKeys() {
     }
@@ -88,7 +119,7 @@ public class ProveedorController implements Serializable {
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ProveedorDeleted"));
+         persist(PersistAction.DELETE, "El proveedor se ha eliminado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
@@ -107,12 +138,33 @@ public class ProveedorController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
+                    
+                    String nombre = getSelected().getNombre();
+                    
+                    nombreprov = ejbFacade.findCategoria(nombre);
+                    
+                    if(nombreprov == null){
+                    
                     getFacade().edit(selected);
-                } else {
-                    getFacade().remove(selected);
+                     JsfUtil.addSuccessMessage(successMessage);
+                    }else {
+                        JsfUtil.addErrorMessage("El proveedor ya existe");
+                    }
                 }
-                JsfUtil.addSuccessMessage(successMessage);
-            } catch (EJBException ex) {
+                else {
+                    int idprov = getSelected().getIdProveedor();
+                    prodconproveedor = currentproducto.getProductoFacade().findProdProveedor(idprov);
+                    
+                    if (prodconproveedor.isEmpty()) {
+                        getFacade().remove(selected);
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("No se puede eliminar el proveedor porque tiene registros asociados");
+                    }
+                }
+            } 
+             
+                catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
                 if (cause != null) {

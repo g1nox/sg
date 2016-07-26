@@ -3,25 +3,22 @@
     <Scope Scope="Faces Configuration Only"/>
     <Scope Scope="Project">
         <Node id="admin/proveedor/View.xhtml" x="650" y="600" zoom="true"/>
-        <Node id="admin/ingrediente/Edit.xhtml" x="1900" y="300" zoom="true"/>
         <Node id="admin/categoria/List.xhtml" x="650" y="1050" zoom="true"/>
-        <Node id="admin/log/List.xhtml" x="900" y="900" zoom="true"/>
+        <Node id="admin/ingrediente/Edit.xhtml" x="1900" y="300" zoom="true"/>
         <Node id="util/access-denied.xhtml" x="1900" y="150" zoom="true"/>
+        <Node id="admin/log/List.xhtml" x="900" y="900" zoom="true"/>
         <Node id="admin/producto/List.xhtml" x="900" y="600" zoom="true"/>
         <Node id="admin/usuarios/new.xhtml" x="150" y="300" zoom="true"/>
-        <Node id="admin/ingrediente/View.xhtml" x="400" y="600" zoom="true"/>
         <Node id="admin/movimiento/List.xhtml" x="1150" y="600" zoom="true"/>
         <Node id="admin/producto/Edit.xhtml" x="1150" y="150" zoom="true"/>
         <Node id="admin/log/Create.xhtml" x="150" y="1200" zoom="true"/>
         <Node id="admin/proveedor/List.xhtml" x="900" y="300" zoom="true"/>
-        <Node id="admin/producto/View.xhtml" x="1400" y="150" zoom="true"/>
         <Node id="admin/movimiento/View.xhtml" x="1150" y="750" zoom="true"/>
         <Node id="admin/estado/Edit.xhtml" x="1400" y="600" zoom="true"/>
         <Node id="admin/ingrediente/List.xhtml" x="400" y="300" zoom="true"/>
         <Node id="admin/categoria/Edit.xhtml" x="1400" y="450" zoom="true"/>
         <Node id="admin/proveedor/Edit.xhtml" x="900" y="750" zoom="true"/>
         <Node id="admin/movimiento/Edit.xhtml" x="1400" y="300" zoom="true"/>
-        <Node id="admin/categoria/View.xhtml" x="650" y="900" zoom="true"/>
         <Node id="admin/proveedor/Create.xhtml" x="400" y="150" zoom="true"/>
         <Node id="admin/estado/View.xhtml" x="900" y="450" zoom="true"/>
         <Node id="admin/usuarios/edit.xhtml" x="650" y="450" zoom="true"/>
@@ -34,17 +31,17 @@
         <Node id="admin/welcome-admin.xhtml" x="150" y="1050" zoom="true"/>
         <Node id="admin/categoria/Create.xhtml" x="400" y="900" zoom="true"/>
         <Node id="login.xhtml" x="400" y="450" zoom="true"/>
-        <Node id="util/login.xhtml" x="1150" y="300" zoom="true"/>
         <Node id="admin/movimiento/Create.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="util/login.xhtml" x="1150" y="300" zoom="true"/>
         <Node id="admin/rol/List.xhtml" x="1650" y="150" zoom="true"/>
         <Node id="util/index.html" x="650" y="150" zoom="true"/>
         <Node id="admin/estado/Create.xhtml" x="150" y="900" zoom="true"/>
         <Node id="admin/rol/View.xhtml" x="1650" y="300" zoom="true"/>
         <Node id="admin/log/Edit.xhtml" x="1650" y="450" zoom="true"/>
         <Node id="admin/producto/Create.xhtml" x="1150" y="450" zoom="true"/>
-        <Node id="admin/rol/Edit.xhtml" x="650" y="750" zoom="true"/>
-        <Node id="admin/log/View.xhtml" x="650" y="300" zoom="true"/>
         <Node id="util/error.xhtml" x="2150" y="150" zoom="true"/>
+        <Node id="admin/log/View.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="admin/rol/Edit.xhtml" x="650" y="750" zoom="true"/>
     </Scope>
     <Scope Scope="All Faces Configurations"/>
 </Scene>

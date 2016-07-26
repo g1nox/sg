@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -53,6 +54,27 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
                 .setParameter(3, estado)
                 .getResultList();
 
+    }
+     
+     public List<Object> meseroTop() {
+
+        Query q;
+//        q = getEntityManager().createQuery("SELECT p, sum(dp.cantArt) as total"
+//                + " FROM Producto p, DetallePedido dp, Pedido pe, Venta v "
+//                + " where p = dp.idProducto"
+//                + " and dp.idPedido = pe"
+//                + " and pe = v.idPedido  "
+//                + " group by p.idProducto order by total desc ");
+        
+        q = getEntityManager().createQuery("select u, sum(v.total) as total"
+                                          +  " from Venta v, Usuario u"
+                                          +  " where u = v.idUsuario"
+                                          +  " group by u.idUsuario"
+                                          + " order by total desc");
+
+        List <Object> resultList = q.getResultList();
+
+        return resultList;
     }
     
     

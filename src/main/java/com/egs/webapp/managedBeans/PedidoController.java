@@ -1,6 +1,6 @@
 package com.egs.webapp.managedBeans;
 
-import com.egs.webapp.entities.Detallepedido;
+import com.egs.webapp.entities.DetallePedido;
 import com.egs.webapp.entities.Pedido;
 import com.egs.webapp.sessionBeans.PedidoFacade;
 import com.egs.webapp.util.JsfUtil;
@@ -23,43 +23,43 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-
 @Named(value = "pedidoController")
 @SessionScoped
 public class PedidoController implements Serializable {
 
-   
-    
     @EJB
     private com.egs.webapp.sessionBeans.PedidoFacade ejbFacade;
     private List<Pedido> items = null;
     private List<Pedido> itemsOrderBy = null;
+    private List<Pedido> itemsFiltrados = null;
+    private List<Pedido> itemsToday = null;
+
     private Pedido selected;
-    
-    private int cant =0;
-    
+
+    private Date fechaConsulta;
+
     @Inject
     private DetalleController currentDetallePedido;
-    
+
     public DetalleController getCurrentDetallePedido() {
         return currentDetallePedido;
     }
 
     public void setCurrentDetallePedido(DetalleController currentDetallePedido) {
-        this.currentDetallePedido = currentDetallePedido ;
+        this.currentDetallePedido = currentDetallePedido;
     }
-    
+
     @Inject
     private UsuariosController contextUsuario;
-    
+
     public UsuariosController getContextUsuario() {
         return contextUsuario;
     }
 
     public void setContextUsuario(UsuariosController contextUsuario) {
-        this.contextUsuario = contextUsuario ;
+        this.contextUsuario = contextUsuario;
     }
-    
+
     @Inject
     private MesaController currentmesa;
 
@@ -70,7 +70,7 @@ public class PedidoController implements Serializable {
     public void setCurrentmesa(MesaController currentmesa) {
         this.currentmesa = currentmesa;
     }
-    
+
     @Inject
     private ProductoController currentproducto;
 
@@ -81,192 +81,249 @@ public class PedidoController implements Serializable {
     public void setCurrentproducto(ProductoController currentproducto) {
         this.currentproducto = currentproducto;
     }
-        
-            
+
     public PedidoController() {
     }
 
     public PedidoFacade getEjbFacade() {
         return ejbFacade;
     }
-    
+
+    public void setEjbFacade(PedidoFacade ejbFacade) {
+        this.ejbFacade = ejbFacade;
+    }
+
     public List<Pedido> getItems() {
         if (items == null) {
             items = getEjbFacade().findAll();
         }
         return items;
     }
-    
-     public List<Pedido> getItemsOrderBy() {
+
+    public void setItems(List<Pedido> items) {
+        this.items = items;
+    }
+
+    public List<Pedido> getItemsOrderBy() {
         if (itemsOrderBy == null) {
             itemsOrderBy = getEjbFacade().findOrderBy();
         }
         return itemsOrderBy;
     }
 
+    public void setItemsOrderBy(List<Pedido> itemsOrderBy) {
+        this.itemsOrderBy = itemsOrderBy;
+    }
+
+    public Date getFechaConsulta() {
+        return fechaConsulta;
+    }
+
+    public void setFechaConsulta(Date fechaConsulta) {
+        this.fechaConsulta = fechaConsulta;
+    }
+
     public Pedido getSelected() {
         return selected;
     }
-    
+
     public void setSelected(Pedido selected) {
         this.selected = selected;
     }
 
-    public void setEjbFacade(PedidoFacade ejbFacade) {
-        this.ejbFacade = ejbFacade;
+    public List<Pedido> getItemsFiltrados() {
+        return itemsFiltrados;
     }
 
-    public void setItems(List<Pedido> items) {
-        this.items = items;
+    public void setItemsFiltrados(List<Pedido> itemsFiltrados) {
+        this.itemsFiltrados = itemsFiltrados;
     }
 
-   
+    public List<Pedido> getItemsToday() {
+        
+        Date fechaActual = new Date();
+        itemsToday = ejbFacade.today(fechaActual);
+        
+        return itemsToday;
+    }
 
-  public void init (){
-         
-        if (itemsOrderBy == null){
-         itemsOrderBy = new ArrayList<Pedido>();
-         }
-         
-         
-     }
+    public void setItemsToday(List<Pedido> itemsToday) {
+        this.itemsToday = itemsToday;
+    }
 
-    
+    //metodos
+    public void init() {
+
+        if (itemsOrderBy == null) {
+            itemsOrderBy = new ArrayList<Pedido>();
+        }
+    }
+
     public Pedido prepareCreate() {
         selected = new Pedido();
+        currentproducto.setSelectedProducto(null);
         currentproducto.reinit();
         currentDetallePedido.init();
         currentmesa.setSelected(null);
         currentmesa.init();
         return selected;
     }
-     
-    public List<Detallepedido> prepareUpdate() {
-           
+
+    public Pedido prepareSearch() {
+        selected = new Pedido();
+        return selected;
+
+    }
+
+    public List<DetallePedido> prepareUpdate() {
+
         currentDetallePedido.rereinit();
-       
-      
+
         return selected.getDetallepedidoList();
     }
-     
-     
-     
-     
+
+    public void addProducto() {
+
+        if (currentproducto.getSelectedProducto().getCompuesto()) {
+
+            JsfUtil.addSuccessMessage("buena es compuesto");
+
+        } else {
+
+            currentDetallePedido.addShoppingCart();
+
+        }
+
+    }
+
     public String create() {
-        persist(JsfUtil.PersistAction.CREATE,  "el pedido se creo");
+        
+        if( !currentDetallePedido.getCurrentItems().isEmpty()){
+        
+        persist(JsfUtil.PersistAction.CREATE, "el pedido se creo");
         if (!JsfUtil.isValidationFailed()) {
             itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
-             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goPedidoList();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareCreate();
+            return goPedidoList();
         }
-        return null;
+        
+        
+        }else{
+        
+            JsfUtil.addErrorMessage("Ingrese productos al pedido antes de finalizar");
+        }
+       return null;
     }
-    
 
     public void update() {
         persist(JsfUtil.PersistAction.UPDATE, "alan tiwa");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
-             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareUpdate();
-             
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareUpdate();
+
         }
-        
+
     }
 
     public void destroy() {
-        persist(JsfUtil.PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ProductoDeleted"));
+        persist(JsfUtil.PersistAction.DELETE, "eliminado xuxeta");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
-            items = null;    // Invalidate list of items to trigger re-query.
-        }
-    }
-    
-    
-    
+            items = null; // Invalidate list of items to trigger re-query.
+            itemsOrderBy = null;    
+    }}
+
     private void persist(JsfUtil.PersistAction persistAction, String successMessage) {
         if (selected != null) {
-           
+
             try {
-                if (persistAction != JsfUtil.PersistAction.DELETE) {
-                    if(persistAction == JsfUtil.PersistAction.CREATE){
-                        
-                        Date d = new Date();
-                        selected.setDatetime(d);                 
+              //  if (persistAction != JsfUtil.PersistAction.DELETE) {
+                    if (persistAction == JsfUtil.PersistAction.CREATE) {
+
+                        //fecha ingreso pedido
+                        Date f = new Date();
+                        selected.setFecha(f);
+                        //define hora de ingreso
+                        Date h = new Date();
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                        selected.setHora(sdf.format(h));
 
                         selected.setEstado(Boolean.FALSE);
-                        
-                       // ingresar mesa a bd
-                       selected.setIdMesa(currentmesa.getSelected());
-                        
-                       // ingresar usuario a bd
+
+                        // ingresar mesa a bd
+                        selected.setIdMesa(currentmesa.getSelected());
+
+                        // ingresar usuario a bd
                         selected.setIdUsuario(contextUsuario.getCurrentUser());
-                    
-                        int total = 0;                 
-                        for (Detallepedido dv: currentDetallePedido.getCurrentItems()){                    
+
+                        int total = 0;
+                        for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
                             dv.setIdPedido(selected);
                             total += dv.getPrecioTotal();
                         }
                         selected.setTotal(total);
-                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());                    
+                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
 
-                        
 //                        //modificar estado mesa
-                       currentmesa.getSelected().setEstado(Boolean.TRUE);
-                       currentmesa.llamarEditarMesa();
-                     
-                        
+                        currentmesa.getSelected().setEstado(Boolean.TRUE);
+                        currentmesa.llamarEditarMesa();
+
                         getEjbFacade().edit(selected);
 
                         //prepareCreate();
                         currentDetallePedido.reinit();
                         JsfUtil.addSuccessMessage(successMessage);
-                                      
-//                    SimpleDateFormat hora = new SimpleDateFormat("HH:mm:ss");
-//                    selected.setHora(hora.format(d));
-//                    
-//                    SimpleDateFormat fecha = new SimpleDateFormat("dd/MM/yyyy");
-//                    selected.setFecha(fecha.format(d));  
+
                     }
-                    
-                    if(persistAction == JsfUtil.PersistAction.UPDATE){
+
+                    if (persistAction == JsfUtil.PersistAction.UPDATE) {
                         int total = selected.getTotal();
-                         for (Detallepedido dv: currentDetallePedido.getCurrentItems()){
+                        for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
 
                             dv.setIdPedido(selected);
                             total += dv.getPrecioTotal();
-                            
-                         }
-                         selected.setTotal(total);
-                         
-                         List<Detallepedido> detalleaux = new ArrayList<Detallepedido>();
-                         detalleaux = selected.getDetallepedidoList();
-                         for(Detallepedido dv: detalleaux){
-                             currentDetallePedido.getCurrentItems().add(dv);
-                         }
-                         selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
-                     
-                         getEjbFacade().edit(selected);
-                         
 
-                         
-                         JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
-                         
-                     }
-        
+                        }
+                        selected.setTotal(total);
+
+                        List<DetallePedido> detalleaux = new ArrayList<DetallePedido>();
+                        detalleaux = selected.getDetallepedidoList();
+                        for (DetallePedido dv : detalleaux) {
+                            currentDetallePedido.getCurrentItems().add(dv);
+                        }
+                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
+
+                        getEjbFacade().edit(selected);
+                        JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
+
+                    }
                     
-                } else {
-                   getEjbFacade().remove(selected);
-               }
-            
-                
+                    if (persistAction == JsfUtil.PersistAction.DELETE) {
+
+                        //modificar estado mesa
+                     
+                        currentmesa.setSelected(selected.getIdMesa());
+                        currentmesa.getSelected().setEstado(Boolean.FALSE);
+                        currentmesa.llamarEditarMesa();
+
+                        
+                        
+                        
+                        getEjbFacade().remove(selected);
+                        JsfUtil.addSuccessMessage(successMessage);
+
+                    }
+
+              //  }
+
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -284,8 +341,7 @@ public class PedidoController implements Serializable {
             }
         }
     }
-    
-    
+
     public Pedido getPedido(java.lang.Long id) {
         return getEjbFacade().find(id);
     }
@@ -319,9 +375,9 @@ public class PedidoController implements Serializable {
             return controller.getProducto(getKey(value));
         }
 
-        java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+        java.lang.Integer getKey(String value) {
+            java.lang.Integer key;
+            key = Integer.valueOf(value);
             return key;
         }
 
@@ -346,22 +402,43 @@ public class PedidoController implements Serializable {
         }
 
     }
-    
-    public String goPedidoCreate(){
-    prepareCreate();
-    return "pedido-create";
-    }
-    
-    public String goPedidoList(){
-      
-    return "pedido-list";
-    }
-    
-       public void llamarEditarPedido(){
 
-          getEjbFacade().edit(selected);
-          
-        }
+    public String goPedidoCreate() {
+        prepareCreate();
+        return "pedido-create";
+    }
+
+    public String goPedidoList() {
+
+        return "pedido-list";
+    }
+
+    public String goPedidoSearch() {
+
+        return "pedido-search";
+
+    }
+    
+     public String goPedidoToday() {
+
+        return "pedido-today";
+
+    }
+
+    public void llamarEditarPedido() {
+
+        getEjbFacade().edit(selected);
+
+    }
+
+    public void search() {
+
+        itemsFiltrados = ejbFacade.findDate(fechaConsulta);
+
+    }
+    
+   
     
     
+
 }

@@ -29,33 +29,33 @@
                                 <div class="EmptyBox10" />
 
                                 <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
-                                    
-                                    
-                                    <p:inputText value="#{productoController.selectedProducto.nombre}" required="true" label="Nombre" placeholder="Nombre" styleClass="Wid90"/>
-                                    
-                                    <p:inputText value="#{productoController.selectedProducto.precio_venta}" placeholder="Precio venta" styleClass="Wid90"/>
-                                    
-                                    <p:selectOneMenu id="categoria"  style="width: 90%"   
-                                     styleClass="Wid90" value="#{categoriaController.selected}" 
-                                     converter="categoriaConverter" filter="true" 
-                                     filterMatchMode="startsWith" effect="blind"
-                                     required="true" requiredMessage="Seleccione categoría!"><!--
 
--->                                    <f:selectItem itemLabel="Seleccione Categoria" />
-                                    <f:selectItems value="#{categoriaController.items}" var="item"
-                                                   itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
+
+                                    <p:inputText value="#{productoController.selectedProducto.nombre}" required="true" label="Nombre" placeholder="Nombre" styleClass="Wid90"/>
+
+                                    <p:inputText value="#{productoController.selectedProducto.precioVenta}" placeholder="Precio venta" styleClass="Wid90"/>
+
+                                    <p:selectOneMenu id="categoria"  style="width: 90%"   
+                                                     styleClass="Wid90" value="#{categoriaController.selected}" 
+                                                     converter="categoriaConverter" filter="true" 
+                                                     filterMatchMode="startsWith" effect="blind"
+                                                     required="true" requiredMessage="Seleccione categoría!">
+
+                                        <f:selectItem itemLabel="Seleccione Categoria" />
+                                        <f:selectItems value="#{categoriaController.items}" var="item"
+                                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
-                                    
-                                    
-                                    
-                                            
-<!--                                     <h:outputText value="Posee ingrediente?" />
+
+
+
+
+                                    <!--<h:outputText value="Posee ingrediente?" />
                                         <p:inputSwitch value="#{productoController.selectedProducto.compuesto}" >       
-                                               <p:ajax  update="ing" />
+                                        <p:ajax  update="ing" />
                                         </p:inputSwitch>-->
-<!--                                     
-                                    
--->                                               <p:selectOneMenu id="ing" 
+                                    <!--                                      
+                                    -->                
+                                    <p:selectOneMenu id="ingrediente" 
                                                      style="width: 90%"   
                                                      styleClass="Wid90"
                                                      value="#{ingredienteController.selected}" 
@@ -67,21 +67,21 @@
                                                        var="item"
                                                        itemValue="#{item}"
                                                        itemLabel="#{item.nombre.toString().concat(' [').concat(item.umedida.toString()).concat(']')}" />
-                                         
+
                                     </p:selectOneMenu>
-                                    
-                                    
-                                    
-                                 
+
+
+
+
 
                                     <p:inputText value="#{recetaController.currentReceta.cantidad}" 
-                                               placeholder="Cantidad" styleClass="Wid90"/>
-                                
+                                                 placeholder="Cantidad" styleClass="Wid90"/>
+
                                 </p:panelGrid>
 
-                                
+
                                 <p:commandButton id="add" value="Add" update="outItemsPanel" action="#{recetaController.addIngrediente()}" >
-                                    </p:commandButton>
+                                </p:commandButton>
 
                             </p:panel>
                         </div>
@@ -104,45 +104,45 @@
                                             <h:outputText value="#{Items.idIngrediente.nombre}" />
                                         </p:column>
 
-                                       <p:column headerText="cantidad">
-                                    
-                                    <h:outputText value="#{Items.cantidad}"/>
+                                        <p:column headerText="cantidad">
 
-                                    
-                                       </p:column>
-                                        
-                                         <p:column headerText="Unidad">
-                                            
+                                            <h:outputText value="#{Items.cantidad}"/>
+
+
+                                        </p:column>
+
+                                        <p:column headerText="Unidad">
+
                                             <h:outputText value="#{Items.umedida}" />
                                         </p:column>
-                                        
-                                        
-                                        
-                                      <p:column headerText="Action">
-                                            
+
+
+
+                                        <p:column headerText="Action">
+
                                             <p:commandLink value="Remover" update="ItemsTable">
-                                              <p:collector value="#{Items}" removeFrom="#{recetaController.currentItems}" unique="true" />
-                                           </p:commandLink>
-                                            
-                                      </p:column>
-                                        
-                                       
-    
+                                                <p:collector value="#{Items}" removeFrom="#{recetaController.currentItems}" unique="true" />
+                                            </p:commandLink>
+
+                                        </p:column>
+
+
+
 
                                     </p:dataTable>
-                                    
+
                                     <br/>
-                                
-                                
+
+
                                 </p:outputPanel>
-                                
+
 
 
                             </p:panel>
                             <br/>
                             <p:commandButton value="Terminar producto" action="#{productoController.createCompuesto()}"/>
-                                    
-                                    <br/>
+
+                            <br/>
                         </div>
                     </div>
 

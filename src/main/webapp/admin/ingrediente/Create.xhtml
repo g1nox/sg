@@ -32,21 +32,45 @@
                                          placeholder="Nombre"/>
                 
                             
-                            <p:inputText value="#{ingredienteController.selected.tipo}"
-                                         required="true"
-                                         requiredMessage="Ingrese Tipo!"
-                                         styleClass="Wid90"
-                                         placeholder="Tipo"/>
+                          
                        
-                        
-                         <p:inputText value="#{ingredienteController.selected.cantidad}"
+                            
+                            <p:selectOneMenu id="disp" value="#{ingredienteController.selected.umedida}"
+                                         style="width: 90%"
+                                         styleClass="wid90"
                                          required="true"
-                                         requiredMessage="Ingrese Cantidad!"
-                                         styleClass="Wid90"
-                                         placeholder="Cantidad"/>
+                                         requiredMessage="Ingrese unidad de medida!">
+                             <f:selectItem itemLabel="Unidad" itemValue="Unidad" />
+                             <f:selectItem itemLabel="Kilo" itemValue="Kilo" />
+                            <f:selectItem itemLabel="Litro" itemValue="Litro" />
+                            
+                            </p:selectOneMenu>
+                            
+                                 <p:selectOneMenu id="categoria"  style="width: 90%"   
+                                     styleClass="Wid90" value="#{categoriaController.selected}" 
+                                     converter="categoriaConverter" filter="true" 
+                                     filterMatchMode="startsWith" effect="blind"
+                                     required="true" requiredMessage="Seleccione categoría!">
+
+                        <f:selectItem itemLabel="Seleccione Categoria" />
+                        <f:selectItems value="#{categoriaController.items}" var="item"
+                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
+                    </p:selectOneMenu>
+                            
+                            
+                               <p:selectOneMenu id="proveedor" style="width: 90%"   
+                                     styleClass="Wid90" value="#{proveedorController.selected}"
+                                     converter="proveedorConverter" filter="true"       
+                                     filterMatchMode="startsWith" effect="blind"           
+                                     required="true" requiredMessage="Seleccione proveedor!">
+
+                        <f:selectItem itemLabel="Seleccione Proveedor"/>
+                        <f:selectItems value="#{proveedorController.items}" var="item"
+                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
+                    </p:selectOneMenu>
                         
                         
-                           <p:selectOneMenu id="disp" value="#{ingredienteController.selected.disponibilidad}" 
+<!--                           <p:selectOneMenu id="disp" value="#{ingredienteController.selected.disponibilidad}" 
                                          style="width: 90%"
                                          styleClass="wid90"
                                          required="true"
@@ -59,7 +83,7 @@
                             
                             
                                                 
-                    </p:selectOneMenu>  
+                    </p:selectOneMenu>  -->
                         
                         
                         

@@ -55,6 +55,8 @@ public class UsuariosController implements Serializable {
     private String pass;
     private List<Usuario> items = null;
     
+    private List<Object> itemsTop = null;
+    
     public UsuariosController() {
     }
 
@@ -116,8 +118,18 @@ public class UsuariosController implements Serializable {
      return items;
     
     }
+   
     public void setItems(List<Usuario> items) {
         this.items = items;
+    }
+    
+     public List<Object> getItemsTop() {
+        
+        if (itemsTop == null) {
+            // no tiene que encontrarlos a todos   
+           itemsTop = getUsuarioFacade().meseroTop();
+        }
+        return itemsTop;
     }
     
 

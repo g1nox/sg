@@ -27,12 +27,16 @@
                          <p:commandButton actionListener="#{proveedorController.llamarEditarProveedor()}" 
                                      value="Guardar cambios" 
                                      update="ProveedorEditForm,:proveedorListForm:datatable,:growl" 
-                                     oncomplete="handleSubmit(args, 'ProveedorEditDialog')"/>
-                    
-                    
+                                     oncomplete="handleSubmit(args, 'ProveedorEditDialog')">
+                    <p:confirm header="Confirmación" message="¿Esta seguro de guardar los cambios?" icon="ui-icon-alert"/> 
+                    </p:commandButton>
                     </p:panel>
                  
-                    
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                             onclick="PF('ProveedorEditDialog').hide()"/>
+                        </p:confirmDialog>
                     
                 </h:panelGroup>
             </h:form>

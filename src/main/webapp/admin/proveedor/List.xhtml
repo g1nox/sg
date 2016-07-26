@@ -59,16 +59,28 @@
                        
                    
                          <p:column>
-                                <f:facet name="header">
-                                       <h:outputText value="Modificar"/>
-                                </f:facet>
+                              
             
-                                    <p:commandButton update=":ProveedorEditForm" oncomplete="PF('ProveedorEditDialog').show()" 
+                             <p:commandButton value="Editar" update=":ProveedorEditForm" oncomplete="PF('ProveedorEditDialog').show()" 
                                                       icon="ui-icon-pencil" title="Modificar">
                                         <f:setPropertyActionListener value="#{current}" target="#{proveedorController.selected}"/>
                                     </p:commandButton>
-                                
-                                 </p:column>
+                             
+                             <p:commandButton  value="Eliminar"  icon="fa fa-times-circle" update="datatable"
+                                              action="#{proveedorController.destroy()}">
+                            
+                                 <f:setPropertyActionListener value="#{current}" target="#{proveedorController.selected}"/>
+                            <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                        </p:commandButton>
+                              
+                              <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                             
+                            
+                             
+                         </p:column>
                         
                        
                              

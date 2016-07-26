@@ -1,6 +1,7 @@
 package com.egs.webapp.sessionBeans;
 
 import com.egs.webapp.entities.Pedido;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -24,19 +25,7 @@ public class PedidoFacade extends AbstractFacade<Pedido> {
         super(Pedido.class);
     }
     
-    
-//     public List<Usuario> usuariosActivos(String usuario) {
-//        // me tiene que devolver una lista con los usuarios activos
-//        final Estado estado = ef.find(1);
-//        final String admin = "admin";
-//        return getEntityManager().createQuery("Select u FROM Usuario u Where u.username <> ?1 AND u.username <> ?2 AND u.idEstado = ?3")
-//                .setParameter(1, usuario)
-//                .setParameter(2, admin)
-//                .setParameter(3, estado)
-//                .getResultList();
-//
-//    }
-//    
+
 //    public Pedido findLastPedido (){
 //    Pedido pedido = (Pedido)getEntityManager().createQuery("SELECT v FROM Pedido v Where v.idPedido = (SELECT MAX (vv.idPedido) FROM Pedido vv)").getSingleResult();
 //    return pedido;
@@ -50,5 +39,46 @@ public class PedidoFacade extends AbstractFacade<Pedido> {
          return p;
       
       }
+    
+//      public List<Pedido> findDate() {
+//          
+//          List <Pedido> p  = null;
+//          
+//          p = (List<Pedido>)getEntityManager().
+//              createQuery ("SELECT  p  FROM  Pedido p WHERE p.fecha BETWEEN '2016-03-19' AND '2016-03-22' ").
+//              getResultList();
+//         
+//          return p;
+//      
+//      }
+      
+      public List<Pedido> findDate(Date fechaConsulta) {
+          
+          List <Pedido> p  = null;
+          
+          p = (List<Pedido>)getEntityManager().
+              createQuery ("SELECT  p  FROM  Pedido p WHERE p.fecha = ?1 ").
+              setParameter(1, fechaConsulta).
+              getResultList();
+         
+          return p;
+      
+      }
+      
+      public List<Pedido> today(Date fechaHoy) {
+          
+          List <Pedido> p  = null;
+          
+          p = (List<Pedido>)getEntityManager().
+              createQuery ("SELECT  p  FROM  Pedido p WHERE p.fecha = ?1 ").
+              setParameter(1, fechaHoy).
+              getResultList();
+         
+          return p;
+      
+      }
+    
+    
+   
   
 }

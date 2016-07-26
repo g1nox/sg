@@ -45,7 +45,7 @@
 
                                         <f:selectItem itemLabel="Seleccione Producto" />
                                         <f:selectItems value="#{productoController.items}"
-                                                       var="item"
+                                                       var="items"
                                                        itemValue="#{items}"
                                                        itemLabel="#{items.nombre.toString()}"
 
@@ -55,13 +55,13 @@
 
 
 
-                                    <p:spinner value="#{detalleController.currentDetallePedido.cantArt}" min="1"
+                                    <p:spinner value="#{detalleEntradaController.currentDetalleEntrada.cantArt}" min="1"
                                                placeholder="Cantidad"
                                                style=""/>
                                 </p:panelGrid>
 
                                 
-                                <p:commandButton id="boton_add" value="Add" update="outPanel producto" action="#{detalleController.addShoppingCart()}" />
+                                <p:commandButton id="boton_add" value="Add" update="outPanel" action="#{detalleEntradaController.addShoppingCart()}" />
                                     
 
                             </p:panel>
@@ -79,7 +79,7 @@
 
 
                                 <p:outputPanel id="outPanel">
-                                    <p:dataTable value="#{detalleController.currentItems}" var="currentItems" id="currentItems" editable="true" editMode="cell">
+                                    <p:dataTable value="#{detalleEntradaController.currentItems}" var="currentItems" id="currentItems" editable="true" editMode="cell">
 
                                         <p:column headerText="Producto">
                                             <h:outputText value="#{currentItems.idProducto.nombre}" />
@@ -94,26 +94,7 @@
                                         
                                         </p:column>
                                         
-                                        <p:column headerText="Hora ingreso">
-                                            
-                                            <h:outputText value="#{currentItems.horaIng}" />
-                                            
-                                        </p:column>
-                                        <p:column headerText="Precio uni">     
-                                            
-                                            <h:outputText value="#{currentItems.precioUni}" />     
-                                            
-                                        </p:column>
-                                        
-                                        <p:column headerText="Action">
-                                            
-                                            <p:commandLink value="Eliminar" update="currentItems" action="#{detalleController.removeShoppingCart()}">
-                                              <p:collector value="#{currentItems}" removeFrom="#{detalleController.currentItems}" unique="true" />
-                                           </p:commandLink>
-                                            
-                                        </p:column>
-
-
+         
 
                                     </p:dataTable>
                                     
@@ -126,7 +107,7 @@
 
                             </p:panel>
                             <br/>
-                            <p:commandButton value="Terminar pedido" action="#{pedidoController.create}" />
+                            <p:commandButton value="Terminar pedido" />
                                     
                                     <br/>
                         </div>

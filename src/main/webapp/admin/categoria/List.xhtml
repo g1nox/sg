@@ -31,7 +31,7 @@
             <h:form id="categoriaListForm">
                 
                     
-                 
+                 <h:outputStylesheet name="css/custom.css" />
                        
                 <p:dataTable id="datatable" var="current" value="#{categoriaController.items}" 
                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
@@ -51,17 +51,29 @@
                         </p:column>
                         
                        
-                        <p:column>
-                                <f:facet name="header">
-                                       <h:outputText value="Modificar"/>
-                                </f:facet>
-            
-                                    <p:commandButton update=":CategoriaEditForm" oncomplete="PF('CategoriaEditDialog').show()" 
-                                                      icon="ui-icon-pencil" title="Modificar">
-                                        <f:setPropertyActionListener value="#{current}" target="#{categoriaController.selected}"/>
-                                    </p:commandButton>
-                                
-                                 </p:column>
+                    <p:column>
+                       
+                         <p:commandButton id="Btn3"  value="Editar" icon="fa fa-pencil" styleClass="butttonGreen"
+                                        update=":CategoriaEditForm" oncomplete="PF('CategoriaEditDialog').show()">
+                            <f:setPropertyActionListener value="#{current}" target="#{categoriaController.selected}"/>
+                            
+                        </p:commandButton>
+                        
+                        
+                        
+                        <p:commandButton id="delete" value="Eliminar"  icon="fa fa-times-circle" 
+                                         action="#{categoriaController.destroy()}" update="datatable">
+                            
+                            <f:setPropertyActionListener value="#{current}" target="#{categoriaController.selected}"/>
+                             <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                        </p:commandButton>
+                        
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                        </p:confirmDialog>
+                        
+                    </p:column>
                         
                        
                              

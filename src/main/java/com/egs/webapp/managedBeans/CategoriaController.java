@@ -1,6 +1,7 @@
 package com.egs.webapp.managedBeans;
 
 import com.egs.webapp.entities.Categoria;
+import com.egs.webapp.entities.Producto;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
 import com.egs.webapp.sessionBeans.CategoriaFacade;
@@ -19,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("categoriaController")
 @SessionScoped
@@ -28,6 +30,10 @@ public class CategoriaController implements Serializable {
     private com.egs.webapp.sessionBeans.CategoriaFacade ejbFacade;
     private List<Categoria> items = null;
     private Categoria selected;
+    
+   private Categoria nombrecat;
+   private List<Producto> prodconcategoria;
+   
     
     @EJB
     private CategoriaFacade categoriaFacade;
@@ -42,7 +48,7 @@ public class CategoriaController implements Serializable {
     public void setSelected(Categoria selected) {
         this.selected = selected;
     }
-    
+   
     
       public CategoriaFacade getCategoriaFacade() {
         return categoriaFacade;
@@ -51,8 +57,35 @@ public class CategoriaController implements Serializable {
       public void setCategoriaFacade(CategoriaFacade categoriaFacade) {
         this.categoriaFacade = categoriaFacade;
     }   
+      
+     @Inject
+      
+    private ProductoController currentproducto;
 
-    
+    public ProductoController getCurrentproducto() {
+        return currentproducto;
+    }
+
+    public void setCurrentproducto(ProductoController currentproducto) {
+        this.currentproducto = currentproducto;
+    }
+      
+
+    public Categoria getNombrecat() {
+        return nombrecat;
+    }
+
+    public void setNombrecat(Categoria nombrecat) {
+        this.nombrecat = nombrecat;
+    }
+
+    public List<Producto> getProdconcategoria() {
+        return prodconcategoria;
+    }
+
+    public void setProdconcategoria(List<Producto> prodconcategoria) {
+        this.prodconcategoria = prodconcategoria;
+    }
 
     protected void setEmbeddableKeys() {
     }
@@ -71,6 +104,7 @@ public class CategoriaController implements Serializable {
     }
 
     public String create() {
+        
             persist(PersistAction.CREATE,  "la categoria se ha creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
@@ -89,7 +123,7 @@ public class CategoriaController implements Serializable {
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("CategoriaDeleted"));
+        persist(PersistAction.DELETE, "La categoria se ha eliminado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
@@ -108,11 +142,30 @@ public class CategoriaController implements Serializable {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
+                    
+                    String nombre = getSelected().getNombre();
+                    nombrecat = ejbFacade.findCategoria(nombre);
+                    
+                    if (nombrecat == null) {
+                        
+                        getFacade().edit(selected);
+                        
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("La categoría ya existe");
+                    }
                 } else {
-                    getFacade().remove(selected);
+                    int idcat = getSelected().getIdCategoria();
+                    prodconcategoria = currentproducto.getProductoFacade().findProdCategoria(idcat);
+                    
+                    if (prodconcategoria.isEmpty()) {
+                        getFacade().remove(selected);
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("No se puede eliminar la categoria porque tiene registros asociados");
+                    }
                 }
-                JsfUtil.addSuccessMessage(successMessage);
+                
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -213,9 +266,8 @@ public class CategoriaController implements Serializable {
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
         }
-   }        
-               
-               
-               
+   } 
+         
+            
                
 }

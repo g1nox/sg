@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+        <ui:define name="breadcrumb">
+        <p:menuitem value="Ingrediente" url="#" />
+        <p:menuitem value="Entradas" url="#" disabled="true"/>
+
+    </ui:define>
+    
+    <ui:define name="content">
+    
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+    
+    
+    <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Entrada ingredientes
+                        </div>
+                        <div class="EmptyBox10" />
+                        
+            <h:form id="intoingListForm">
+                
+                 
+                       
+                       <p:dataTable id="datatable" var="current" value="#{intoingController.items}" 
+                                    paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                    selection="#{intoingController.selected}" selectionMode="single"
+                                    rowKey="#{current.idIngrediente}"
+                                    emptyMessage="No se encontraron registros"
+                                    reflow="true">
+             
+                              <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="usuario"/>
+                            </f:facet>
+                                <h:outputText value="#{current.idUsuario.username}"/>
+                            <br />
+                        </p:column>
+                           
+                           <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="cantidad art"/>
+                            </f:facet>
+                               <h:outputText value="#{current.idIngrediente.nombre}"/>
+                            <br />
+                        </p:column>
+                       
+                           <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock actual"/>
+                            </f:facet>
+                            <h:outputText value="#{current.stockActual}"/>
+                            <br />
+                        </p:column>
+                           
+                            <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock anterior"/>
+                            </f:facet>
+                                <h:outputText value="#{current.stockAnterior}"/>
+                            <br />
+                        </p:column>
+                           
+                           
+                             <p:column>
+                            <f:facet name="header">
+                                <h:outputText  value="Fecha"/>
+                            </f:facet>
+                               <h:outputText value="#{current.fecha}">
+                               <f:convertDateTime pattern="dd-MM-yyyy" />
+                               </h:outputText>
+                          </p:column>
+                           
+                                 <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="hora"/>
+                            </f:facet>
+                                     <h:outputText value="#{current.hora}"/>
+                            <br />
+                        </p:column>
+                           
+                                 <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="gasto"/>
+                            </f:facet>
+                                     <h:outputText value="#{current.gasto}"/>
+                            <br />
+                        </p:column>
+                           
+                                 <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="nota"/>
+                            </f:facet>
+                                     <h:outputText value="#{current.nota}"/>
+                            <br />
+                        </p:column>
+                  
+                   
+                   
+                   </p:dataTable>
+                  
+                
+            </h:form>
+
+            
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>

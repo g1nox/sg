@@ -13,17 +13,24 @@
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{ingredienteController.selected != null}">
                         
-                        <p:outputLabel value="Tipo:" for="tipo" />
-                        <p:inputText id="tipo" value="#{ingredienteController.selected.tipo}" title="#{bundle.EditIngredienteTitle_tipo}" />
                         
                         <p:outputLabel value="Nombre:" for="nombre" />
-                        <p:inputText id="nombre" value="#{ingredienteController.selected.nombre}" title="#{bundle.EditIngredienteTitle_nombre}" />
+                        <p:inputText id="nombre" value="#{ingredienteController.selected.nombre}"  />
                         
                         <p:outputLabel value="Cantidad:" for="cantidad" />
-                        <p:inputText id="cantidad" value="#{ingredienteController.selected.cantidad}" title="#{bundle.EditIngredienteTitle_cantidad}" />
+                        <p:inputText id="cantidad" value="#{ingredienteController.selected.stockActual}"  />
                         
-                        <p:outputLabel value="Disponibilidad:" for="disponibilidad" />
-                        <p:inputText id="disponibilidad" value="#{ingredienteController.selected.disponibilidad}" title="#{bundle.EditIngredienteTitle_disponibilidad}" />
+                        <p:outputLabel value="Unidad medida:" for="umedida"/>
+                       <p:selectOneMenu id="umedida" value="#{ingredienteController.selected.umedida}"
+                                         style="width: 90%"
+                                         styleClass="wid90"
+                                         required="true"
+                                         requiredMessage="Ingrese unidad de medida!">
+                           <f:selectItem itemValue="Unidad" itemLabel="Unidad" />
+                             <f:selectItem itemValue="Kilo" itemLabel="Kilo"/>
+                            <f:selectItem itemValue="Litro" itemLabel="Litro" />
+                            
+                            </p:selectOneMenu>
                         
                        
                     </p:panelGrid>

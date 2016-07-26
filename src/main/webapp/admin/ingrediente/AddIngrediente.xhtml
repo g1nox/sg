@@ -1,0 +1,89 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Stock" url="#" />
+        <p:menuitem value="Nuevo ingreso" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+
+            <h:form id="IngtedienteAddForm">
+
+                <div class="ContainerIndent">
+                    <!-- First container -->
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-search-outline"></i> Buscar Ingrediente
+                                </div>
+                                <div class="EmptyBox10" />
+
+                                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+
+                                    <p:selectOneMenu id="ing" 
+                                                     style="width: 90%"   
+                                                     styleClass="Wid90"
+                                                     value="#{ingredienteController.selected}" 
+                                                     converter="ingredienteConverter"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     effect="blind">
+                                        <p:ajax listener="#{ingredienteController.selected}" update="proveedor" />
+                                        <f:selectItem itemLabel="Seleccione Ingrediente" />
+                                        <f:selectItems value="#{ingredienteController.items}"
+                                                       var="items"
+                                                       itemValue="#{items}"
+                                                       itemLabel="#{items.nombre.toString()}" />  
+                                    </p:selectOneMenu>
+
+                                    <p:selectOneMenu id="proveedor" style="width: 90%"   
+                                                     styleClass="Wid90" value="#{intoingController.selected.idProveedor}"
+                                                     converter="proveedorConverter" filter="true"       
+                                                     filterMatchMode="startsWith" effect="blind"           
+                                                     required="true" requiredMessage="Seleccione proveedor!">
+
+                                        <f:selectItem itemLabel="Seleccione Proveedor"/>
+                                        <f:selectItems value="#{proveedorController.items}" var="item"
+                                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
+                                    </p:selectOneMenu>
+
+                                    <p:inputText value="#{intoingController.selected.cantArt}" 
+                                                 styleClass="Wid90"
+                                                 style="width: 90%" 
+                                                 required="true"
+                                                 placeholder="Cantidad"/>
+
+                                    <p:inputText value="#{intoingController.selected.gasto}"
+                                                 styleClass="Wid90"
+                                                 required="true"
+                                                 requiredMessage="Ingrese gasto asociado!"
+                                                 placeholder="Gasto del ingrediente"/>
+
+
+                                </p:panelGrid>
+
+                            </p:panel>
+
+                            <br/>
+                            <p:commandButton action="#{intoingController.create()}" value="Terminar actualizacion" />
+
+                            <br/>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

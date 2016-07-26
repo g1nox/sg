@@ -4,20 +4,20 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui" 
                 template="/WEB-INF/template.xhtml">
-    
+
     <ui:define name="breadcrumb">
         <p:menuitem value="Productos" url="#" />
         <p:menuitem value="Listar" url="#" disabled="true"/>
-        
+
     </ui:define>
 
-        <ui:define name="content">
-            
+    <ui:define name="content">
+
         <h:outputScript name="jquery/jquery.js" 
                         library="primefaces"
                         target="head" />
-        
-  <div class="Container100">
+
+        <div class="Container100">
             <!--  second row -->
             <div class="ContainerIndent">
 
@@ -28,83 +28,107 @@
                             <i class="icon-table"></i> Stock productos
                         </div>
                         <div class="EmptyBox10" />
-                        
-   <h:form id="ListForm">
-    
-       
- 
-       <p:dataTable id="table2" var="current" value="#{productoController.items}" 
-                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                 selection="#{productoController.selectedProducto}" selectionMode="single"
-                 rowKey="#{current.idProducto}"
-                 emptyMessage="No se encontraron registros"
-                 reflow="true">
-        
-                      
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Nombre"/>
-                            </f:facet>
-                                <h:outputText value="#{current.nombre}"/>
-                            
-                        </p:column>
-           
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Disponibilidad"/>
-                            </f:facet>
-                              <h:outputText value="#{current.disponible}"/>    
-                        </p:column>
-           
-           
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Stock máximo"/>
-                            </f:facet>
-                            <h:outputText value="#{current.stockMaximo}"/>
-                        </p:column>
-                        
-           
-                          <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Stock mínimo"/>
-                            </f:facet>
-                            <h:outputText value="#{current.stockMinimo}"/>
-                          </p:column>
-                        
-                     
-                          <p:column>
-                            <f:facet name="header">
-                                <h:outputText  value="Stock actual"/>
-                            </f:facet>
-                            <h:outputText value="#{current.stockActual}"/>
-                          </p:column>
-                                  
-                       
-                        <p:column headerText="Acción">
-                            <p:menuButton value="Opciones">
-                                
-                                     
-                                <p:menuitem  action="#{productoController.goProductoCreateStock()}" value="Política de stock"  
-                                              icon="ui-icon-circle-zoomout" 
-                                            >
-                                    <f:setPropertyActionListener value="#{current}"  target="#{productoController.selectedProducto}"/>
-                                </p:menuitem>
-                                
-                                
-                                
-                            </p:menuButton>
-                        </p:column>
-    
-    
-    </p:dataTable>
-                
-            </h:form>
-                        
-                       
-                      
-                        
-                </p:panel>
+
+                        <h:form id="ListForm">
+
+
+
+                            <p:dataTable id="table2" var="v" value="#{productoController.itemsActivos}"
+                                         selection="#{productoController.selectedProducto}" selectionMode="single"
+                                         rowKey="#{v.idProducto}" emptyMessage="No se encontraron registros" reflow="true"
+                                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                            paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                         rowStyleClass="#{v.stockActual lt v.stockMinimo ? 'rojo' : null}
+                                         #{v.stockActual gt v.stockMinimo and v.stockActual lt v.stockIdeal ? 'amarillo' : null} 
+                                         #{v.stockActual gt v.stockIdeal and v.stockActual lt v.stockMaximo ? 'verde' : null}
+                                         #{v.stockActual gt v.stockMaximo ? 'azul' : null}">
+
+                                <f:facet name="{Exporters}">
+                                    <h:commandLink>
+                                        <p:graphicImage name="png/xls.png" width="24"/>
+                                        <p:dataExporter type="xls" target="table2" fileName="exel" />
+                                    </h:commandLink>
+
+                                    <h:commandLink>
+                                        <p:graphicImage name="png/pdf.png" width="24"/>
+                                        <p:dataExporter type="pdf" target="table2" fileName="pdf"/>
+                                    </h:commandLink>
+                                </f:facet>  
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Nombre"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.nombre}"/>
+
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Disponibilidad"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.disponible}"/>    
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Stock máximo"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.stockMaximo}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Stock mínimo"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.stockMinimo}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Stock actual"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.stockActual}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Stock ideal"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.stockIdeal}"/>
+                                </p:column>
+
+
+                                <p:column headerText="Acción" exportable="false">
+                                    <p:menuButton value="Opciones">
+
+
+                                        <p:menuitem  action="#{productoController.goProductoCreateStock()}" value="Política de stock"  
+                                                     icon="ui-icon-circle-zoomout">
+                                            <f:setPropertyActionListener value="#{v}"  target="#{productoController.selectedProducto}"/>
+                                        </p:menuitem>
+
+                                        <p:menuitem   action="#{intoprodController.goIntoprodCreate()}" value="Agregar stock"  
+                                                      icon="ui-icon-circle-zoomout">
+                                            <f:setPropertyActionListener value="#{v}"  target="#{productoController.selectedProducto}"/>
+                                        </p:menuitem>
+
+
+                                    </p:menuButton>
+                                </p:column>
+
+
+                            </p:dataTable>
+
+                        </h:form>
+
+
+
+
+                    </p:panel>
                     <div class="EmptyBox10" />
                 </div>
 
@@ -112,6 +136,6 @@
 
 
         </div>
-          
-        </ui:define>
-    </ui:composition>
+
+    </ui:define>
+</ui:composition>

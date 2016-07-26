@@ -1,13 +1,10 @@
 package com.egs.webapp.managedBeans;
 
-import com.egs.webapp.entities.Categoria;
 import com.egs.webapp.entities.Producto;
-import com.egs.webapp.entities.Proveedor;
 import com.egs.webapp.entities.Receta;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
 import com.egs.webapp.sessionBeans.ProductoFacade;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +23,6 @@ import javax.inject.Inject;
 
 import javax.faces.context.FacesContext;
 
-
 @Named("productoController")
 @SessionScoped
 public class ProductoController implements Serializable {
@@ -37,19 +33,17 @@ public class ProductoController implements Serializable {
     private List<Producto> itemsActivos = null;
     private Producto selectedProducto;
     
+    private List<Object> itemsTop = null;
+    private List<Object> itemspormes = null;
+
     private boolean disponible;
-    
-   // private Producto producto;
-     
-   // private List<Producto> productos;
-    
-    
+
     @EJB
-    
+
     private ProductoFacade productoFacade;
-   
-    @Inject  
-    
+
+    @Inject
+
     private CategoriaController currentcategoria;
 
     public CategoriaController getCurrentcategoria() {
@@ -59,9 +53,9 @@ public class ProductoController implements Serializable {
     public void setCurrentcategoria(CategoriaController currentcategoria) {
         this.currentcategoria = currentcategoria;
     }
-   
+
     @Inject
-    
+
     private ProveedorController currentproveedor;
 
     public ProveedorController getCurrentproveedor() {
@@ -71,9 +65,9 @@ public class ProductoController implements Serializable {
     public void setCurrentproveedor(ProveedorController currentproveedor) {
         this.currentproveedor = currentproveedor;
     }
-    
-    @Inject 
-    
+
+    @Inject
+
     private IngredienteController currentingrediente;
 
     public IngredienteController getCurrentingrediente() {
@@ -83,8 +77,7 @@ public class ProductoController implements Serializable {
     public void setCurrentingrediente(IngredienteController currentingrediente) {
         this.currentingrediente = currentingrediente;
     }
-    
-    
+
     @Inject
     private RecetaController currentreceta;
 
@@ -96,24 +89,31 @@ public class ProductoController implements Serializable {
         this.currentreceta = currentreceta;
     }
 
-    
+    @Inject
+    private DetalleController currentDetallePedido;
+
+    public DetalleController getCurrentDetallePedido() {
+        return currentDetallePedido;
+    }
+
+    public void setCurrentDetallePedido(DetalleController currentDetallePedido) {
+        this.currentDetallePedido = currentDetallePedido;
+    }
+
     // utility attributes
-    private boolean checkbox; 
-    
-    
+    private boolean checkbox;
+
     public ProductoController() {
     }
-    
+
     public ProductoFacade getProductoFacade() {
         return productoFacade;
     }
 
     public void setProductoFacade(ProductoFacade usuarioFacade) {
         this.productoFacade = usuarioFacade;
-    }    
-        
-    
-    
+    }
+
     public boolean isCheckbox() {
         return checkbox;
     }
@@ -121,23 +121,15 @@ public class ProductoController implements Serializable {
     public void setCheckbox(boolean checkbox) {
         this.checkbox = checkbox;
     }
-    
+
     public Producto getSelectedProducto() {
         return selectedProducto;
     }
 
     public void setSelectedProducto(Producto selectedProducto) {
-        this.selectedProducto = selectedProducto;   
+        this.selectedProducto = selectedProducto;
     }
-    
-//       public Producto getProducto() {
-//        return producto;
-//    }
-// 
-//    public List<Producto> getProductos() {
-//        return productos;
-//    }
-    
+
     public boolean isDisponible() {
         return disponible;
     }
@@ -145,6 +137,27 @@ public class ProductoController implements Serializable {
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
     }
+
+    public List<Object> getItemsTop() {
+        
+        if (itemsTop == null) {
+            // no tiene que encontrarlos a todos   
+           itemsTop = getProductoFacade().productomasvendido();
+        }
+        return itemsTop;
+    }
+
+    public List<Object> getItemspormes() {
+        
+        itemspormes = getProductoFacade().productomasvendidopomes();
+        
+        return itemspormes;
+    }
+
+    public void setItemspormes(List<Object> itemspormes) {
+        this.itemspormes = itemspormes;
+    }
+    
 
     protected void setEmbeddableKeys() {
     }
@@ -155,18 +168,15 @@ public class ProductoController implements Serializable {
     private ProductoFacade getFacade() {
         return ejbFacade;
     }
-    
 
     public Producto prepareCreate() {
         selectedProducto = new Producto();
-        
         //currentingrediente.setSelected(null);
-      currentcategoria.setSelected(null);
-      currentproveedor.setSelected(null);
+        currentcategoria.setSelected(null);
+        currentproveedor.setSelected(null);
         //currentreceta.setSelected(null);
-        
-        //currentreceta.init();
-        
+        currentreceta.init();
+
         return selectedProducto;
     }
 
@@ -175,30 +185,29 @@ public class ProductoController implements Serializable {
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query. 
             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             
-             return goProductoCreate();
-            
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+
+            return goProductoCreate();
+
         }
         return null;
     }
-    
-        public String createCompuesto() {
+
+    public String createCompuesto() {
         persist(PersistAction.CREATE, "Producto compuesto creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goProductoCreateCompuesto();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareCreate();
+            return goProductoCreateCompuesto();
         }
         return null;
     }
-    
 
     public void update() {
         persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ProductoUpdated"));
@@ -218,40 +227,42 @@ public class ProductoController implements Serializable {
         }
         return items;
     }
-    
+
     public List<Producto> getItemsActivos() {
         if (itemsActivos == null) {
             itemsActivos = getFacade().findbyActivo();
         }
         return itemsActivos;
     }
+    
+   
+
+
     private void persist(PersistAction persistAction, String successMessage) {
         if (selectedProducto != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    
-                   if(selectedProducto.getCompuesto())
-                   {
+
+                    if (selectedProducto.getCompuesto()) {
                         selectedProducto.setRecetaList(currentreceta.getCurrentItems());
                         selectedProducto.setCompuesto(Boolean.TRUE);
                         selectedProducto.setIdCategoria(currentcategoria.getSelected());
-                        
-                        for (Receta dv: currentreceta.getCurrentItems())
-                        {
-                          dv.setIdProducto(selectedProducto);
+
+                        for (Receta dv : currentreceta.getCurrentItems()) {
+                            dv.setIdProducto(selectedProducto);
                         }
-                   }else{
+                    } else {
                         this.selectedProducto.setIdCategoria(currentcategoria.getSelected());
                         this.selectedProducto.setIdProveedor(currentproveedor.getSelected());
 
                         selectedProducto.setStockActual(0);
                         selectedProducto.setStockIdeal(0);
                         selectedProducto.setStockMaximo(0);
-                        selectedProducto.setStockMinimo(0);                    
+                        selectedProducto.setStockMinimo(0);
                     }
-                    getFacade().edit(selectedProducto);                   
-                    
+                    getFacade().edit(selectedProducto);
+
                 } else {
                     getFacade().remove(selectedProducto);
                 }
@@ -274,7 +285,7 @@ public class ProductoController implements Serializable {
         }
     }
 
-    public Producto getProducto(java.lang.Long id) {
+    public Producto getProducto(java.lang.Integer id) {
         return getFacade().find(id);
     }
 
@@ -287,16 +298,13 @@ public class ProductoController implements Serializable {
     }
 
     public List<Producto> productosActivos() {
-       
-          if (items == null) {
 
+        if (items == null) {
             // no tiene que encontrarlos a todos   
             items = getProductoFacade().findbyActivo();
         }
-     return items;
+        return items;
     }
-   
-    
 
     @FacesConverter(forClass = Producto.class)
     public static class ProductoControllerConverter implements Converter {
@@ -311,13 +319,13 @@ public class ProductoController implements Serializable {
             return controller.getProducto(getKey(value));
         }
 
-        java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+        java.lang.Integer getKey(String value) {
+            java.lang.Integer key;
+            key = Integer.valueOf(value);
             return key;
         }
 
-        String getStringKey(java.lang.Long value) {
+        String getStringKey(java.lang.Integer value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value);
             return sb.toString();
@@ -338,92 +346,98 @@ public class ProductoController implements Serializable {
         }
 
     }
-    
-            public String goProductoCreate(){
-            prepareCreate();    
-            return "producto-create";
-            }
-            
-            public String goProductoCreateCompuesto(){
-            prepareCreate();
-            selectedProducto.setCompuesto(true);
-            return "receta-create";
-            }
 
-            public String goProductoList(){
-            prepareCreate();
-            return "producto-list";
-            }
-            
-            public String goProductoCreateStock(){
-            return "stock-create";
-            }
-             
-            public String goProductoUpdateStock(){
-            prepareCreate();
-            return "stock-update";
-            }
-             
-            public String goProductoStockList(){
-            return "stock-list";
-            }
-            
-            
-            
-    
-            public void llamarEditarProducto(){
+    public String goProductoCreate() {
+        prepareCreate();
+        return "producto-create";
+    }
 
-            if (selectedProducto != null)  {
+    public String goProductoCreateCompuesto() {
+        prepareCreate();
+        selectedProducto.setCompuesto(true);
+        return "receta-create";
+    }
+
+    public String goProductoList() {
+        prepareCreate();
+        return "producto-list";
+    }
+
+    public String goProductoCreateStock() {
+        return "stock-create";
+    }
+
+    public String goProductoUpdateStock() {
+        prepareCreate();
+        return "stock-update";
+    }
+
+    public String goProductoStockList() {
+        //items = getFacade().findAll();
+        reinit();
+        return "stock-list";
+    }
+
+    public void llamarEditarProducto() {
+
+        if (selectedProducto != null) {
 
             editarProducto(selectedProducto);
 
-            } else{JsfUtil.addErrorMessage("Error al editar ");}
+        } else {
+            JsfUtil.addErrorMessage("Error al editar ");
         }
-        
-        public void editarProducto(Producto currentProducto) {   
-            try{
-                if (currentProducto != null) {
-                    getProductoFacade().edit(currentProducto);
-                    //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-                    JsfUtil.addSuccessMessage("Producto editado correctamente ");  
-                }else{
-                    getProductoFacade().edit(selectedProducto);
-                    //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
-                    JsfUtil.addSuccessMessage("Producto editado correctamente ");  
-                }
-            } 
-             catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            }
-        }
-         
-    public void actualizarStock(){
-        try{
-                getProductoFacade().edit(selectedProducto);
-                JsfUtil.addSuccessMessage("Stock de producto actualizado");  
-                
-            } 
-             catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
-            }
     }
-    
+
+    public void editarProducto(Producto currentProducto) {
+        try {
+            if (currentProducto != null) {
+                getProductoFacade().edit(currentProducto);
+                //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                JsfUtil.addSuccessMessage("Producto editado correctamente ");
+            } else {
+                getProductoFacade().edit(selectedProducto);
+                //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                JsfUtil.addSuccessMessage("Producto editado correctamente ");
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+    }
+
+    public void actualizarStock() {
+
+//        int stockActual = getSelectedProducto().getStockActual();
+//            
+//        getSelectedProducto().setStockActual(stockActual - currentDetallePedido.getSelected().getCantArt());
+        try {
+            getProductoFacade().edit(selectedProducto);
+            JsfUtil.addSuccessMessage("Stock de producto actualizado");
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+    }
+
     public void init() {
-        if (selectedProducto==null){
-         selectedProducto = new Producto();
-         }
-         if (items ==null){
-         items = new ArrayList <Producto>();
-         }
-         
-    } 
+        if (selectedProducto == null) {
+            selectedProducto = new Producto();
+        }
+        if (items == null) {
+            items = new ArrayList<Producto>();
+        }
+
+    }
+
     public void reinit() {
         itemsActivos = getFacade().findbyActivo();
-         
+
     }
-        
+    
+    
+
  
  
 

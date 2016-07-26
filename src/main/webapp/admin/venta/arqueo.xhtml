@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Buscar" url="#" disabled="true"/>
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Ventas
+                        </div>
+                        <div class="EmptyBox10" />
+
+                        <h:form id="search3">
+
+                            <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none" >
+
+                             
+                                <h:outputScript name="spanish.js" library="js"/>
+                                
+                                <p:calendar id="name" value="#{ventaController.fechaConsulta}" pattern="yyyy-MM-dd" locale="es"/>
+                                   
+
+                                <p:commandButton value="Aceptar" action="#{ventaController.arqueopordia()}" update="search3"/>
+
+
+                            </p:panelGrid>
+                            
+
+                            
+                            
+                            
+                               <p:dataTable id="diario" var="current" value="#{ventaController.arqueolist}"
+                            paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+                                         paginatorPosition="bottom"
+                                         rowKey="#{current[0]}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+                            
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Producto"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current[0].nombre}"/>
+                                    <br />
+                                </p:column>
+                                
+
+                                         <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Cantidad"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current[1]}"/>
+                          
+                                    <br />
+                                </p:column>
+                                
+                                 <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Total"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current[2]}"/>
+                                    <br />
+                                </p:column>
+                               
+                            
+                            </p:dataTable> 
+                            
+                            <p:panelGrid  columns="2">
+
+                                <p:outputLabel value="Efectivo:"/>
+                                <p:outputLabel value="#{ventaController.arqueototales[0][1]}"/>
+
+                                <p:outputLabel  value="tarjeta:"/>
+                                <p:outputLabel value="#{ventaController.arqueototales[1][1]}"/>
+
+                                <p:outputLabel value="Cheque:" />
+                                <p:outputLabel value="#{ventaController.arqueototales[2][1]}"/>
+
+                            </p:panelGrid>
+
+                        </h:form>
+                        
+                       
+            
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>

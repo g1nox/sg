@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/WEB-INF/template.xhtml">
+        
+        <ui:define name="content">
+            
+        <h:outputScript name="jquery/jquery.js" 
+                        library="primefaces"
+                        target="head" />
+        
+  <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Productos
+                        </div>
+                        <div class="EmptyBox10" />
+      
+
+        
+
+                        <h:form> 
+                            <p:growl id="growl" showDetail="true" sticky="true" />  
+
+                            <p:panel header="Growl">  
+                                <h:panelGrid columns="2" cellpadding="5">  
+                                    <p:outputLabel for="msg" value="Message:" />   
+                                    <p:inputText id="msg" value="#{growlView.message}" required="true" />  
+                                </h:panelGrid>  
+
+                                <p:commandButton value="Save" actionListener="#{growlView.saveMessage}" update="growl" />  
+                            </p:panel> 
+                        </h:form>  
+
+    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+        </ui:define>
+    </ui:composition>

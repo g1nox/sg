@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+         <p:dialog header="Resumen ventas por mes" widgetVar="carDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                  
+             <p:outputPanel id="carDetail" >
+                                        <p:panelGrid  columns="2"  columnClasses="label,value">
+   
+                                            
+                                <p:dataTable id="ventaxmes" var="current" value="#{ventaController.ventaxmes}"
+                            paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+                                         paginatorPosition="bottom"
+                                         rowKey="#{current[0]}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+                            
+                                    <p:column headerText="Producto">
+                                    <h:outputText value="#{current[0].nombre}"/>
+                                    <br />
+                                </p:column>
+                                
+
+                                    <p:column headerText="Cantidad">
+                                    <h:outputText value="#{current[1]}"/>
+                                    <br />
+                                </p:column>
+                                
+                                    <p:column headerText="Total">
+                                    <h:outputText value="#{current[2]}"/>
+                                    <br />
+                                </p:column>
+                               
+                            
+                            </p:dataTable> 
+                                
+                                    
+                                        
+
+                                        </p:panelGrid>
+                                    </p:outputPanel>
+                 
+               
+                                </p:dialog>
+
+    </ui:composition>
+</html>

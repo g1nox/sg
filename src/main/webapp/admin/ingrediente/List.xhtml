@@ -47,30 +47,22 @@
                             <br />
                         </p:column>
                        
-                      <p:column sortBy="#{current.cantidad}">
+                           <p:column sortBy="#{current.stockActual}">
                             <f:facet name="header">
-                                <h:outputText value="Cantidad"/>
+                                <h:outputText value="Stock actual"/>
                             </f:facet>
-                            <h:outputText value="#{current.cantidad}"/>
+                            <h:outputText value="#{current.stockActual}"/>
                             <br />
                         </p:column>
                        
-                       <p:column sortBy="#{current.tipo}">
+                           <p:column sortBy="#{current.umedida}">
                             <f:facet name="header">
-                                <h:outputText value="Tipo"/>
+                                <h:outputText value="Unidad medida"/>
                             </f:facet>
-                            <h:outputText value="#{current.tipo}"/>
+                               <h:outputText value="#{current.umedida}"/>
                             <br />
                         </p:column>
-                       
-                       <p:column sortBy="#{current.disponibilidad}">
-                            <f:facet name="header">
-                                <h:outputText value="Disponibilidad"/>
-                            </f:facet>
-                            <h:outputText value="#{current.disponibilidad}"/>
-                            <br />
-                        </p:column>
-                       
+                     
                      
                            
                            
@@ -82,6 +74,14 @@
                               icon="ui-icon-pencil" title="Modificar">
                     <f:setPropertyActionListener value="#{current}" target="#{ingredienteController.selected}"/>
                         </p:commandButton>
+                             
+                              <p:commandButton id="delete" value="Eliminar"  icon="fa fa-times-circle" 
+                                         action="#{ingredienteController.destroy()}" update="datatable">
+                            
+                            <f:setPropertyActionListener value="#{current}" target="#{ingredienteController.selected}"/>
+                            
+                        </p:commandButton>
+                             
                         </p:column>
                    
                    

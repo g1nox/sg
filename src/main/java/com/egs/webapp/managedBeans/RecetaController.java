@@ -33,13 +33,14 @@ public class RecetaController implements Serializable {
     @EJB
     private com.egs.webapp.sessionBeans.RecetaFacade ejbFacade;
     private List<Receta> items = null;
+    private List<Receta> recetas = null;
     private Receta selected;
     // This items are only available in shopping cart 
     private Receta currentReceta; 
     
     private List<Receta> currentItems = null;
     
-    
+   
     @EJB
     private RecetaFacade recetaFacade;
 
@@ -73,9 +74,6 @@ public class RecetaController implements Serializable {
         this.currentcategoria = currentcategoria;
     }
     
-    
-    
-    
     @Inject    
     private IngredienteController currentingrediente;
 
@@ -95,7 +93,9 @@ public class RecetaController implements Serializable {
         return ejbFacade;
     }
     
-    public List<Receta> getItems() {
+  
+    
+     public List<Receta> getItems() {
         if (items == null) {
             items = getEjbFacade().findAll();
         }
@@ -244,9 +244,9 @@ public class RecetaController implements Serializable {
             return controller.getIngrediente(getKey(value));
         }
 
-        java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+        java.lang.Integer getKey(String value) {
+            java.lang.Integer key;
+            key = Integer.valueOf(value);
             return key;
         }
 
@@ -269,8 +269,22 @@ public class RecetaController implements Serializable {
                 return null;
             }
         }
-
+   
     }
+    
+    public List<Receta> getRecetasPorProducto(int idProducto) {
+        
+        if (recetas == null) {
+            recetas = getEjbFacade().recetaidProducto(idProducto);
+        }
+        return recetas;
+    }
+
+    public void setRecetas(List<Receta> recetas) {
+        this.recetas = recetas;
+    }
+    
+    
 
     public Receta getCurrentReceta() {
         return currentReceta;

@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Venta.findByIdVenta", query = "SELECT v FROM Venta v WHERE v.idVenta = :idVenta"),
     @NamedQuery(name = "Venta.findByTotal", query = "SELECT v FROM Venta v WHERE v.total = :total"),
     @NamedQuery(name = "Venta.findByMedioPago", query = "SELECT v FROM Venta v WHERE v.medioPago = :medioPago"),
-    @NamedQuery(name = "Venta.findByDatetime", query = "SELECT v FROM Venta v WHERE v.datetime = :datetime")})
+    @NamedQuery(name = "Venta.findByDatetime", query = "SELECT v FROM Venta v WHERE v.fecha = :fecha")})
 
 public class Venta implements Serializable {
     
@@ -50,9 +50,12 @@ public class Venta implements Serializable {
     @Column(name = "medio_pago")
     private String medioPago;
     
-    @Column(name = "datetime")
+    @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
-    private Date datetime;
+    private Date fecha;
+    
+    @Column ( name = "hora")
+    private String hora;
     
     @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")
     @ManyToOne
@@ -93,14 +96,22 @@ public class Venta implements Serializable {
         this.medioPago = medioPago;
     }
 
-    public Date getDatetime() {
-        return datetime;
+    public Date getFecha() {
+        return fecha;
     }
 
-    public void setDatetime(Date datetime) {
-        this.datetime = datetime;
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
     }
 
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
+    }
+    
     public Pedido getIdPedido() {
         return idPedido;
     }

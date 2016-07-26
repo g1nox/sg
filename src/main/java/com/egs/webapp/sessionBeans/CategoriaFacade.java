@@ -19,4 +19,19 @@ public class CategoriaFacade extends AbstractFacade<Categoria> {
         super(Categoria.class);
     }
     
+    public Categoria findCategoria(String nombre) {
+        try {
+            Categoria result = (Categoria) getEntityManager().
+                    createQuery("SELECT c FROM Categoria c WHERE c.nombre = ?1 ")
+                    .setParameter(1, nombre)
+                    .getSingleResult();
+
+            return result;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+    
+    
 }

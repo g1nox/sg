@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Proveedor.findByNombre", query = "SELECT p FROM Proveedor p WHERE p.nombre = :nombre"),
     @NamedQuery(name = "Proveedor.findByTelefono", query = "SELECT p FROM Proveedor p WHERE p.telefono = :telefono")})
 public class Proveedor implements Serializable {
+    @OneToMany(mappedBy = "idProveedor")
+    private List<Intoing> intoingList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,6 +108,15 @@ public class Proveedor implements Serializable {
     @Override
     public String toString() {
         return "com.egs.webapp.entities.Proveedor[ idProveedor=" + idProveedor + " ]";
+    }
+
+    @XmlTransient
+    public List<Intoing> getIntoingList() {
+        return intoingList;
+    }
+
+    public void setIntoingList(List<Intoing> intoingList) {
+        this.intoingList = intoingList;
     }
     
 }

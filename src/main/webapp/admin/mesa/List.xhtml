@@ -1,0 +1,110 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+        <ui:define name="breadcrumb">
+        <p:menuitem value="Mesa" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+
+    </ui:define>
+    
+    <ui:define name="content">
+    
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+    
+    
+    <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Mesa
+                        </div>
+                        <div class="EmptyBox10" />
+                        
+            <h:form id="mesaListForm">
+                
+                    
+                 <h:outputStylesheet name="css/custom.css" />
+                       
+                <p:dataTable id="datatable" var="current" value="#{mesaController.items}" 
+                                            paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                            selection="#{mesaController.selected}" selectionMode="single"
+                                            rowKey="#{current.idMesa}"
+                                            emptyMessage="No se encontraron registros"
+                                            reflow="true">  
+
+                                
+                      
+                        <p:column sortBy="#{current.nombre}">
+                            <f:facet name="header">
+                                <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{current.nombre}"/>
+                            <br />
+                        </p:column>
+                    
+                    <p:column sortBy="#{current.capacidad}">
+                            <f:facet name="header">
+                                <h:outputText value="Capacidad"/>
+                            </f:facet>
+                            <h:outputText value="#{current.capacidad}"/>
+                            <br />
+                        </p:column>
+                    
+                    <p:column sortBy="#{current.estado}">
+                            <f:facet name="header">
+                                <h:outputText value="Estado"/>
+                            </f:facet>
+                            <h:outputText value="Disponible" styleClass="clase-parto-no" rendered="#{current.estado == false}"/>
+
+                                    <h:outputText value="Ocupada" styleClass="clase-parto-si" rendered="#{current.estado == true}" />
+                            <br />
+                        </p:column>
+                     
+                        
+                        <p:column>
+                       
+                         <p:commandButton id="BtnEdit"  value="Editar" icon="fa fa-pencil" styleClass="butttonGreen"
+                                        update=":MesaEditForm" oncomplete="PF('MesaEditDialog').show()">
+                            <f:setPropertyActionListener value="#{current}" target="#{mesaController.selected}"/>
+                            
+                        </p:commandButton>
+                            
+                            
+                            <p:commandButton id="delete" value="Eliminar"  icon="fa fa-times-circle" 
+                                         action="#{mesaController.destroy()}" update="datatable">
+                            
+                            <f:setPropertyActionListener value="#{current}" target="#{mesaController.selected}"/>
+                             <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                        </p:commandButton>
+                            
+                             
+                             </p:column>
+                       
+                             
+                    </p:dataTable>
+                
+            </h:form>
+                        
+                        <ui:include src="Edit.xhtml"/>
+            
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>

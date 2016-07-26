@@ -9,6 +9,8 @@
         <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
 
         <div class="Container100">
+            
+            <h:form>
 
             <div class="ContainerIndent">
                 <!-- First container -->
@@ -63,15 +65,15 @@
                             <div class="EmptyBox10"></div>
                             <p:separator></p:separator>
                             <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Numº 1 <br></br> <span class="Fs24 orange">Pisco mistral</span>
+                                Numº 1 <br></br> <span class="Fs24 orange"><h:outputLabel value="#{productoController.itemsTop[0][0].nombre}"/></span>
                             </div>
 
                             <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Numº 2 <br></br> <span class="Fs24 red">Habana club</span>
+                                Numº 2 <br></br> <span class="Fs24 red"><h:outputLabel value="#{productoController.itemsTop[1][0].nombre}"/></span>
                             </div>
 
                             <div class="Fs12 Fright leaden Wid100 TexAlCenter Responsive">
-                                Numº 3 <br></br> <span class="Fs24 hardblue">Cerveza Sol</span>
+                                Numº 3 <br></br> <span class="Fs24 hardblue"><h:outputLabel value="#{productoController.itemsTop[2][0].nombre}"/></span>
                             </div>
 
                             <div class="EmptyBox10"></div>
@@ -91,7 +93,7 @@
                                 <span>Ventas</span>
                             </div>
                             <div class="Fs18 Fright leaden Wid70">
-                                Total <span class="green">$ 132.875</span>
+                                Total hoy <span class="green">$<p:outputLabel value="#{ventaController.total}"/></span>
                             </div>
 
                             <div class="EmptyBox10"></div>
@@ -99,20 +101,22 @@
                             <div class="EmptyBox10"></div>
 
                             <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Marzo <br></br> <span class="Fs20 hardblue">$ 130.728</span>
+                                <p:outputLabel  value="#{ventaController.totalpormes[0][0]}/#{ventaController.totalpormes[0][1]}"/> <br></br> <span class="Fs20 hardblue">$ <p:outputLabel value="#{ventaController.totalpormes[0][2]}"/></span>
                             </div>
 
                             <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Abril <br></br> <span class="Fs20 hardblue">$13.760</span>
+                                <p:outputLabel  value="#{ventaController.totalpormes[1][0]}/#{ventaController.totalpormes[1][1]}"/> <br></br> <span class="Fs20 hardblue">$ <p:outputLabel value="#{ventaController.totalpormes[1][2]}"/></span>
+                            </div>
+
+                           <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
+                                <p:outputLabel  value="#{ventaController.totalpormes[2][0]}/#{ventaController.totalpormes[2][1]}"/> <br></br> <span class="Fs20 hardblue">$ <p:outputLabel value="#{ventaController.totalpormes[2][2]}"/></span>
                             </div>
 
                             <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Mayo <br></br> <span class="Fs20 hardblue">$23.567</span>
+                                <p:outputLabel  value="#{ventaController.totalpormes[3][0]}/#{ventaController.totalpormes[3][1]}"/> <br></br> <span class="Fs20 hardblue">$ <p:outputLabel value="#{ventaController.totalpormes[2][2]}"/></span>
                             </div>
-
-                            <div class="Fs12 Fright leaden Wid50 TexAlCenter Responsive">
-                                Junio <br></br> <span class="Fs20 hardblue">$2.370</span>
-                            </div>
+                            
+                            
 
                             <div class="EmptyBox10"></div>
                      
@@ -184,8 +188,12 @@
                     </div>
                 </div>
             </div>
+        
+         </h:form>
+        
         </div>
 
+       
 
 
 

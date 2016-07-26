@@ -7,14 +7,13 @@
 package com.egs.webapp.sessionBeans;
 
 import com.egs.webapp.entities.Proveedor;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author EduardoAlexis
- */
+
+
 @Stateless
 public class ProveedorFacade extends AbstractFacade<Proveedor> {
     @PersistenceContext(unitName = "com.egs.webapp_HabanaSalsa_war_1.0-SNAPSHOTPU")
@@ -27,6 +26,20 @@ public class ProveedorFacade extends AbstractFacade<Proveedor> {
 
     public ProveedorFacade() {
         super(Proveedor.class);
+    }
+    
+       public Proveedor findCategoria(String nombre) {
+        try {
+            Proveedor result = (Proveedor) getEntityManager().
+                    createQuery("SELECT p FROM Proveedor p WHERE p.nombre = ?1 ")
+                    .setParameter(1, nombre)
+                    .getSingleResult();
+
+            return result;
+        } catch (Exception e) {
+
+            return null;
+        }
     }
     
 }

@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,12 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
 
 /**
  *
@@ -34,66 +25,52 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Ingrediente.findAll", query = "SELECT i FROM Ingrediente i"),
     @NamedQuery(name = "Ingrediente.findByIdIngrediente", query = "SELECT i FROM Ingrediente i WHERE i.idIngrediente = :idIngrediente"),
-    @NamedQuery(name = "Ingrediente.findByTipo", query = "SELECT i FROM Ingrediente i WHERE i.tipo = :tipo"),
     @NamedQuery(name = "Ingrediente.findByNombre", query = "SELECT i FROM Ingrediente i WHERE i.nombre = :nombre"),
-    @NamedQuery(name = "Ingrediente.findByCantidad", query = "SELECT i FROM Ingrediente i WHERE i.cantidad = :cantidad"),
-    @NamedQuery(name = "Ingrediente.findByDisponibilidad", query = "SELECT i FROM Ingrediente i WHERE i.disponibilidad = :disponibilidad")})
+    @NamedQuery(name = "Ingrediente.findByDisponibilidad", query = "SELECT i FROM Ingrediente i WHERE i.disponibilidad = :disponibilidad"),
+    @NamedQuery(name = "Ingrediente.findByUmedida", query = "SELECT i FROM Ingrediente i WHERE i.umedida = :umedida"),
+    @NamedQuery(name = "Ingrediente.findByStockActual", query = "SELECT i FROM Ingrediente i WHERE i.stockActual = :stockActual")})
 public class Ingrediente implements Serializable {
-   
-    
-    
-    @OneToMany(mappedBy = "idIngrediente")
-    private List<Receta> recetaList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id_ingrediente")
-    private Long idIngrediente;
-    @Size(max = 50)
+    private Integer idIngrediente;
     
-    @Column(name = "tipo")
-    private String tipo;
     @Size(max = 50)
-    
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 50)
-    
     @Column(name = "disponibilidad")
     private String disponibilidad;
-   
+    @Size(max = 2147483647)
     @Column(name = "umedida")
     private String umedida;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "stock_actual")
+    private Double stockActual;
     
-    @Column(name = "cantidad")
-    private Integer cantidad;
-    
-    @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
+    @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
     @ManyToOne
-    private Producto idProducto;
+    private Categoria idCategoria;
+    
+    @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
+    @ManyToOne
+    private Proveedor idProveedor;
 
     public Ingrediente() {
     }
 
-    public Ingrediente(Long idIngrediente) {
+    public Ingrediente(Integer idIngrediente) {
         this.idIngrediente = idIngrediente;
     }
 
-    public Long getIdIngrediente() {
+    public Integer getIdIngrediente() {
         return idIngrediente;
     }
 
-    public void setIdIngrediente(Long idIngrediente) {
+    public void setIdIngrediente(Integer idIngrediente) {
         this.idIngrediente = idIngrediente;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
     }
 
     public String getNombre() {
@@ -103,7 +80,6 @@ public class Ingrediente implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
 
     public String getDisponibilidad() {
         return disponibilidad;
@@ -121,32 +97,30 @@ public class Ingrediente implements Serializable {
         this.umedida = umedida;
     }
 
-    public Producto getIdProducto() {
-        return idProducto;
+    public Double getStockActual() {
+        return stockActual;
     }
 
-    public void setIdProducto(Producto idProducto) {
-        this.idProducto = idProducto;
+    public void setStockActual(Double stockActual) {
+        this.stockActual = stockActual;
+    }
+
+    public Categoria getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(Categoria idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public Proveedor getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(Proveedor idProveedor) {
+        this.idProveedor = idProveedor;
     }
     
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    @XmlTransient
-    public List<Receta> getRecetaList() {
-        return recetaList;
-    }
-
-    public void setRecetaList(List<Receta> recetaList) {
-        this.recetaList = recetaList;
-    }
-    
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -171,8 +145,5 @@ public class Ingrediente implements Serializable {
     public String toString() {
         return "com.egs.webapp.entities.Ingrediente[ idIngrediente=" + idIngrediente + " ]";
     }
-
- 
-
-
+    
 }

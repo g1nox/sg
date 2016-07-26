@@ -6,7 +6,7 @@
     <ui:define name="breadcrumb">
         <p:menuitem value="Pedidos" url="#" />
         <p:menuitem value="Listar" url="#" disabled="true"/>
-        
+
     </ui:define>
     <ui:define name="content">
         <h:outputScript name="jquery/jquery.js" library="primefaces"
@@ -26,105 +26,159 @@
                         <!-- Users List -->
 
                         <h:form id="VentaListForm">
-                        
+
                             <p:dataTable id="datatable" var="current" value="#{ventaController.items}"
-                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                                          selection="#{ventaController.selected}" selectionMode="single"
-                                          rowKey="#{current.idVenta}"
-                                          emptyMessage="No se encontraron registros"
-                                          reflow="true">  
-             
-                        <p:column headerText="Id pedido">
-                            <h:outputText value="#{current.idPedido}"/>
-                        </p:column>
-                                
-                        <p:column headerText="Usuario">
-                            <h:outputText value="#{current.idUsuario.nombre}"/>
-                        </p:column> 
-              
-                          <p:column headerText="Total">
-                              <h:outputText value="#{current.total}"/>
-                          </p:column> 
-                                
-                           <p:column headerText="Medio pago">
-                          
-                               <h:outputText value="Efectivo" rendered="#{current.medioPago == 1}"/>
-                               <h:outputText value="tarjeta"  rendered="#{current.medioPago == 2}"/>
-                               <h:outputText value="cheque"  rendered="#{current.medioPago == 3}"/>     
-                          
-                           </p:column> 
-                       
-                                
-                          <p:column headerText="Fecha pago">
-                              <h:outputText value="#{current.datetime}"/>
-                          </p:column> 
-                       
-                       
-                              
-<!--                         <p:column headerText="Acción">
-                            <p:menuButton value="Opciones">
-                                <p:menuitem id="movieBtn" value="Abrir mesa"  action="#{detalleController.goDetalleEdit()}" icon="ui-icon-clipboard">
-                                    <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
-                                </p:menuitem>
-                                     
-                                <p:menuitem value="Ver detalle"  icon="ui-icon-circle-zoomout"
-                                            oncomplete="PF('detalleOP').show('#{pedidoController.selected}')" update="PedidoListForm:datatable1">
-                                    <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
-                                </p:menuitem>
-                           
-                            </p:menuButton>
-                        </p:column>-->
-            
-                                       
-                             </p:dataTable>
-                            
-                  
-                <p:overlayPanel widgetVar="detalleOP" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true" dynamic="true" style="width:400px">
-                                
-                     <p:outputPanel id="pdetail">
-                                
-                                
-                         <p:dataTable id="datatable1" var="current" value="#{pedidoController.selected.detallepedidoList}"  rows="10" 
-                                              
-                                      rowKey="#{pedidoController.selected.idPedido}">  
+                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                         selection="#{ventaController.selected}" selectionMode="single"
+                                         rowKey="#{current.idVenta}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">  
 
-                           <p:column headerText="Producto">
-                               <p:outputLabel value="#{current.idProducto.nombre}" /> 
-                            </p:column>      
-                      
-                            
-                             <p:column headerText="cantidad">
-                                 <p:outputLabel value="#{current.cantArt}" />  
-                            </p:column>    
-                            
-                            
-                             <p:column headerText="Hora ingresa">
-                                 <p:outputLabel value="#{current.horaIng}" /> 
-                            </p:column> 
-                      
-                      
-                          <p:column headerText="Precio">
-                                <p:outputLabel value="#{current.precioTotal}" />
-                          </p:column>
-                        
-                            
-                          <p:column headerText="Total">
-                              <p:outputLabel value="#{current.precioTotal}" />
-                          </p:column>
-                            
-                     
-                         </p:dataTable>  
-                            
-                    </p:outputPanel>
-                                
-                  </p:overlayPanel>
-                            
-                       
+                                <p:column headerText="Usuario">
+                                    <h:outputText value="#{current.idUsuario.nombre}"/>
+                                </p:column> 
+
+                                <p:column headerText="Total">
+                                    <h:outputText value="#{current.total}"/>
+                                </p:column> 
+
+                                <p:column headerText="Medio pago">
+                                    <h:outputText value="Efectivo" rendered="#{current.medioPago == 1}"/>
+                                    <h:outputText value="tarjeta"  rendered="#{current.medioPago == 2}"/>
+                                    <h:outputText value="cheque"  rendered="#{current.medioPago == 3}"/>
+                                </p:column> 
+
+
+                                <p:column headerText="Fecha pago">
+                                    <h:outputText value="#{current.fecha}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+                                </p:column> 
+
+                                <p:column headerText="Hora">
+                                    <h:outputText value="#{current.hora}"/>
+                                </p:column> 
+
+                                <p:column headerText="Acción">
+
+                                    <p:menuButton value="Opciones">
+                                        <p:menuitem id="btndetalle" value="Ver pedido" icon="ui-icon-clipboard" update="detalleventa"
+                                                    oncomplete="PF('dlgventa').show('#{ventaController.selected}')">
+
+                                            <f:setPropertyActionListener value="#{current}"  target="#{ventaController.selected}"/>
+
+                                        </p:menuitem>
+
+                                    </p:menuButton>
+
+                                </p:column>
+
+
+                            </p:dataTable>
+
+
+                            <p:overlayPanel widgetVar="detalleOP" showEffect="fade" hideEffect="fade" dismissable="false" showCloseIcon="true" dynamic="true" style="width:400px">
+
+                                <p:outputPanel id="pdetail">
+
+
+                                    <p:dataTable id="datatable1" var="current" value="#{pedidoController.selected.detallepedidoList}"  rows="10" 
+
+                                                 rowKey="#{pedidoController.selected.idPedido}">  
+
+                                        <p:column headerText="Producto">
+                                            <p:outputLabel value="#{current.idProducto.nombre}" /> 
+                                        </p:column>      
+
+
+                                        <p:column headerText="cantidad">
+                                            <p:outputLabel value="#{current.cantArt}" />  
+                                        </p:column>    
+
+
+                                        <p:column headerText="Hora ingresa">
+                                            <p:outputLabel value="#{current.horaIng}" /> 
+                                        </p:column> 
+
+
+                                        <p:column headerText="Precio">
+                                            <p:outputLabel value="#{current.precioTotal}" />
+                                        </p:column>
+
+
+                                        <p:column headerText="Total">
+                                            <p:outputLabel value="#{current.precioTotal}" />
+                                        </p:column>
+
+
+                                    </p:dataTable>  
+
+                                </p:outputPanel>
+
+                            </p:overlayPanel>
+
+
                         </h:form>
+                        
+                        
+                             <p:dialog  header="Ver pedido asociado a la venta" widgetVar="dlgventa" resizable="false" responsive="true" width="500" modal="true" maximizable="true">
+                                    
+                                    <h:form id="detalleventa">
+                                    
+                                    
+                                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
 
-<!--                    <ui:include src="detalle.xhtml"/>
-                
-                    -->
+
+
+                                            <p:outputLabel value="Mesa:"/>
+                                            <p:outputLabel value="#{ventaController.selected.idPedido.idMesa.nombre}" />  
+                                        
+                                            <p:outputLabel value="Total:"/>
+                                            <p:outputLabel value="#{ventaController.selected.idPedido.total}"/>
+                                            
+                                          
+                                        </p:panelGrid>
+                                        
+                                           <p:dataTable id="dt" var="current" value="#{ventaController.selected.idPedido.detallepedidoList}"  
+                                                         reflow="true" scrollable="true" scrollHeight="300" 
+                                                         rowKey="#{ventaController.selected.idPedido}">   
+
+                                                <p:column headerText="cantidad">
+                                                    <p:outputLabel value="#{current.cantArt}" />  
+                                                </p:column>    
+
+                                                <p:column headerText="Producto">
+                                                    <p:outputLabel value="#{current.idProducto.nombre}" /> 
+                                                </p:column>      
+
+                                                <p:column headerText="Hora ingresa">
+                                                    <p:outputLabel value="#{current.horaIng}" /> 
+                                                </p:column> 
+
+
+                                                <p:column headerText="Precio unitario">
+                                                    <p:outputLabel value="#{current.precioUni}" />
+                                                </p:column>
+
+                                                <p:column headerText="Valor">
+                                                    <p:outputLabel value="#{current.precioTotal}" />
+                                                </p:column>
+
+                                                <f:facet name="footer">
+                                             #{pedidoController.selected.total}
+                                                </f:facet>
+                                            
+                                            </p:dataTable>  
+                                        
+
+                                        </h:form>
+
+                                </p:dialog>
+                        
+
+                        <!--                    <ui:include src="detalle.xhtml"/>
+                                        
+                        -->
 
                     </p:panel>
                     <div class="EmptyBox10" />

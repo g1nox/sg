@@ -21,3 +21,9 @@ and open the template in the editor.
     color:#fff!important;
         
 }
+
+.ui-icon.fa {
+     text-indent:0px;
+     background-image:none;
+    
+}

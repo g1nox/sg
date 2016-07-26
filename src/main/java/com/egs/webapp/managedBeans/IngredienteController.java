@@ -22,7 +22,6 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-
 @Named(value = "ingredienteController")
 @SessionScoped
 public class IngredienteController implements Serializable {
@@ -30,11 +29,18 @@ public class IngredienteController implements Serializable {
     /**
      * Creates a new instance of IngredienteController
      */
-    
     @EJB
     private com.egs.webapp.sessionBeans.IngredienteFacade ejbFacade;
     private List<Ingrediente> items = null;
     private Ingrediente selected;
+    
+    private Ingrediente nombreing;
+    
+    private List<Receta> recetaconingrediente;
+
+    public Ingrediente getSelected() {
+        return selected;
+    }
     
     @Inject
     private RecetaController currentReceta;
@@ -47,28 +53,65 @@ public class IngredienteController implements Serializable {
         this.currentReceta = currentReceta;
     }
     
+     @Inject
+
+    private CategoriaController currentcategoria;
+
+    public CategoriaController getCurrentcategoria() {
+        return currentcategoria;
+    }
+
+    public void setCurrentcategoria(CategoriaController currentcategoria) {
+        this.currentcategoria = currentcategoria;
+    }
     
+    @Inject
+
+    private ProveedorController currentproveedor;
+
+    public ProveedorController getCurrentproveedor() {
+        return currentproveedor;
+    }
+
+    public void setCurrentproveedor(ProveedorController currentproveedor) {
+        this.currentproveedor = currentproveedor;
+    }
+
     @EJB
-    
     private IngredienteFacade ingredienteFacade;
 
     public void setSelected(Ingrediente selected) {
         this.selected = selected;
     }
+
+    public IngredienteFacade getEjbFacade() {
+        return ejbFacade;
+    }
     
-   
-    public IngredienteController() {
+    @Inject
+    private ProductoController currentproducto;
+
+    public ProductoController getCurrentproducto() {
+        return currentproducto;
     }
 
-   public IngredienteFacade getIngredienteFacade() {
+    public void setCurrentproducto(ProductoController currentproducto) {
+        this.currentproducto = currentproducto;
+    }
+
+    
+    public IngredienteController() {
+       
+    }
+
+    public IngredienteFacade getIngredienteFacade() {
         return ingredienteFacade;
     }
-    
-   private IngredienteFacade getFacade() {
+
+    private IngredienteFacade getFacade() {
         return ejbFacade;
-    } 
-   
-    
+    }
+
     public List<Ingrediente> getItems() {
         if (items == null) {
             items = getFacade().findAll();
@@ -76,38 +119,59 @@ public class IngredienteController implements Serializable {
         return items;
     }
 
-    public Ingrediente getSelected() {
-        return selected;
+    public Ingrediente getNombreing() {
+        return nombreing;
+    }
+
+    public void setNombreing(Ingrediente nombreing) {
+        this.nombreing = nombreing;
+    }
+
+    public List<Receta> getRecetaconingrediente() {
+        return recetaconingrediente;
+    }
+
+    public void setRecetaconingrediente(List<Receta> recetaconingrediente) {
+        this.recetaconingrediente = recetaconingrediente;
     }
     
-     public Ingrediente prepareCreate() {
+    public Ingrediente prepareCreate() {
         selected = new Ingrediente();
         currentReceta.init();
-      
+
         return selected;
     }
-     
-     protected void setEmbeddableKeys() {
+
+    protected void setEmbeddableKeys() {
     }
-     
-     public void init (){
+
+    public void init() {
+
+        if (selected == null) {
+            selected = new Ingrediente();
+        }
+    }
+    
+    public void reinit (){
          
         if (selected == null){
          selected = new Ingrediente();
          }
-         
+         if (items == null){
+         items = new ArrayList <Ingrediente>();
+         }  
      }
-     
+
     public String create() {
-        persist(JsfUtil.PersistAction.CREATE,  "ingrediente se creo");
+        persist(JsfUtil.PersistAction.CREATE, "ingrediente se creo");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
-             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goIngredienteCreate();
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+
+            return goIngredienteCreate();
         }
         return null;
     }
@@ -116,28 +180,46 @@ public class IngredienteController implements Serializable {
         persist(JsfUtil.PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ProductoUpdated"));
     }
 
-    public void destroy() {
-        persist(JsfUtil.PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ProductoDeleted"));
+     public void destroy() {
+        persist(PersistAction.DELETE, "El ingrediente se ha eliminado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
         }
     }
-    
-     private void persist(PersistAction persistAction, String successMessage) {
-          if (selected != null) {
-           
+
+    private void persist(PersistAction persistAction, String successMessage) {
+        if (selected != null) {
+            setEmbeddableKeys();
             try {
-                if (persistAction != JsfUtil.PersistAction.DELETE) {
-           
-                    getFacade().edit(selected);
+                if (persistAction != PersistAction.DELETE) {
+                    
+                    String nombre = getSelected().getNombre();
+                    nombreing = ejbFacade.findIngrediente(nombre);
+                    
+                    if (nombreing == null) {
+                        
+                        selected.setIdCategoria(currentcategoria.getSelected());
+                        selected.setIdProveedor(currentproveedor.getSelected());
+                        
+                        getFacade().edit(selected);
+                        
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("El ingrediente ya existe");
+                    }
                 } else {
-                   getFacade().remove(selected);
-               }
+                    int iding = getSelected().getIdIngrediente();
+                    recetaconingrediente = currentReceta.getRecetaFacade().findIngReceta(iding);
+                    
+                    if (recetaconingrediente.isEmpty()) {
+                        getFacade().remove(selected);
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("No se puede eliminar el ingrediente porque tiene registros asociados");
+                    }
+                }
                 
-                prepareCreate();
-                currentReceta.reinit();
-               JsfUtil.addSuccessMessage(successMessage);
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -155,9 +237,8 @@ public class IngredienteController implements Serializable {
             }
         }
     }
-    
-    
-    public Ingrediente getIngrediente(java.lang.Long id) {
+
+    public Ingrediente getIngrediente(java.lang.Integer id) {
         return getFacade().find(id);
     }
 
@@ -182,19 +263,19 @@ public class IngredienteController implements Serializable {
             return controller.getProducto(getKey(value));
         }
 
-        java.lang.Long getKey(String value) {
-            java.lang.Long key;
-            key = Long.valueOf(value);
+        java.lang.Integer getKey(String value) {
+            java.lang.Integer key;
+            key = Integer.valueOf(value);
             return key;
         }
 
-        String getStringKey(java.lang.Long value) {
+        String getStringKey(java.lang.Integer value) {
             StringBuilder sb = new StringBuilder();
             sb.append(value);
             return sb.toString();
         }
 
-        @Override
+           @Override
         public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
             if (object == null) {
                 return null;
@@ -209,20 +290,59 @@ public class IngredienteController implements Serializable {
         }
 
     }
-    
-    public String goIngredienteCreate(){
-    prepareCreate();
-    return "ingrediente-create";
-    }
-    
-    public String goIngredienteNew(){
-    prepareCreate();
-    return "ingrediente-new";
-    }
-    
-    public String goIngredienteList(){
-    return "ingrediente-list";
+
+    public String goIngredienteCreate() {
+        prepareCreate();
+        return "ingrediente-create";
     }
 
+    public String goIngredienteList() {
+        init();
+        return "ingrediente-list";
+    }
+
+    public void actualizarStock() {
+        try {
+            getFacade().edit(selected);
+            JsfUtil.addSuccessMessage("Stock de ingrediente actualizado");
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+        }
+    }
+    
+     public void actualizarStockReceta(){
+        
+         
+         
+//        for (currentReceta.getSelected().getIdProducto() : recetalist){                    
+//                           
+//                           JsfUtil.addSuccessMessage("paso por aqui");
+//        }                   
+   }
+    
+          public void llamarEditarIngrediente(){
+        
+        if (selected != null)  {
+        
+        editarIngrediente(selected, "editado Correctamente");
+        
+        } else{JsfUtil.addErrorMessage("Error al editar ");}
+    }
+        
+         public void editarIngrediente(Ingrediente currentIngrediente, String successMessage) {
+        if (currentIngrediente != null) {
+            
+            try {
+                getIngredienteFacade().edit(currentIngrediente);
+                JsfUtil.addSuccessMessage(successMessage);
+            } 
+             catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
+            }
+        }
+   }        
 
 }

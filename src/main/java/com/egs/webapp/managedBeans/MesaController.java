@@ -12,8 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
@@ -21,7 +21,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 @Named("mesaController")
-@SessionScoped
+@ApplicationScoped
 public class MesaController implements Serializable {
 
     @EJB
@@ -29,7 +29,7 @@ public class MesaController implements Serializable {
     private List<Mesa> items = null;
     private List<Mesa> itemsDisponibles = null;
     private Mesa selected;
-    
+
     @EJB
     private MesaFacade mesaFacade;
 
@@ -43,16 +43,14 @@ public class MesaController implements Serializable {
     public void setSelected(Mesa selected) {
         this.selected = selected;
     }
-    
-    
-      public MesaFacade getMesaFacade() {
+
+    public MesaFacade getMesaFacade() {
         return mesaFacade;
     }
-      
-      public void setMesaFacade(MesaFacade mesaFacade) {
-        this.mesaFacade = mesaFacade;
-    }   
 
+    public void setMesaFacade(MesaFacade mesaFacade) {
+        this.mesaFacade = mesaFacade;
+    }
 
     protected void setEmbeddableKeys() {
     }
@@ -69,23 +67,23 @@ public class MesaController implements Serializable {
         initializeEmbeddableKey();
         return selected;
     }
-    
-    public void init(){
-        //actualiza lista de items con los valores de la bd
+
+    public void init() {
+        //obliga hacer la consulta a la bd
         itemsDisponibles = getFacade().findbyDisponible();
     }
 
     public String create() {
-            persist(PersistAction.CREATE,  "la mesa se ha creado correctamente");
+        persist(PersistAction.CREATE, "la mesa se ha creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
             itemsDisponibles = null;
             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goMesaCreate();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareCreate();
+            return goMesaCreate();
         }
         return null;
     }
@@ -95,12 +93,12 @@ public class MesaController implements Serializable {
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("MesaDeleted"));
+        persist(PersistAction.DELETE, "La mesa se ha eliminado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
             itemsDisponibles = null;
-                 
+
         }
     }
 
@@ -110,38 +108,28 @@ public class MesaController implements Serializable {
         }
         return items;
     }
-    
 
     public List<Mesa> getItemsDisponibles() {
-        
-        
-        if (itemsDisponibles ==  null){
+
+        if (itemsDisponibles == null) {
 
             // no tiene que encontrarlos a todas las mesas  
             itemsDisponibles = getFacade().findbyDisponible();
-        
+
         }
-        
+
         return itemsDisponibles;
     }
 
     public void setItemsDisponibles(List<Mesa> itemsDisponibles) {
         this.itemsDisponibles = itemsDisponibles;
     }
-    
-    
-    
-    
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
             setEmbeddableKeys();
             try {
                 if (persistAction != PersistAction.DELETE) {
-                    
-                    
-                    
-                    
                     getFacade().edit(selected);
                 } else {
                     getFacade().remove(selected);
@@ -217,48 +205,43 @@ public class MesaController implements Serializable {
         }
 
     }
-               public String goMesaCreate(){
-               prepareCreate();
-               return "mesa-create";
-    }
-               public String goMesaList(){
-               prepareCreate();
-               return "mesa-list";
-    }
-               
-               
-               
-            public void llamarEditarMesa(){
 
-          getFacade().edit(selected);
-          
+    public String goMesaCreate() {
+        prepareCreate();
+        return "mesa-create";
+    }
+
+    public String goMesaList() {
+        prepareCreate();
+        return "mesa-list";
+    }
+
+//            public void llamarEditarMesa(){
+//
+//          getFacade().edit(selected);
+//          
+////        }
+    public void llamarEditarMesa() {
+
+        if (selected != null) {
+
+            editarMesa(selected);
+
+        } else {
+            JsfUtil.addErrorMessage("Error al editar mesa ");
         }
-               
-               
-//          public void llamarEditarMesa(){
-//        
-//        if (selected != null)  {
-//        
-//        editarMesa(selected, "editado Correctamente");
-//        
-//        } else{JsfUtil.addErrorMessage("Error al editar ");}
-//    }
-        
-         public void editarMesa(Mesa currentMesa, String successMessage) {
+    }
+
+    public void editarMesa(Mesa currentMesa) {
         if (currentMesa != null) {
-            
+
             try {
                 getMesaFacade().edit(currentMesa);
-                JsfUtil.addSuccessMessage(successMessage);
-            } 
-             catch (Exception ex) {
+            } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
         }
-   }        
-               
-               
-               
-               
+    }
+
 }

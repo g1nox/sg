@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -26,7 +20,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author EduardoAlexis
+ * @author g1nox
  */
 @Entity
 @Table(name = "producto")
@@ -39,26 +33,25 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Producto.findByStockIdeal", query = "SELECT p FROM Producto p WHERE p.stockIdeal = :stockIdeal"),
     @NamedQuery(name = "Producto.findByStockMaximo", query = "SELECT p FROM Producto p WHERE p.stockMaximo = :stockMaximo"),
     @NamedQuery(name = "Producto.findByStockMinimo", query = "SELECT p FROM Producto p WHERE p.stockMinimo = :stockMinimo"),
+    @NamedQuery(name = "Producto.findByStockActual", query = "SELECT p FROM Producto p WHERE p.stockActual = :stockActual"),
+    @NamedQuery(name = "Producto.findByPrecioVenta", query = "SELECT p FROM Producto p WHERE p.precioVenta = :precioVenta"),
+    @NamedQuery(name = "Producto.findByCompuesto", query = "SELECT p FROM Producto p WHERE p.compuesto = :compuesto"),
     @NamedQuery(name = "Producto.findByDisponible", query = "SELECT p FROM Producto p WHERE p.disponible = :disponible")})
-
 public class Producto implements Serializable {
-    
-    
     @OneToMany(mappedBy = "idProducto")
-    private List<Receta> recetaList;
-    @OneToMany(mappedBy = "idProducto")
-    private List<Detallepedido> detallepedidoList;
-    @Size(max = 50)
-   
+    private List<DetallePedido> detallepedidoList;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    
     @Column(name = "id_producto")
-    private Long idProducto;
+    private Integer idProducto;
     @Size(max = 50)
-    
+
+    @OneToMany(mappedBy = "idProducto")
+    private List<Receta> recetaList;
+
     @Column(name = "nombre")
     private String nombre;
     @Size(max = 50)
@@ -78,35 +71,38 @@ public class Producto implements Serializable {
     @Column(name = "stock_actual")
     private Integer stockActual;
     
-    @Column (name = "precio_venta")
-    private Integer precio_venta;
+    @Column(name = "precio_venta")
+    private Integer precioVenta;
+    
+    @Column(name = "compuesto")
+    private Boolean compuesto;
     
     @Column(name = "disponible")
     private Boolean disponible;
     
-    @Column(name = "compuesto")
-    private Boolean compuesto;
-   
-    @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
-    @ManyToOne
-    private Proveedor idProveedor;
     @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
     @ManyToOne
     private Categoria idCategoria;
-   
+    
+    @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
+    @ManyToOne
+    private Proveedor idProveedor;
+
+    
+    
     public Producto() {
         this.compuesto = false;
     }
 
-    public Producto(Long idProducto) {
+    public Producto(Integer idProducto) {
         this.idProducto = idProducto;
     }
 
-    public Long getIdProducto() {
+    public Integer getIdProducto() {
         return idProducto;
     }
 
-    public void setIdProducto(Long idProducto) {
+    public void setIdProducto(Integer idProducto) {
         this.idProducto = idProducto;
     }
 
@@ -125,7 +121,6 @@ public class Producto implements Serializable {
     public void setUnidadCompra(String unidadCompra) {
         this.unidadCompra = unidadCompra;
     }
-
 
     public Integer getStockIdeal() {
         return stockIdeal;
@@ -159,20 +154,28 @@ public class Producto implements Serializable {
         this.stockActual = stockActual;
     }
 
-    public Integer getPrecio_venta() {
-        return precio_venta;
+    public Integer getPrecioVenta() {
+        return precioVenta;
     }
 
-    public void setPrecio_venta(Integer precio_venta) {
-        this.precio_venta = precio_venta;
-    }
- 
-    public Proveedor getIdProveedor() {
-        return idProveedor;
+    public void setPrecioVenta(Integer precioVenta) {
+        this.precioVenta = precioVenta;
     }
 
-    public void setIdProveedor(Proveedor idProveedor) {
-        this.idProveedor = idProveedor;
+    public Boolean getCompuesto() {
+        return compuesto;
+    }
+
+    public void setCompuesto(Boolean compuesto) {
+        this.compuesto = compuesto;
+    }
+
+    public Boolean getDisponible() {
+        return disponible;
+    }
+
+    public void setDisponible(Boolean disponible) {
+        this.disponible = disponible;
     }
 
     public Categoria getIdCategoria() {
@@ -183,21 +186,12 @@ public class Producto implements Serializable {
         this.idCategoria = idCategoria;
     }
 
-    public Boolean getDisponible() {
-        return disponible;
+    public Proveedor getIdProveedor() {
+        return idProveedor;
     }
 
-    public void setDisponible(Boolean disponible) {
-        this.disponible = disponible;
-    }
-    
-    
-     public Boolean getCompuesto() {
-        return compuesto;
-    }
-
-    public void setCompuesto(Boolean compuesto) {
-        this.compuesto = compuesto;
+    public void setIdProveedor(Proveedor idProveedor) {
+        this.idProveedor = idProveedor;
     }
 
     @Override
@@ -225,15 +219,6 @@ public class Producto implements Serializable {
         return "com.egs.webapp.entities.Producto[ idProducto=" + idProducto + " ]";
     }
 
-    public List<Detallepedido> getDetallepedidoList() {
-        return detallepedidoList;
-    }
-
-    public void setDetallepedidoList(List<Detallepedido> detallepedidoList) {
-        this.detallepedidoList = detallepedidoList;
-    }
-
-
     @XmlTransient
     public List<Receta> getRecetaList() {
         return recetaList;
@@ -242,8 +227,14 @@ public class Producto implements Serializable {
     public void setRecetaList(List<Receta> recetaList) {
         this.recetaList = recetaList;
     }
-    
-    
-    
-    
+
+    @XmlTransient
+    public List<DetallePedido> getDetallepedidoList() {
+        return detallepedidoList;
+    }
+
+    public void setDetallepedidoList(List<DetallePedido> detallepedidoList) {
+        this.detallepedidoList = detallepedidoList;
+    }
+
 }

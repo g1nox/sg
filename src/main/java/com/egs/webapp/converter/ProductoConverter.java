@@ -34,13 +34,13 @@ public class ProductoConverter implements Converter{
         return this.ejbFacade.find(getKey(value));
     }
     
-    java.lang.Long getKey(String value) {
-        java.lang.Long key;
-        key = Long.valueOf(value);
+    java.lang.Integer getKey(String value) {
+        java.lang.Integer key;
+        key = Integer.valueOf(value);
         return key;
     }
 
-    String getStringKey(java.lang.Long value) {
+    String getStringKey(java.lang.Integer value) {
         StringBuffer sb = new StringBuffer();
         sb.append(value);
         return sb.toString();

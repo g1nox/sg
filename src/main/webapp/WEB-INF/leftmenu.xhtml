@@ -15,104 +15,125 @@
             </div>
 
             <ps:menu id="sm_leftmenu">
-                
+
                 <p:menuitem id="sm_dashboard" value=" Dashboard" icon="icon-gauge"  containerStyleClass="layout-menubar-active"/>
 
                 <p:submenu id="usuarios" label=" Usuarios" icon="icon-users-2">
-
                     <p:menuitem id="users_lnk1" value="Nuevo" icon="icon-user-add"
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuarios/new')?'active':'' } " 
                                 action="#{usuariosController.goUsuarioCreate()}" />
-                    
-                    <p:menuitem id="users_lnk2" value="Listar" icon="icon-edit" 
+
+                    <p:menuitem id="users_lnk2" value="Listar" icon="icon-list" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuarios/list')?'active':'' } " 
                                 action="#{usuariosController.goUsuariosList()}" />
                     <p:menuitem id="users_lnk3" value="Bloquear" icon="icon-user-delete" />
-
                 </p:submenu>
 
-             
-                
-                
+
                 <p:submenu id="productos" label=" Productos" icon="icon-glass">
                     <p:menuitem id="prod_lnk1" value="Nuevo" icon="icon-plus-circled" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/Create')?'active':'' } " 
                                 action="#{productoController.goProductoCreate()}" />
 
-                    <p:menuitem id="prod_lnk2" value="Listar" icon="icon-edit" 
+                    <p:menuitem id="prod_lnk2" value="Listar" icon="icon-list" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/List')?'active':'' } " 
                                 action="#{productoController.goProductoList()}" />
-                      </p:submenu> 
-                
-                
-                
-                <p:submenu id="ingredientes" label=" Ingredientes" icon="icon-apple">
-                        <p:menuitem id="ingrediente_lnk1" value="Nuevo" icon="icon-plus-circled" 
-                                    styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrendiente/Create')?'active':'' } "
-                                    action="#{ingredienteController.goIngredienteCreate()}"/>
-                        <p:menuitem id="ingrediente_lnk2" value="Listar" icon="icon-edit" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/List')?'active':'' } " 
-                                action="#{ingredienteController.goIngredienteList()}" />
-                        <p:menuitem id="ingrediente_lnk3" value="Producto compuesto" icon="icon-edit" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/receta/Create')?'active':'' } " 
-                                action="#{productoController.goProductoCreateCompuesto()}" />
-                    </p:submenu> 
-                
-                    <p:submenu id="categorias" label=" Categorías" icon="icon-cubes">
-                        <p:menuitem id="cat_lnk1" value="Nueva" icon="icon-plus-circled" 
-                                    styleClass="#{fn:startsWith(request.pathInfo,'/admin/categoria/Create')?'active':'' } "
-                                    action="#{categoriaController.goCategoriaCreate()}"/>
-                        <p:menuitem id="cat_lnk2" value="Listar" icon="icon-edit" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/categoria/List')?'active':'' } " 
-                                action="#{categoriaController.goCategoriaList()}" />
-                    </p:submenu>
-                   
-                   <p:submenu id="proveedores" label="Proveedores" icon="icon-truck">
-                        <p:menuitem id="prov_lnk1" value="Nueva" icon="icon-plus-circled" 
-                                    styleClass="#{fn:startsWith(request.pathInfo,'/admin/proveedor/Create')?'active':'' } "
-                                    action="#{proveedorController.goProveedorCreate()}"/>
-                        <p:menuitem id="prov_lnk2" value="Listar" icon="icon-edit" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/proveedor/List')?'active':'' } " 
-                                action="#{proveedorController.goProveedorList()}" />
-                    </p:submenu>    
-                
-
-                 <p:submenu id="pedidos" label="Pedidos" icon="icon-dollar">
-                    <p:menuitem id="pedidos_lnk1" value="Nuevo" icon="icon-user-add"
-                                  styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Create')?'active':'' } " 
-                                  action="#{pedidoController.goPedidoCreate()}"/>
-                     <p:menuitem id="pedidos_lnk2" value="Listar" icon="icon-edit"
-                                  styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/List')?'active':'' } " 
-                                action="#{pedidoController.goPedidoList()}"/>
-                </p:submenu>
-                
-                <p:submenu id="pagos" label="Pagos" icon="icon-dollar">
-                    <p:menuitem id="pago_lnk1" value="Nuevo"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pago/Create')?'active':'' } " 
-                                action="#{pagoController.goPagoCreate()}"/>
                     
-                     <p:menuitem id="pago_lnk2" value="Listar" icon="icon-edit"
-                                  styleClass="#{fn:startsWith(request.pathInfo,'/admin/pago/List')?'active':'' } " 
-                                action="#{pagoController.goPagoList()}"/>
+                    <p:submenu id="stock" label=" Stock" icon="icon-sort-numeric">
                     
-                </p:submenu>
-                
-                  <p:submenu id="stock" label="Stock" icon="icon-dollar">
-                    <p:menuitem id="stock_lnk1" value="Ajustar"
+                    <p:menuitem id="stock_lnk1" value="Ajustar" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/stock/List')?'active':'' } " 
                                 action="#{productoController.goProductoStockList()}"/>
-                    
-                    
+
+                    <p:menuitem id="stocl_lnk2" value="Agregar stock" icon="icon-add"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/stock/AddProducto')?'active':'' } " 
+                                action="#{intoprodController.goIntoprodCreate()}"/>
+
+                    <p:menuitem id="stocl_lnk3" value="Entradas de productos" icon="icon-add"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/IntoList')?'active':'' } " 
+                                action="#{intoprodController.goIntoprodList()}"/>
+
+                    </p:submenu>
+                </p:submenu> 
+
+
+                <p:submenu id="ingredientes" label=" Ingredientes" icon="icon-apple">
+                    <p:menuitem id="ingrediente_lnk1" value="Nuevo" icon="icon-plus-circled" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrendiente/Create')?'active':'' } "
+                                action="#{ingredienteController.goIngredienteCreate()}"/>
+                    <p:menuitem id="ingrediente_lnk2" value="Listar" icon="icon-list" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/List')?'active':'' } " 
+                                action="#{ingredienteController.goIngredienteList()}" />
+                    <p:menuitem id="ingrediente_lnk3" value="Producto compuesto" icon="icon-edit" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/receta/Create')?'active':'' } " 
+                                action="#{productoController.goProductoCreateCompuesto()}" />
+                    <p:menuitem id="ingrediente_lnk4" value="Actualizar ingrediente" icon="icon-edit" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/AddIngrediente')?'active':'' } " 
+                                action="#{intoingController.goIntoingCreate()}" />
+                    <p:menuitem id="ingrediente_lnk5" value="Entradas" icon="icon-edit" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/Intolist')?'active':'' } " 
+                                action="#{intoingController.goIntoingList()}" />
+                </p:submenu> 
+
+
+                <p:submenu id="categorias" label=" Categorías" icon="icon-cubes">
+                    <p:menuitem id="cat_lnk1" value="Nueva" icon="icon-plus-circled" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/categoria/Create')?'active':'' } "
+                                action="#{categoriaController.goCategoriaCreate()}"/>
+                    <p:menuitem id="cat_lnk2" value="Listar" icon="icon-list" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/categoria/List')?'active':'' } " 
+                                action="#{categoriaController.goCategoriaList()}" />
+                </p:submenu>
+
+
+                <p:submenu id="proveedores" label=" Proveedores" icon="icon-truck">
+                    <p:menuitem id="prov_lnk1" value="Nueva" icon="icon-plus-circled" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/proveedor/Create')?'active':'' } "
+                                action="#{proveedorController.goProveedorCreate()}"/>
+                    <p:menuitem id="prov_lnk2" value="Listar" icon="icon-list"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/proveedor/List')?'active':'' } " 
+                                action="#{proveedorController.goProveedorList()}" />
+                </p:submenu>    
+
+
+                <p:submenu id="pedidos" label=" Pedidos" icon="icon-basket">
+                    <p:menuitem id="pedidos_lnk1" value="Nuevo" icon="icon-plus-circled"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Create')?'active':'' } " 
+                                action="#{pedidoController.goPedidoCreate()}"/>
+                    <p:menuitem id="pedidos_lnk2" value="Listar" icon="icon-list"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/List')?'active':'' } " 
+                                action="#{pedidoController.goPedidoList()}"/>
+                    <p:menuitem id="pedidos_lnk3" value="Buscar" icon="icon-search"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Search')?'active':'' } " 
+                                action="#{pedidoController.goPedidoSearch()}"/>
+
+                    <p:menuitem id="pedidos_lnk4" value="Hoy" icon="icon-search"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Today')?'active':'' } " 
+                                action="#{pedidoController.goPedidoToday()}"/>
+
+                </p:submenu>
+
+                <p:submenu id="venta" label=" Ventas" icon="icon-dollar">
+                    <p:menuitem id="venta_lnk" value="Listar" icon="icon-list"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/List')?'active':'' } " 
+                                action="#{ventaController.goVentaList()}"/>
+                    <p:menuitem id="venta_lnk2" value="Buscar" icon="icon-search"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/Search')?'active':'' } " 
+                                action="#{ventaController.goVentaSearch()}"/>
+                    <p:menuitem id="venta_lnk3" value="Por mes" icon="icon-search"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/Ventapormes')?'active':'' } " 
+                                action="#{ventaController.goVentaSearchxmes()}"/>
                     
                 </p:submenu>
-                
-                <p:submenu id="mesa" label="Mesa" icon="icon-add">
-                    <p:menuitem id="mesa_lnk" value="Nueva"
+
+
+                <p:submenu id="mesa" label=" Mesa" icon="icon-inbox-1">
+                    <p:menuitem id="mesa_lnk" value="Nueva" icon="icon-plus-circled"
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/mesa/Create')?'active':'' } " 
                                 action="#{mesaController.goMesaCreate()}"/>
-                    
-                    
-                    
+                    <p:menuitem id="mesa_lnk2" value="Listar" icon="icon-list"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/mesa/List')?'active':'' } " 
+                                action="#{mesaController.goMesaList()}"/>
                 </p:submenu>
 
 

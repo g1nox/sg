@@ -52,6 +52,7 @@
             <redirect/>
         </navigation-case>
         
+        
         <navigation-case>
             <from-outcome>stock-update</from-outcome>    
             <to-view-id>/admin/stock/UpdateStock.xhtml</to-view-id>
@@ -108,6 +109,18 @@
             <redirect/>
         </navigation-case>
         
+        <navigation-case>
+            <from-outcome>pedido-search</from-outcome>    
+            <to-view-id>/admin/pedidos/Search.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pedido-today</from-outcome>    
+            <to-view-id>/admin/pedidos/Today.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
         
          <navigation-case>
             <from-outcome>proveedor-create</from-outcome>    
@@ -141,10 +154,54 @@
         </navigation-case>
         
          <navigation-case>
+            <from-outcome>venta-search</from-outcome>    
+            <to-view-id>/admin/venta/Search.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>venta-searchxmes</from-outcome>    
+            <to-view-id>/admin/venta/Ventapormes.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
             <from-outcome>mesa-create</from-outcome>    
             <to-view-id>/admin/mesa/Create.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>mesa-list</from-outcome>    
+            <to-view-id>/admin/mesa/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>intoing-create</from-outcome>    
+            <to-view-id>/admin/ingrediente/AddIngrediente.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>intoing-list</from-outcome>    
+            <to-view-id>/admin/ingrediente/IntoList.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+         
+        <navigation-case>
+            <from-outcome>intoprod-create</from-outcome>    
+            <to-view-id>/admin/stock/AddProducto.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+            <navigation-case>
+            <from-outcome>intoprod-list</from-outcome>    
+            <to-view-id>/admin/producto/IntoList.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+       
         
    
     </navigation-rule>

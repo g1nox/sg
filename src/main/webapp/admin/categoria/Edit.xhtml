@@ -12,27 +12,29 @@
             <h:form id="CategoriaEditForm">
                 <h:panelGroup id="display">
                     <p:panelGrid columns="2" rendered="#{categoriaController.selected != null}">
-                        
-                        
-                       <p:outputLabel value="Nombre:" for="nombre" />
-                        <p:inputText id="nombre" value="#{categoriaController.selected.nombre}" title="#{bundle.EditCategoriaTitle_nombre}" />
-                        
-                       
-                       
+
+                        <p:outputLabel value="Nombre:" for="nombre" />
+                        <p:inputText id="nombre" value="#{categoriaController.selected.nombre}" />
+
                     </p:panelGrid>
-                    
+
                     <p:panel>
+
+                        <p:commandButton actionListener="#{categoriaController.llamarEditarCategoria()}" 
+                                         value="Guardar cambios"
+                                         update="CategoriaEditForm,:categoriaListForm:datatable,:growl" 
+                                         oncomplete="handleSubmit(args, 'CategoriaEditDialog')">
+                      <p:confirm header="Confirmación" message="¿Esta seguro de guardar los cambios?" icon="ui-icon-alert"/> 
+                        </p:commandButton> 
                         
-                         <p:commandButton actionListener="#{categoriaController.llamarEditarCategoria()}" 
-                                     value="Guardar cambios" 
-                                     update="CategoriaEditForm,:categoriaListForm:datatable,:growl" 
-                                     oncomplete="handleSubmit(args, 'CategoriaEditDialog')"/>
-                    
-                    
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"
+                                             onclick="PF('CategoriaEditDialog').hide()"/>
+                        </p:confirmDialog>
+
                     </p:panel>
-                 
-                    
-                    
+
                 </h:panelGroup>
             </h:form>
         </p:dialog>
