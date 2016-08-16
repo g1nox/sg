@@ -2,6 +2,7 @@ package com.egs.webapp.managedBeans;
 
 import com.egs.webapp.entities.DetallePedido;
 import com.egs.webapp.entities.Pedido;
+import com.egs.webapp.entities.Receta;
 import com.egs.webapp.sessionBeans.PedidoFacade;
 import com.egs.webapp.util.JsfUtil;
 import java.io.Serializable;
@@ -35,6 +36,8 @@ public class PedidoController implements Serializable {
     private List<Pedido> itemsToday = null;
 
     private Pedido selected;
+    
+    private Pedido productosPedido;
 
     private Date fechaConsulta;
 
@@ -80,6 +83,28 @@ public class PedidoController implements Serializable {
 
     public void setCurrentproducto(ProductoController currentproducto) {
         this.currentproducto = currentproducto;
+    }
+    
+    @Inject
+    private RecetaController currentreceta;
+
+    public RecetaController getCurrentreceta() {
+        return currentreceta;
+    }
+
+    public void setCurrentreceta(RecetaController currentreceta) {
+        this.currentreceta = currentreceta;
+    }
+    
+    @Inject
+    private IngredienteController currentingrediente;
+
+    public IngredienteController getCurrentingrediente() {
+        return currentingrediente;
+    }
+
+    public void setCurrentingrediente(IngredienteController currentingrediente) {
+        this.currentingrediente = currentingrediente;
     }
 
     public PedidoController() {
@@ -151,6 +176,14 @@ public class PedidoController implements Serializable {
         this.itemsToday = itemsToday;
     }
 
+    public Pedido getProductosPedido() {
+        return productosPedido;
+    }
+
+    public void setProductosPedido(Pedido productosPedido) {
+        this.productosPedido = productosPedido;
+    }
+
     //metodos
     public void init() {
 
@@ -163,8 +196,9 @@ public class PedidoController implements Serializable {
         selected = new Pedido();
         currentproducto.setSelectedProducto(null);
         currentproducto.reinit();
+       //currentDetallePedido.setCurrentItems(null);
         currentDetallePedido.init();
-        currentmesa.setSelected(null);
+        
         currentmesa.init();
         return selected;
     }
@@ -199,7 +233,7 @@ public class PedidoController implements Serializable {
     public String create() {
         
         if( !currentDetallePedido.getCurrentItems().isEmpty()){
-        
+            
         persist(JsfUtil.PersistAction.CREATE, "el pedido se creo");
         if (!JsfUtil.isValidationFailed()) {
             itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
@@ -208,6 +242,7 @@ public class PedidoController implements Serializable {
             flash.setKeepMessages(true);
             flash.setRedirect(true);
             prepareCreate();
+            currentmesa.setSelected(null);
             return goPedidoList();
         }
         
@@ -245,84 +280,112 @@ public class PedidoController implements Serializable {
         if (selected != null) {
 
             try {
-              //  if (persistAction != JsfUtil.PersistAction.DELETE) {
-                    if (persistAction == JsfUtil.PersistAction.CREATE) {
+                //  if (persistAction != JsfUtil.PersistAction.DELETE) {
+                if (persistAction == JsfUtil.PersistAction.CREATE) {
 
-                        //fecha ingreso pedido
-                        Date f = new Date();
-                        selected.setFecha(f);
-                        //define hora de ingreso
-                        Date h = new Date();
-                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                        selected.setHora(sdf.format(h));
+                    //fecha ingreso pedido
+                    Date f = new Date();
+                    selected.setFecha(f);
+                    //define hora de ingreso
+                    Date h = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    selected.setHora(sdf.format(h));
 
-                        selected.setEstado(Boolean.FALSE);
+                    //define estado del pedido
+                    selected.setEstado(Boolean.FALSE);
 
-                        // ingresar mesa a bd
-                        selected.setIdMesa(currentmesa.getSelected());
+                    // define la mesa del pedido
+                    selected.setIdMesa(currentmesa.getSelected());
 
-                        // ingresar usuario a bd
-                        selected.setIdUsuario(contextUsuario.getCurrentUser());
+                    // ingresar usuario a bd
+                    selected.setIdUsuario(contextUsuario.getCurrentUser());
 
-                        int total = 0;
-                        for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
-                            dv.setIdPedido(selected);
-                            total += dv.getPrecioTotal();
+                    //modificar estado mesa
+                    currentmesa.getSelected().setEstado(Boolean.TRUE);
+                    currentmesa.llamarEditarMesa();
+
+                    int total = 0;
+                    for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
+                        dv.setIdPedido(selected);
+                        total += dv.getPrecioTotal();
+                    }
+                    selected.setTotal(total);
+                    selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
+
+                    getEjbFacade().edit(selected);
+
+                    currentDetallePedido.reinit();
+                    JsfUtil.addSuccessMessage(successMessage);
+
+                }
+
+                if (persistAction == JsfUtil.PersistAction.UPDATE) {
+                    int total = selected.getTotal();
+                    for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
+
+                        dv.setIdPedido(selected);
+                        total += dv.getPrecioTotal();
+
+                    }
+                    selected.setTotal(total);
+
+                    List<DetallePedido> detalleaux = new ArrayList<DetallePedido>();
+                    detalleaux = selected.getDetallepedidoList();
+                    for (DetallePedido dv : detalleaux) {
+                        currentDetallePedido.getCurrentItems().add(dv);
+                    }
+                    selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
+
+                    getEjbFacade().edit(selected);
+                    JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
+
+                }
+
+                if (persistAction == JsfUtil.PersistAction.DELETE) {
+
+                    List<DetallePedido> productos = selected.getDetallepedidoList();
+
+                    for (DetallePedido producto : productos) {
+
+                        if (producto.getIdProducto().getCompuesto() == true) {
+
+                            int idProducto = producto.getIdProducto().getIdProducto();
+
+                            List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
+
+                            for (Receta receta : recetas) {
+                                double stockActual = receta.getIdIngrediente().getStockActual();
+                                double cantidad = receta.getCantidad();
+
+                                receta.getIdIngrediente().setStockActual(stockActual + cantidad);
+                                currentingrediente.setSelected(receta.getIdIngrediente());
+                                currentingrediente.actualizarStock();
+
+                            }
+
+                        } else {
+
+                            int stockActual = producto.getIdProducto().getStockActual();
+                            int cantidad = producto.getCantArt();
+
+                            producto.getIdProducto().setStockActual(stockActual + cantidad);
+                            currentproducto.setSelectedProducto(producto.getIdProducto());
+                            currentproducto.actualizarStock();
+
                         }
-                        selected.setTotal(total);
-                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
-
-//                        //modificar estado mesa
-                        currentmesa.getSelected().setEstado(Boolean.TRUE);
-                        currentmesa.llamarEditarMesa();
-
-                        getEjbFacade().edit(selected);
-
-                        //prepareCreate();
-                        currentDetallePedido.reinit();
-                        JsfUtil.addSuccessMessage(successMessage);
 
                     }
 
-                    if (persistAction == JsfUtil.PersistAction.UPDATE) {
-                        int total = selected.getTotal();
-                        for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
+                    //modificar estado mesa
+                    currentmesa.setSelected(selected.getIdMesa());
+                    currentmesa.getSelected().setEstado(Boolean.FALSE);
+                    currentmesa.llamarEditarMesa();
 
-                            dv.setIdPedido(selected);
-                            total += dv.getPrecioTotal();
+                    getEjbFacade().remove(selected);
+                    currentmesa.setSelected(null);
+                    JsfUtil.addSuccessMessage(successMessage);
 
-                        }
-                        selected.setTotal(total);
-
-                        List<DetallePedido> detalleaux = new ArrayList<DetallePedido>();
-                        detalleaux = selected.getDetallepedidoList();
-                        for (DetallePedido dv : detalleaux) {
-                            currentDetallePedido.getCurrentItems().add(dv);
-                        }
-                        selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
-
-                        getEjbFacade().edit(selected);
-                        JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
-
-                    }
-                    
-                    if (persistAction == JsfUtil.PersistAction.DELETE) {
-
-                        //modificar estado mesa
-                     
-                        currentmesa.setSelected(selected.getIdMesa());
-                        currentmesa.getSelected().setEstado(Boolean.FALSE);
-                        currentmesa.llamarEditarMesa();
-
-                        
-                        
-                        
-                        getEjbFacade().remove(selected);
-                        JsfUtil.addSuccessMessage(successMessage);
-
-                    }
-
-              //  }
+                }
 
             } catch (EJBException ex) {
                 String msg = "";
