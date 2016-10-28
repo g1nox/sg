@@ -28,13 +28,13 @@
                         </div>
                         <div class="EmptyBox10" />
 
-                        <h:form id="search3">
+                        <h:form id="grafProd">
 
                            
 
                                 
-                                <p:dataTable id="mesaño" var="current" value="#{ventaController.mesyaño}" widgetVar="table"
-                                             selection="#{ventaController.seleccion}" selectionMode="single"
+                                <p:dataTable id="mesaño" var="current" value="#{productoController.mesyaño}" widgetVar="table"
+                                             
                                              rowKey="#{current[0]}">
 
                                     <p:column>
@@ -66,33 +66,30 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:commandButton action="#{ventaController.consulta()}" update=":carDetail" oncomplete="PF('carDialog').show()" icon="ui-icon-search" title="View">
-                                            <f:setPropertyActionListener value="#{current[0]}" target="#{ventaController.currentSelectMes}"/>
-                                            <f:setPropertyActionListener value="#{current[1]}" target="#{ventaController.currentSelectAño}"/>
+                                        <p:commandButton action="#{productoController.consulta()}" update="grafProd:prodDetail" oncomplete="PF('prodDialog').show()" icon="ui-icon-search" title="View">
+                                            <f:setPropertyActionListener value="#{current[0]}" target="#{productoController.currentMes}"/>
+                                            <f:setPropertyActionListener value="#{current[1]}" target="#{productoController.currentAño}"/>
                                         </p:commandButton>
                                     </p:column>
 
                                 </p:dataTable>
-                             
-                            
-                            <p:panelGrid  columns="2">
-
-                                <p:outputLabel value="Efectivo:"/>
-                                <p:outputLabel value="#{ventaController.arqueototales[0][1]}"/>
-
-                                <p:outputLabel  value="tarjeta:"/>
-                                <p:outputLabel value="#{ventaController.arqueototales[1][1]}"/>
-
-                                <p:outputLabel value="Cheque:" />
-                                <p:outputLabel value="#{ventaController.arqueototales[2][1]}"/>
-
-                            </p:panelGrid>
-                            
-                            
-                        </h:form>
                         
-                       
-             <ui:include src="Listxmes.xhtml"/>
+                           
+                            
+                                 <p:dialog header="Producto mas vendido" widgetVar="prodDialog" resizable="false" responsive="true" width="450" modal="true" maximizable="true" >
+                  
+                                    <p:outputPanel id="prodDetail" >
+                                      
+                                         <p:chart type="bar" model="#{productoTopModel.barModel}"  rendered="#{productoTopModel.barModel != null}" />
+                            
+                                    </p:outputPanel>
+                 
+                                </p:dialog>
+                                
+                          
+                        
+                        </h:form>
+                    
             
             </p:panel>
                  <div class="EmptyBox10" />

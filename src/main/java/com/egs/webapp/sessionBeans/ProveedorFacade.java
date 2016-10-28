@@ -7,7 +7,6 @@
 package com.egs.webapp.sessionBeans;
 
 import com.egs.webapp.entities.Proveedor;
-import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,7 +27,7 @@ public class ProveedorFacade extends AbstractFacade<Proveedor> {
         super(Proveedor.class);
     }
     
-       public Proveedor findCategoria(String nombre) {
+       public Proveedor findProveedor(String nombre) {
         try {
             Proveedor result = (Proveedor) getEntityManager().
                     createQuery("SELECT p FROM Proveedor p WHERE p.nombre = ?1 ")

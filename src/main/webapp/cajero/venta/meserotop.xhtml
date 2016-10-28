@@ -1,0 +1,95 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Buscar" url="#" disabled="true"/>
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Ventas
+                        </div>
+                        <div class="EmptyBox10" />
+
+                        <h:form id="search3">
+
+                           
+
+                                
+                                <p:dataTable id="mesaño" var="current" value="#{ventaController.mesyaño}" widgetVar="table"
+                                             
+                                             rowKey="#{current[0]}">
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="mes"/>
+                                        </f:facet>
+                                        <h:outputText value="Enero" rendered="#{current[0] == 1.0}"/>
+                                        <h:outputText value="Febrero"  rendered="#{current[0] == 2.0}"/>
+                                        <h:outputText value="Marzo"  rendered="#{current[0] == 3.0}"/>
+                                        <h:outputText value="Abril"  rendered="#{current[0] == 4.0}"/>
+                                        <h:outputText value="Mayo"  rendered="#{current[0] == 5.0}"/>
+                                        <h:outputText value="Junio"  rendered="#{current[0] == 6.0}"/>
+                                        <h:outputText value="Julio"  rendered="#{current[0] == 7.0}"/>
+                                        <h:outputText value="Agosto"  rendered="#{current[0] == 8.0}"/>
+                                        <h:outputText value="Septiembre"  rendered="#{current[0] == 9.0}"/>
+                                        <h:outputText value="Octubre"  rendered="#{current[0] == 10.0}"/>
+                                        <h:outputText value="Noviembre"  rendered="#{current[0] == 11.0}"/>
+                                        <h:outputText value="Diciembre"  rendered="#{current[0] == 12.0}"/>
+                                    </p:column>
+
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="año"/>
+                                        </f:facet>
+                                        <h:outputText value="#{current[1]}">
+                                        <f:convertNumber  pattern="0000" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:commandButton action="#{ventaController.metodo()}" update="meseroDetail" oncomplete="PF('meseroDialog').show()" icon="ui-icon-search" title="View">
+                                            <f:setPropertyActionListener value="#{current[0]}" target="#{ventaController.currentMes}"/>
+                                            <f:setPropertyActionListener value="#{current[1]}" target="#{ventaController.currentAño}"/>
+                                        </p:commandButton>
+                                    </p:column>
+
+                                </p:dataTable>
+                            
+                            
+                            
+                             </h:form>
+                        
+                        <ui:include src="meserografico.xhtml"/>
+           
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>

@@ -1,9 +1,11 @@
 package com.egs.webapp.sessionBeans;
 
+import com.egs.webapp.entities.Mesa;
 import com.egs.webapp.entities.Pedido;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -20,6 +22,9 @@ public class PedidoFacade extends AbstractFacade<Pedido> {
     protected EntityManager getEntityManager() {
         return em;
     }
+    
+    @Inject
+    MesaFacade mf;
 
     public PedidoFacade() {
         super(Pedido.class);
@@ -77,6 +82,38 @@ public class PedidoFacade extends AbstractFacade<Pedido> {
           return p;
       
       }
+      
+      public List<Pedido> todayMesero(long idUsuario, Date fechaActual) {
+          
+          List <Pedido> p  = null;
+          
+          p = (List<Pedido>)getEntityManager().createQuery ("SELECT  p  FROM  Pedido p, Usuario u "
+                                                          + " Where p.idUsuario = u "
+                                                          + " and u.idUsuario = ?1 "
+                                                          + " and p.fecha = ?2 ")
+                  .setParameter(1, idUsuario)
+                  .setParameter(2, fechaActual)
+                  .getResultList();
+         
+          return p;
+      
+      }
+      
+           public List<Pedido> findidmesa(int idMesa) {
+
+        try {
+
+            Mesa mesa = mf.find(idMesa);
+            
+            List<Pedido> resultList = (List<Pedido>)getEntityManager().createQuery("SELECT  p  FROM  Pedido  p WHERE p.idMesa = ?1 ")
+                    .setParameter(1, mesa)
+                    .getResultList();
+
+            return resultList;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
     
    

@@ -141,7 +141,7 @@ public class ProveedorController implements Serializable {
                     
                     String nombre = getSelected().getNombre();
                     
-                    nombreprov = ejbFacade.findCategoria(nombre);
+                    nombreprov = ejbFacade.findProveedor(nombre);
                     
                     if(nombreprov == null){
                     
@@ -153,7 +153,7 @@ public class ProveedorController implements Serializable {
                 }
                 else {
                     int idprov = getSelected().getIdProveedor();
-                    prodconproveedor = currentproducto.getProductoFacade().findProdProveedor(idprov);
+                    prodconproveedor = currentproducto.getEjbFacade().findProdProveedor(idprov);
                     
                     if (prodconproveedor.isEmpty()) {
                         getFacade().remove(selected);

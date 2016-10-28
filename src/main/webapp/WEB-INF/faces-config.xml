@@ -13,10 +13,21 @@
             <redirect/>
           </navigation-case>
     
-    
         <navigation-case>
             <from-outcome>welcome-admin</from-outcome>    
             <to-view-id>/admin/welcome-admin.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>welcome-cajero</from-outcome>    
+            <to-view-id>/cajero/welcome-cajero.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>welcome-mesero</from-outcome>    
+            <to-view-id>/mesero/welcome-mesero.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
@@ -36,6 +47,12 @@
          <navigation-case>
             <from-outcome>producto-create</from-outcome>    
             <to-view-id>/admin/producto/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+             <navigation-case>
+            <from-outcome>receta-create</from-outcome>    
+            <to-view-id>/admin/producto/CreateCompuesto.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
@@ -65,7 +82,6 @@
             <redirect/>
         </navigation-case>
         
-        
           <navigation-case>
             <from-outcome>ingrediente-create</from-outcome>    
             <to-view-id>/admin/ingrediente/Create.xhtml</to-view-id>
@@ -92,35 +108,52 @@
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>pedido-create</from-outcome>    
-            <to-view-id>/admin/pedidos/Create.xhtml</to-view-id>
+            <from-outcome>pedido-create-admin</from-outcome>    
+            <to-view-id>/admin/pedido/Create.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>pedido-list</from-outcome>    
-            <to-view-id>/admin/pedidos/List.xhtml</to-view-id>
+            <from-outcome>pedido-create-mesero</from-outcome>    
+            <to-view-id>/mesero/pedido/Create.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        <navigation-case>
+            <from-outcome>pedido-list-admin</from-outcome>    
+            <to-view-id>/admin/pedido/List.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+          <navigation-case>
+            <from-outcome>pedido-list-mesero</from-outcome>    
+            <to-view-id>/mesero/pedido/List.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
         <navigation-case>
             <from-outcome>pedido-update</from-outcome>    
-            <to-view-id>/admin/pedidos/Update.xhtml</to-view-id>
+            <to-view-id>/admin/pedido/Update.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
         <navigation-case>
             <from-outcome>pedido-search</from-outcome>    
-            <to-view-id>/admin/pedidos/Search.xhtml</to-view-id>
+            <to-view-id>/admin/pedido/Search.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
         <navigation-case>
-            <from-outcome>pedido-today</from-outcome>    
-            <to-view-id>/admin/pedidos/Today.xhtml</to-view-id>
+            <from-outcome>pedido-today-admin</from-outcome>    
+            <to-view-id>/admin/pedido/Today.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
         
+           <navigation-case>
+            <from-outcome>pedido-today-mesero</from-outcome>    
+            <to-view-id>/mesero/pedido/Today.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
         
          <navigation-case>
             <from-outcome>proveedor-create</from-outcome>    
@@ -134,13 +167,7 @@
             <redirect/>
         </navigation-case>
         
-        <navigation-case>
-            <from-outcome>receta-create</from-outcome>    
-            <to-view-id>/admin/receta/Create.xhtml</to-view-id>
-            <redirect/>
-        </navigation-case>
-        
-        
+       
         <navigation-case>
             <from-outcome>venta-create</from-outcome>    
             <to-view-id>/admin/venta/Create.xhtml</to-view-id>
@@ -164,6 +191,27 @@
             <to-view-id>/admin/venta/Ventapormes.xhtml</to-view-id>
             <redirect/>
         </navigation-case>
+        
+           <navigation-case>
+            <from-outcome>venta-graficoventas</from-outcome>    
+            <to-view-id>/admin/venta/graficoventas.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>venta-usuariotop</from-outcome>    
+            <to-view-id>/admin/venta/meserotop.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+         <navigation-case>
+            <from-outcome>venta-productotop</from-outcome>    
+            <to-view-id>/admin/venta/graficoprodtop.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        
+        
+        
         
          <navigation-case>
             <from-outcome>mesa-create</from-outcome>    

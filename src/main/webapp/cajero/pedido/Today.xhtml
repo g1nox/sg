@@ -29,15 +29,16 @@
                             
                         
 
-                            <p:dataTable id="datatable" var="current"  value="#{pedidoController.itemsOrderBy}"
+                            <p:dataTable id="datatable" var="current"  value="#{pedidoController.itemsToday}"
                                          widgetVar="table"
+                                         
                                          selection="#{pedidoController.selected}" selectionMode="single"
                                          rowKey="#{current.idPedido}"
                                          emptyMessage="No se encontraron registros"
                                          reflow="true">  
 
                                 <p:column headerText="Mesa" filterBy="#{current.idMesa.nombre}"
-                                          filterMatchMode="contains">
+                                           filterMatchMode="contains">
                                     <h:outputText value="#{current.idMesa.nombre}">
                                     </h:outputText>
                                 </p:column>
@@ -45,7 +46,10 @@
                                 
                                 
                                 <p:column headerText="Usuario" filterBy="#{current.idUsuario.username}" 
-                                          filterMatchMode="contains" >
+                                          filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                  
+                                    </f:facet>
                                     <h:outputText value="#{current.idUsuario.username}"/>
                                 </p:column> 
                                 
@@ -58,7 +62,7 @@
                                 </p:column> 
 
                                 <p:column headerText="Fecha" filterBy="#{current.fecha}" 
-                                          filterMatchMode="contains">
+                                           filterMatchMode="contains">
                             
                                     <h:outputText value="#{current.fecha}">
                                         <f:convertDateTime pattern="dd-MM-yyyy"/>
@@ -66,24 +70,32 @@
 
                                 </p:column> 
 
-                                <p:column headerText="Hora">
+                                <p:column>
                                     <h:outputText value="#{current.hora}"/>
                                 </p:column> 
-                                
-                                 <p:column headerText="Estado" filterBy="#{current.estado}" 
+
+
+
+                                <p:column filterMatchMode="exact" filterBy="#{current.estado}" headerText="Brand">
+                                    <f:facet name="header">
+                                        <h:outputText value="Estado"/>
+                                    </f:facet>
+
+                                    <h:outputText value="Pagado" styleClass="clase-parto-no" rendered="#{current.estado == true}"/>
+
+                                    <h:outputText value="Pendiente" styleClass="clase-parto-si" rendered="#{current.estado == false}" />
+                                </p:column>
+
+                                <p:column headerText="Estado" filterBy="#{current.estado}" 
                                           filterMatchMode="equals">
                                     <f:facet name="filter">
                                         <p:selectOneButton onchange="PF('table').filter()">
                                             <f:converter converterId="javax.faces.Boolean" />
-                                            <f:selectItem itemLabel="Pagado" itemValue="true"  />
+                                            <f:selectItem itemLabel="Pagado" itemValue="true" />
                                             <f:selectItem itemLabel="Pendiente" itemValue="false" />
                                         </p:selectOneButton>
                                     </f:facet>
-                                    
-                                     <h:outputText value="Pagado" styleClass="clase-parto-no" rendered="#{current.estado == true}"/>
-
-                                    <h:outputText value="Pendiente" styleClass="clase-parto-si" rendered="#{current.estado == false}" />
-                                     
+                                    <h:outputText value="#{current.estado ? 'Pagado': 'Pendiente'}" />
                                 </p:column> 
 
 
@@ -106,7 +118,7 @@
                                             <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
                                         </p:menuitem>
                                         
-                                        <p:menuitem value="Eliminar" action="#{pedidoController.destroy()}" rendered="#{current.estado == false}" update="datatable">
+                                        <p:menuitem value="Eliminar" action="#{pedidoController.destroy()}" update="PedidoListForm">
                                             <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
                                         </p:menuitem>
 

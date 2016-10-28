@@ -2,13 +2,12 @@ package com.egs.webapp.managedBeans;
 
 import com.egs.webapp.entities.DetallePedido;
 import com.egs.webapp.entities.Ingrediente;
+import com.egs.webapp.entities.Producto;
 import com.egs.webapp.entities.Receta;
 import com.egs.webapp.sessionBeans.DetallepedidoFacade;
 import com.egs.webapp.util.JsfUtil;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -25,10 +24,7 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-/**
- *
- * @author EduardoAlexis
- */
+
 @Named(value = "detalleController")
 @SessionScoped
 public class DetalleController implements Serializable {
@@ -40,9 +36,13 @@ public class DetalleController implements Serializable {
     private com.egs.webapp.sessionBeans.DetallepedidoFacade ejbFacade;
     private List<DetallePedido> items = null;
     private DetallePedido selected;
+    
     // This items are only available in shopping cart 
     private DetallePedido currentDetallePedido;
     private List<DetallePedido> currentItems = null;
+    
+    private List<DetallePedido> updateItems = null;
+    
 
     @EJB
     private DetallepedidoFacade detallepedidoFacade;
@@ -114,6 +114,10 @@ public class DetalleController implements Serializable {
         return items;
     }
 
+    public List<DetallePedido> getCurrentItems() {
+        return currentItems;
+    }
+    
     public void setCurrentItems(List<DetallePedido> currentItems) {
         this.currentItems = currentItems;
     }
@@ -122,16 +126,27 @@ public class DetalleController implements Serializable {
         return selected;
     }
 
-    protected void initializeEmbeddableKey() {
+    public void setSelected(DetallePedido selected) {
+        this.selected = selected;
     }
+
+    public List<DetallePedido> getUpdateItems() {
+        return updateItems;
+    }
+
+    public void setUpdateItems(List<DetallePedido> updateItems) {
+        this.updateItems = updateItems;
+    }
+    
+
 
     public DetallePedido prepareCreate() {
 
-        this.currentItems = new ArrayList<DetallePedido>();
-        this.currentDetallePedido = new DetallePedido();
-
+        currentItems = new ArrayList<DetallePedido>();
+        currentDetallePedido = new DetallePedido();
+        
         currentproducto.setSelectedProducto(null);
-
+        
         return currentDetallePedido;
     }
 
@@ -146,50 +161,99 @@ public class DetalleController implements Serializable {
 
     }
 
-    public String reinit() {
+    public void reinit() {
         currentItems = new ArrayList<DetallePedido>();
         currentDetallePedido = new DetallePedido(); // setea el objeto detallepedido para usarlo de nuevo
-        currentproducto.setSelectedProducto(null); // setea el campo de producto del command button
+       // currentproducto.setSelectedProducto(null); // setea el campo de producto del command button
 
-        return null;
+      //  return null;
     }
 
     public void rereinit() {
         currentItems = new ArrayList<DetallePedido>();
 
     }
+    
+    public void updateShoppingCart(){
+       
+       currentItems = currentpedido.getSelected().getDetallepedidoList();
+       
+       addShoppingCart();
+    
+    }
 
     public void addShoppingCart() {
 
+        if (currentproducto.getSelectedProducto() != null) {
+        
         if (currentproducto.getSelectedProducto().getCompuesto() == false) {
 
             int stockActual = currentproducto.getSelectedProducto().getStockActual();
 
             if (stockActual >= currentDetallePedido.getCantArt()) {
 
-                currentproducto.getSelectedProducto().setStockActual(stockActual - currentDetallePedido.getCantArt());
-                currentproducto.actualizarStock();
-
-                //define hora de ingreso
-                Date d = new Date();
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                currentDetallePedido.setHoraIng(sdf.format(d));
-
                 currentDetallePedido.setPrecioUni(currentproducto.getSelectedProducto().getPrecioVenta());
                 currentDetallePedido.setPrecioTotal(currentDetallePedido.getPrecioUni() * currentDetallePedido.getCantArt());
                 currentDetallePedido.setIdProducto(currentproducto.getSelectedProducto());
 
-                currentItems.add(currentDetallePedido);
-                currentDetallePedido = new DetallePedido();
+               
+                int idProducto = currentproducto.getSelectedProducto().getIdProducto();
+                int cantidad = currentDetallePedido.getCantArt();
+
+               
+                if (currentItems.contains(currentDetallePedido)){
                 
-                //deja null el producto despues de agregarse al pedido
-                currentproducto.setSelectedProducto(null);
+                    for (DetallePedido productos : currentItems) {
+                        
+                     int precio = productos.getPrecioUni();
+                        
+                    if (productos.getIdProducto().getIdProducto() == idProducto) {
+                        
+                       //combrobar stock
+                        if (stockActual >= (productos.getCantArt() + cantidad)){
+                        
+                        JsfUtil.addSuccessMessage("Se agregaron " + cantidad + " unidades de " + currentproducto.getSelectedProducto().getNombre());
+                         //sumar cantidad de producto repetido
+                        productos.setCantArt(productos.getCantArt() + cantidad);
+                        
+                        productos.setPrecioTotal(productos.getCantArt() * precio);
+                        
+                        //deja null el producto despues de agregarse al pedido
+                        currentproducto.setSelectedProducto(null);
+                        currentDetallePedido = new DetallePedido(); 
+                        
+                        } else {
+                        
+                        JsfUtil.addErrorMessage("stock insuficiente >=");
+                       
+                        
+                        }
+                     
+                    }                   
+
+                }
+
+                } else {
+                  
+                    JsfUtil.addSuccessMessage("Se agregaron " + cantidad + " unidades de "+ currentproducto.getSelectedProducto().getNombre() );
+                    currentItems.add(currentDetallePedido);
+                    //updateItems.add(currentDetallePedido);
+
+                    //deja null el producto despues de agregarse al pedido
+                    currentproducto.setSelectedProducto(null);
+                    currentDetallePedido = new DetallePedido();
+
+                }
 
             } else {
-                //chantarle un mensaje aqui de que falta stock
-
-                JsfUtil.addErrorMessage("Stock insuficiente");
+               
+            JsfUtil.addErrorMessage("Stock insuficiente");
+           
+            
             }
+            
+            
+            
         } else {
 
             // le pasa el id del producto seleccionado
@@ -198,64 +262,225 @@ public class DetalleController implements Serializable {
             List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
             ArrayList<Ingrediente> ingredientesSinStock = new ArrayList<Ingrediente>();
             ArrayList<Ingrediente> ingredientesConStock = new ArrayList<Ingrediente>();
-            for (Receta receta : recetas) {
-                double stockActual = receta.getIdIngrediente().getStockActual();
 
-                if (stockActual < receta.getCantidad()) {
+            int cantidad = currentDetallePedido.getCantArt();
+            
+            
+            //define hora de ingreso
+          //  Date d = new Date();
+          //  SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+          //  currentDetallePedido.setHoraIng(sdf.format(d));
 
-                    ingredientesSinStock.add(receta.getIdIngrediente());
+            currentDetallePedido.setPrecioUni(currentproducto.getSelectedProducto().getPrecioVenta());
+            currentDetallePedido.setPrecioTotal(currentDetallePedido.getPrecioUni() * currentDetallePedido.getCantArt());
+            currentDetallePedido.setIdProducto(currentproducto.getSelectedProducto());
+            
+            
+            if (currentItems.contains(currentDetallePedido)) {
 
-                } else {
-                    ingredientesConStock.add(receta.getIdIngrediente());
+                for (DetallePedido productos : currentItems) {
+
+                    if (productos.getIdProducto().getIdProducto() == idProducto) {
+
+                        for (Receta receta : recetas) {
+                            double stockActual = receta.getIdIngrediente().getStockActual();
+
+                            if (stockActual < (receta.getCantidad() * currentDetallePedido.getCantArt()) + (receta.getCantidad() * productos.getCantArt())) {
+
+                                ingredientesSinStock.add(receta.getIdIngrediente());
+
+                            } 
+
+                        }
+
+                        if (ingredientesSinStock.size() > 0) {
+                            String mensaje = "";
+                            for (Ingrediente ingrediente : ingredientesSinStock) {
+                                mensaje += "\n " + ingrediente.getNombre();
+
+                            }
+                            JsfUtil.addErrorMessage("Los siguientes ingredientes no poseen stock" + mensaje);
+
+                        } else {
+
+                            JsfUtil.addSuccessMessage("Se agregaron " + cantidad + " unidades de " + currentproducto.getSelectedProducto().getNombre());
+                            productos.setCantArt(productos.getCantArt() + cantidad);
+                            //deja null el producto despues de agregarse al pedido
+                            currentproducto.setSelectedProducto(null);
+                            currentDetallePedido = new DetallePedido();
+                        }
+                    }
+
                 }
 
-            }
-
-            if (ingredientesSinStock.size() > 0) {
-                String mensaje = "";
-                for(Ingrediente ingrediente : ingredientesSinStock ){
-                 mensaje += "\n "+ ingrediente.getNombre();
-                
-                }
-                JsfUtil.addSuccessMessage("Los siguientes productos no poseen stock"+mensaje);
-                
             } else {
+
                 for (Receta receta : recetas) {
                     double stockActual = receta.getIdIngrediente().getStockActual();
-                    double cantidad = receta.getCantidad();
 
-                    receta.getIdIngrediente().setStockActual(stockActual - cantidad);
-                    currentingrediente.setSelected(receta.getIdIngrediente());
-                    currentingrediente.actualizarStock();
+                    if (stockActual < receta.getCantidad() * currentDetallePedido.getCantArt()) {
+
+                        ingredientesSinStock.add(receta.getIdIngrediente());
+
+                    } 
 
                 }
-                    //define hora de ingreso
-                    Date d = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                    currentDetallePedido.setHoraIng(sdf.format(d));
 
-                    currentDetallePedido.setPrecioUni(currentproducto.getSelectedProducto().getPrecioVenta());
-                    currentDetallePedido.setPrecioTotal(currentDetallePedido.getPrecioUni() * currentDetallePedido.getCantArt());
-                    currentDetallePedido.setIdProducto(currentproducto.getSelectedProducto());
+                if (ingredientesSinStock.size() > 0) {
+                    String mensaje = "";
+                    for (Ingrediente ingrediente : ingredientesSinStock) {
+                        mensaje += "\n " + ingrediente.getNombre();
 
+                    }
+                    JsfUtil.addErrorMessage("Los siguientes ingredientes no poseen stock" + mensaje);
+
+                } else {
+
+                    JsfUtil.addSuccessMessage("Se agregaron " + cantidad + " unidades de " + currentproducto.getSelectedProducto().getNombre());
                     currentItems.add(currentDetallePedido);
+                    //updateItems.add(currentDetallePedido);
+
                     currentDetallePedido = new DetallePedido();
-                
+                    currentproducto.setSelectedProducto(null);
+
+                }
+
             }
 
+        }
+        
+    } else {
+        
+        JsfUtil.addErrorMessage("Seleccione un producto");
             
         }
 
     }
+    
+
+    
+    
+    
+    
 
     public void removeShoppingCart() {
-        int stockActual = currentproducto.getSelectedProducto().getStockActual();
 
-        currentproducto.getSelectedProducto().setStockActual(stockActual + currentDetallePedido.getCantArt());
-        currentproducto.actualizarStock();
+        if (selected.getIdProducto().getCompuesto() == false) {
+
+            int stockActual = selected.getIdProducto().getStockActual();
+
+            selected.getIdProducto().setStockActual(stockActual + selected.getCantArt());
+
+            currentproducto.setSelectedProducto(selected.getIdProducto());
+
+            currentproducto.actualizarStock();
+
+        } else {
+
+            int idProducto = selected.getIdProducto().getIdProducto();
+
+            List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
+
+            for (Receta receta : recetas) {
+                double stockActual = receta.getIdIngrediente().getStockActual();
+                double cantidad = receta.getCantidad();
+
+                receta.getIdIngrediente().setStockActual(stockActual + cantidad);
+                currentingrediente.setSelected(receta.getIdIngrediente());
+                currentingrediente.actualizarStock();
+
+            }
+
+        }
 
     }
+    
+    public void updateList(){
 
+        currentItems = updateItems;
+}
+    
+    
+    public boolean comprobarStock() {
+
+        ArrayList<Producto> productoSinStock = new ArrayList<Producto>();
+        updateItems = new ArrayList<DetallePedido>();
+
+        for (DetallePedido lista : currentItems) {
+                
+            int idProducto = lista.getIdProducto().getIdProducto();
+           
+            if (lista.getIdProducto().getCompuesto() == false) {
+                
+                int stockProductoActual = currentproducto.getStockActual(idProducto);
+
+                if (stockProductoActual < lista.getCantArt()) {
+
+                    productoSinStock.add(lista.getIdProducto());
+
+                } else {
+                    
+                    updateItems.add(lista);
+                
+                }
+            } else {
+            
+            //producto compuesto
+            List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
+            ArrayList<Ingrediente> ingredientesSinStock = new ArrayList<Ingrediente>();
+            ArrayList<Ingrediente> ingredientesConStock = new ArrayList<Ingrediente>();
+                
+                for (Receta receta : recetas) {
+                
+                    double stockIngredienteActual = receta.getIdIngrediente().getStockActual();
+
+                if (stockIngredienteActual >= (receta.getCantidad()*lista.getCantArt())) {
+
+                    ingredientesConStock.add(receta.getIdIngrediente());
+
+                } else {
+                    
+                 ingredientesSinStock.add(receta.getIdIngrediente());
+                
+                }   
+
+            } 
+                 if (ingredientesSinStock.size() > 0) {
+                
+                     productoSinStock.add(lista.getIdProducto());
+
+            } else {
+                 
+                 updateItems.add(lista);
+                 
+                 }
+            
+            
+            }
+        }
+
+        currentItems = new ArrayList<DetallePedido>();
+        currentItems = updateItems;
+
+        if (productoSinStock.size() > 0) {
+
+            String mensaje = "";
+
+            for (Producto producto : productoSinStock) {
+                mensaje += "\n " + producto.getNombre();
+            }
+
+            JsfUtil.addErrorMessage("Los siguientes productos no poseen stock y han sido eliminados del carro:" + mensaje);
+            return false;
+
+        } else {
+
+            return true;
+        }
+
+    }
+          
+         
     public String create() {
         persist(JsfUtil.PersistAction.CREATE, "detalle creado");
         if (!JsfUtil.isValidationFailed()) {
@@ -271,7 +496,7 @@ public class DetalleController implements Serializable {
     }
 
     public void update() {
-        persist(JsfUtil.PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ProductoUpdated"));
+        persist(JsfUtil.PersistAction.UPDATE, "");
     }
 
     public void destroy() {
@@ -287,9 +512,6 @@ public class DetalleController implements Serializable {
 
             try {
                 if (persistAction != JsfUtil.PersistAction.DELETE) {
-//                    Date d = new Date();
-//                    currentpedido.setFecha(d);
-//                    currentpedido.setHora(d);
 
                     getEjbFacade().edit(currentDetallePedido);
                 } else {
@@ -371,10 +593,11 @@ public class DetalleController implements Serializable {
         return currentDetallePedido;
     }
 
-    public List<DetallePedido> getCurrentItems() {
-        return currentItems;
+    public void setCurrentDetallePedido(DetallePedido currentDetallePedido) {
+        this.currentDetallePedido = currentDetallePedido;
     }
-
+    
+    
     public String goDetalleCreate() {
         prepareCreate();
         return "pedido-create";

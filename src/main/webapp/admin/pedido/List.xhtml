@@ -1,0 +1,252 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedidos" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces"
+                        target="head" />
+
+        <div class="Container100">
+            
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Pedidos
+                        </div>
+                        <div class="EmptyBox10" />
+                        
+
+                        <h:form id="PedidoListForm">
+
+                            <p:dataTable id="datatable" var="current"  value="#{pedidoController.itemsOrderBy}"
+                                         widgetVar="table"
+                                         selection="#{pedidoController.selected}" selectionMode="single"
+                                         rowKey="#{current.idPedido}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+                                
+                                  <p:column headerText="Nº Pedido">
+                                      <h:outputText value="#{current.idPedido}"/>
+                                </p:column> 
+
+                                <p:column headerText="Mesa" filterBy="#{current.idMesa.nombre}"
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{current.idMesa.nombre}">
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Usuario" filterBy="#{current.idUsuario.username}" 
+                                          filterMatchMode="contains" >
+                                    <h:outputText value="#{current.idUsuario.username}"/>
+                                </p:column> 
+
+                                <p:column headerText="Total">
+                                    <h:outputText value="#{current.total}">
+                                        <f:convertNumber currencySymbol="$"  pattern="¤###,###" type="currency"/>
+                                    </h:outputText>
+                                </p:column> 
+
+<!--                                <p:column headerText="Fecha" filterBy="#{current.fecha}" 
+                                          filterMatchMode="contains">
+                                    <h:outputText value="#{current.fecha}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                    </h:outputText>
+
+                                </p:column> 
+
+                                <p:column headerText="Hora">
+                                    <h:outputText value="#{current.hora}"/>
+                                </p:column> -->
+                                
+                                 <p:column headerText="Fecha" filterBy="#{current.fecha}"
+                                           filterMatchMode="contains">
+                                     <h:outputText value="#{current.fecha}">
+                                         <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                         </h:outputText>
+                                       <h:outputText value=" #{current.hora}"/>
+                                </p:column> 
+
+                                <p:column headerText="Estado" filterBy="#{current.estado}" 
+                                          filterMatchMode="equals">
+                                    <f:facet name="filter">
+                                        <p:selectOneButton onchange="PF('table').filter()">
+                                            <f:converter converterId="javax.faces.Boolean" />
+                                            <f:selectItem itemLabel="Pagado" itemValue="true"  />
+                                            <f:selectItem itemLabel="Pendiente" itemValue="false" />
+                                        </p:selectOneButton>
+                                    </f:facet>
+
+                                    <h:outputText value="Pagado" styleClass="clase-parto-no" rendered="#{current.estado == true}"/>
+
+                                    <h:outputText value="Pendiente" styleClass="clase-parto-si" rendered="#{current.estado == false}" />
+
+                                </p:column> 
+
+
+                                <p:column headerText="Acción">
+                                    <p:menuButton value="Opciones">
+                                        <p:menuitem id="mesa" value="Abrir mesa"  action="#{detalleController.goDetalleEdit()}" rendered="#{current.estado == false}" icon="ui-icon-clipboard">
+                                            <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                        </p:menuitem>
+
+                                        <p:menuitem value="Ver detalle"  icon="ui-icon-circle-zoomout"
+                                                    oncomplete="PF('dlg2').show('#{pedidoController.selected}')" update=":DetalleForm:datatable1">
+                                            <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                        </p:menuitem>
+
+                                        <p:menuitem value="Realizar pago" action="#{ventaController.goVentaCreate()}" rendered="#{current.estado == false}">
+                                            <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                        </p:menuitem>
+
+                                        <p:menuitem value="pago" oncomplete="PF('dlg3').show('#{pedidoController.selected}')" update=":VentaCreateForm1:" rendered="#{current.estado == false}">
+                                            <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                        </p:menuitem>
+
+                                        <p:menuitem value="Eliminar" action="#{pedidoController.destroy()}" rendered="#{current.estado == false}" update="datatable">
+                                            <f:setPropertyActionListener value="#{current}"  target="#{pedidoController.selected}"/>
+                                            <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/>
+                                        </p:menuitem>
+
+                                    </p:menuButton>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                                    </p:confirmDialog>
+
+                                    
+                                </p:column>
+
+
+                            </p:dataTable>
+
+
+                        </h:form>
+
+
+                        <div class="ui-fluid">
+
+                            <p:dialog  header="Detalle Pedido" widgetVar="dlg2" resizable="false" responsive="true" width="450" modal="true" maximizable="true">
+
+                                <h:form id="DetalleForm">
+
+                                    <p:panel>
+
+                                        <p:dataTable id="datatable1" var="current" value="#{pedidoController.selected.detallepedidoList}"  
+                                                     reflow="true" scrollable="true" scrollHeight="300" 
+                                                     rowKey="#{pedidoController.selected.idPedido}">   
+
+
+
+                                            <p:column headerText="cantidad">
+                                                <p:outputLabel value="#{current.cantArt}" />  
+                                            </p:column>    
+
+                                            <p:column headerText="Producto">
+                                                <p:outputLabel value="#{current.idProducto.nombre}" /> 
+                                            </p:column>      
+
+
+                                            <p:column headerText="Precio unitario">
+                                                <p:outputLabel value="#{current.precioUni}" />
+                                            </p:column>
+
+
+                                            <p:column headerText="Valor">
+                                                <p:outputLabel value="#{current.precioTotal}" />
+                                            </p:column>
+
+
+<!--                                            <f:facet name="footer">
+                                                #{pedidoController.selected.total}
+                                            </f:facet>-->
+
+                                        </p:dataTable>  
+
+                                    </p:panel>
+                                    
+                                  
+                                               <div class="Container100 Responsive Fs20 hardblue" style="text-align: right">
+
+                                            <p:outputLabel id="total" value="Total: #{pedidoController.selected.total}"/>
+
+                                        </div>
+                                        
+                                    
+
+                                </h:form>
+
+                            </p:dialog>
+
+                        </div>
+
+                        <div class="ui-fluid">
+
+                            <p:dialog  header="Nuevo pago" widgetVar="dlg3" resizable="false" responsive="true" width="500" modal="true" maximizable="true">
+
+                                <h:form id="VentaCreateForm1">
+
+
+                                    <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
+
+
+
+                                        <p:selectOneMenu id="mpago"  value="#{ventaController.selected.medioPago}" 
+                                                         style="width: 90%"
+                                                         styleClass="wid90"
+                                                         effect="blind"
+                                                         required="true"
+                                                         requiredMessage="Ingrese medio de pago!">
+                                            <f:selectItem itemLabel="Seleccione medio de pago" itemValue="" />
+                                            <f:selectItem itemLabel="Efectivo" itemValue="1" />
+                                            <f:selectItem itemLabel="Tarjeta" itemValue="2" />
+                                            <f:selectItem itemLabel="Cheque" itemValue="3" />
+
+                                        </p:selectOneMenu> 
+
+
+
+                                        <p:commandButton value="Finalizar pago" action="#{ventaController.create()}"/>
+
+                                        <div class="Container100 Responsive Fs20 hardblue" style="text-align: right">
+
+                                            <p:outputLabel id="total" value="Total: #{pedidoController.selected.total}"/>
+
+
+
+                                        </div>
+
+
+
+                                    </p:panelGrid>
+
+
+
+                                </h:form>
+
+                            </p:dialog>
+
+                        </div>
+
+
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+    </ui:define>
+
+</ui:composition>

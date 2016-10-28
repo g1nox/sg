@@ -1,0 +1,121 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Usuarios" url="#" />
+        <p:menuitem value="Nuevo" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+
+            <h:form id="PedidoAddForm">
+
+                <div class="ContainerIndent">
+                    <!-- First container -->
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-search-outline"></i> Buscar Producto
+                                </div>
+                                <div class="EmptyBox10" />
+
+                                <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none"> 
+
+                                 
+                                       
+                                    
+                                    
+                                    <p:selectOneMenu id="producto" 
+                                                     style="width: 90%"   
+                                                     styleClass="Wid90"
+                                                     value="#{productoController.selectedProducto}" 
+                                                     converter="productoConverter"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     effect="blind"
+                                                     >
+
+                                        <f:selectItem itemLabel="Seleccione Producto" />
+                                        <f:selectItems value="#{productoController.items}"
+                                                       var="items"
+                                                       itemValue="#{items}"
+                                                       itemLabel="#{items.nombre.toString()}"
+
+                                                       />  
+                                    </p:selectOneMenu>
+
+
+
+
+                                    <p:spinner value="#{detalleEntradaController.currentDetalleEntrada.cantArt}" min="1"
+                                               placeholder="Cantidad"
+                                               style=""/>
+                                </p:panelGrid>
+
+                                
+                                <p:commandButton id="boton_add" value="Add" update="outPanel" action="#{detalleEntradaController.addShoppingCart()}" />
+                                    
+
+                            </p:panel>
+                        </div>
+                    </div>
+
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-basket-1"></i> En orden
+                                </div>
+                                <div class="EmptyBox10" />
+
+
+                                <p:outputPanel id="outPanel">
+                                    <p:dataTable value="#{detalleEntradaController.currentItems}" var="currentItems" id="currentItems" editable="true" editMode="cell">
+
+                                        <p:column headerText="Producto">
+                                            <h:outputText value="#{currentItems.idProducto.nombre}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cantidad">
+                                            <p:cellEditor>  
+                                                <f:facet name="output"><h:outputText value="#{currentItems.cantArt}"/></f:facet>
+                                                <f:facet name="input"><p:inputText value="#{currentItems.cantArt}" /></f:facet>
+                                       
+                                            </p:cellEditor>
+                                        
+                                        </p:column>
+                                        
+         
+
+                                    </p:dataTable>
+                                    
+                                    <br/>
+                                
+                                
+                                </p:outputPanel>
+                                
+
+
+                            </p:panel>
+                            <br/>
+                            <p:commandButton value="Terminar pedido" />
+                                    
+                                    <br/>
+                        </div>
+                    </div>
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -6,8 +6,8 @@
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
     <ui:define name="breadcrumb">
-        <p:menuitem value="Usuarios" url="#" />
-        <p:menuitem value="Nuevo" url="#" disabled="true"/>
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Abrir mesa" url="#" disabled="true"/>
 
     </ui:define>
     <ui:define name="content">
@@ -30,45 +30,40 @@
                                
                               
                                 
-                                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+                                <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none"> 
                                 
                                     <p:selectOneMenu id="producto" 
-                                                     style="width: 90%"   
                                                      styleClass="Wid90"
                                                      value="#{productoController.selectedProducto}" 
                                                      converter="productoConverter"
                                                      filter="true" filterMatchMode="startsWith"
-                                                     effect="blind"
-                                                     >
+                                                     effect="blind">
 
                                         <f:selectItem itemLabel="Seleccione Producto" />
                                         <f:selectItems value="#{productoController.items}"
                                                        var="item"
                                                        itemValue="#{item}"
-                                                       itemLabel="#{item.nombre.toString()}"
-
-                                                       />  
+                                                       itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
                                 
                                 <p:spinner value="#{detalleController.currentDetallePedido.cantArt}"
-                                               placeholder="Cantidad"
-                                               style=""/> 
+                                           placeholder="Cantidad" styleClass="Wid90" min="1"/> 
                                 
                                 
-                                  <p:commandButton id="btnadd" value="Add" action="#{detalleController.addShoppingCart()}"
-                                                   update="PedidoEditForm:salidaItems" >
+                                <p:commandButton id="btnadd" value="Add"  styleClass="Wid90" action="#{detalleController.addShoppingCart()}"
+                                                   update="PedidoEditForm">
                                     
-<!--                                       <p:collector value="#{detalleController.currentDetallePedido}" addTo="#{detalleController.currentItems}" unique="true"/>-->
+
                                     
                                     </p:commandButton>
                                     
-                                    <p:commandButton id="btn_update" value="Actualizar mesa" 
-                                                     action="#{pedidoController.update()}"  update="tabledetalle Items total"  />
+                                  
                                 
                                     </p:panelGrid>
                                 
                                    <p:outputPanel id="salidaItems">
-                                    <p:dataTable  id="Items" value="#{detalleController.currentItems}" var="current"  editable="true" editMode="cell">
+                                    <p:dataTable  id="Items" value="#{detalleController.currentItems}" var="current"  
+                                                   editable="true" editMode="cell">
 
                                         <p:column headerText="Producto">
                                             <h:outputText value="#{current.idProducto.nombre}" />
@@ -79,11 +74,7 @@
                                                 <h:outputText value="#{current.cantArt}" />
                                         </p:column>
                                         
-                                        <p:column headerText="Hora ingreso">
-                                            
-                                            <h:outputText value="#{current.horaIng}" />
-                                            
-                                        </p:column>
+                                       
                                         <p:column headerText="Precio uni">     
                                             
                                             <h:outputText value="#{current.precioUni}" />     
@@ -122,13 +113,8 @@
                             </p:column>    
                             
                             
-                             <p:column headerText="Hora ingresa">
-                                 <p:outputLabel value="#{current.horaIng}" /> 
-                            </p:column> 
-                      
-                      
-                          <p:column headerText="Precio">
-                                <p:outputLabel value="#{current.precioTotal}" />
+                          <p:column headerText="Precio unitario">
+                              <p:outputLabel value="#{current.precioUni}" />
                           </p:column>
                         
                             
@@ -140,10 +126,15 @@
                          </p:dataTable> 
                                 
                                 
-                         
+                                <p:outputPanel>
                                 
+                           <p:commandButton id="btn_update" value="Actualizar mesa" 
+                                                     action="#{pedidoController.update()}"  update="tabledetalle Items total"/>
                                 
-                                    <p:outputPanel>
+                                </p:outputPanel>
+                                    
+                                
+                                <p:outputPanel>
                                     
                                     <div class="Container100 Responsive Fs20 hardblue" style="text-align: right">
                                    

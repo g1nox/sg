@@ -141,7 +141,7 @@ public class CategoriaController implements Serializable {
         if (selected != null) {
             setEmbeddableKeys();
             try {
-                if (persistAction != PersistAction.DELETE) {
+                if (persistAction == PersistAction.CREATE) {
                     
                     String nombre = getSelected().getNombre();
                     nombrecat = ejbFacade.findCategoria(nombre);
@@ -154,9 +154,12 @@ public class CategoriaController implements Serializable {
                     } else {
                         JsfUtil.addErrorMessage("La categoría ya existe");
                     }
-                } else {
+                } 
+                
+                if (persistAction == PersistAction.DELETE) {
+                    
                     int idcat = getSelected().getIdCategoria();
-                    prodconcategoria = currentproducto.getProductoFacade().findProdCategoria(idcat);
+                    prodconcategoria = currentproducto.getEjbFacade().findProdCategoria(idcat);
                     
                     if (prodconcategoria.isEmpty()) {
                         getFacade().remove(selected);

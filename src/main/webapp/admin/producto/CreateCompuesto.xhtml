@@ -15,7 +15,7 @@
 
         <div class="Container100">
 
-            <h:form id="VentaCreateForm">
+            <h:form id="RecetaCreateForm">
 
                 <div class="ContainerIndent">
                     <!-- First container -->
@@ -46,15 +46,7 @@
                                                        itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
 
-
-
-
-                                    <!--<h:outputText value="Posee ingrediente?" />
-                                        <p:inputSwitch value="#{productoController.selectedProducto.compuesto}" >       
-                                        <p:ajax  update="ing" />
-                                        </p:inputSwitch>-->
-                                    <!--                                      
-                                    -->                
+             
                                     <p:selectOneMenu id="ingrediente" 
                                                      style="width: 90%"   
                                                      styleClass="Wid90"
@@ -80,7 +72,7 @@
                                 </p:panelGrid>
 
 
-                                <p:commandButton id="add" value="Add" update="outItemsPanel" action="#{recetaController.addIngrediente()}" >
+                                <p:commandButton id="add" value="Add" update="RecetaCreateForm" action="#{recetaController.addIngredienteReceta()}" >
                                 </p:commandButton>
 
                             </p:panel>
@@ -98,24 +90,22 @@
 
 
                                 <p:outputPanel id="outItemsPanel">
-                                    <p:dataTable value="#{recetaController.currentItems}" var="Items" id="ItemsTable" >
+                                    <p:dataTable value="#{recetaController.currentItems}" var="Items" id="ItemsTable" editable="true" editMode="cell" >
 
+                                        
                                         <p:column headerText="Ingrediente">
                                             <h:outputText value="#{Items.idIngrediente.nombre}" />
                                         </p:column>
 
+                                        
                                         <p:column headerText="cantidad">
-
                                             <h:outputText value="#{Items.cantidad}"/>
-
-
                                         </p:column>
 
+                                        
                                         <p:column headerText="Unidad">
-
                                             <h:outputText value="#{Items.umedida}" />
                                         </p:column>
-
 
 
                                         <p:column headerText="Action">

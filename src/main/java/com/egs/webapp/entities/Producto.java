@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -29,7 +34,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p"),
     @NamedQuery(name = "Producto.findByIdProducto", query = "SELECT p FROM Producto p WHERE p.idProducto = :idProducto"),
     @NamedQuery(name = "Producto.findByNombre", query = "SELECT p FROM Producto p WHERE p.nombre = :nombre"),
-    @NamedQuery(name = "Producto.findByUnidadCompra", query = "SELECT p FROM Producto p WHERE p.unidadCompra = :unidadCompra"),
     @NamedQuery(name = "Producto.findByStockIdeal", query = "SELECT p FROM Producto p WHERE p.stockIdeal = :stockIdeal"),
     @NamedQuery(name = "Producto.findByStockMaximo", query = "SELECT p FROM Producto p WHERE p.stockMaximo = :stockMaximo"),
     @NamedQuery(name = "Producto.findByStockMinimo", query = "SELECT p FROM Producto p WHERE p.stockMinimo = :stockMinimo"),
@@ -38,9 +42,14 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Producto.findByCompuesto", query = "SELECT p FROM Producto p WHERE p.compuesto = :compuesto"),
     @NamedQuery(name = "Producto.findByDisponible", query = "SELECT p FROM Producto p WHERE p.disponible = :disponible")})
 public class Producto implements Serializable {
-    @OneToMany(mappedBy = "idProducto")
+    
+     @OneToMany(mappedBy = "idProducto")
     private List<DetallePedido> detallepedidoList;
+     
+       @OneToMany(mappedBy = "idProducto")
+    private List<Receta> recetaList;
 
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,50 +57,33 @@ public class Producto implements Serializable {
     @Column(name = "id_producto")
     private Integer idProducto;
     @Size(max = 50)
-
-    @OneToMany(mappedBy = "idProducto")
-    private List<Receta> recetaList;
-
     @Column(name = "nombre")
     private String nombre;
-    @Size(max = 50)
-    
-    @Column(name = "unidad_compra")
-    private String unidadCompra;
-    
     @Column(name = "stock_ideal")
     private Integer stockIdeal;
-    
     @Column(name = "stock_maximo")
     private Integer stockMaximo;
-    
     @Column(name = "stock_minimo")
     private Integer stockMinimo;
-    
     @Column(name = "stock_actual")
     private Integer stockActual;
-    
     @Column(name = "precio_venta")
     private Integer precioVenta;
-    
     @Column(name = "compuesto")
     private Boolean compuesto;
-    
     @Column(name = "disponible")
     private Boolean disponible;
-    
     @JoinColumn(name = "id_categoria", referencedColumnName = "id_categoria")
     @ManyToOne
     private Categoria idCategoria;
-    
     @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
     @ManyToOne
     private Proveedor idProveedor;
 
-    
-    
     public Producto() {
-        this.compuesto = false;
+        
+         this.compuesto = false;
+        
     }
 
     public Producto(Integer idProducto) {
@@ -112,14 +104,6 @@ public class Producto implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getUnidadCompra() {
-        return unidadCompra;
-    }
-
-    public void setUnidadCompra(String unidadCompra) {
-        this.unidadCompra = unidadCompra;
     }
 
     public Integer getStockIdeal() {
@@ -218,8 +202,8 @@ public class Producto implements Serializable {
     public String toString() {
         return "com.egs.webapp.entities.Producto[ idProducto=" + idProducto + " ]";
     }
-
-    @XmlTransient
+    
+     @XmlTransient
     public List<Receta> getRecetaList() {
         return recetaList;
     }
@@ -237,4 +221,5 @@ public class Producto implements Serializable {
         this.detallepedidoList = detallepedidoList;
     }
 
+    
 }

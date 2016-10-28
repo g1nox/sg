@@ -64,7 +64,7 @@ public class ProductoFacade extends AbstractFacade<Producto> {
     }
 
     
-      public List<Object> productomasvendidopomes() {
+      public List<Object> productomasvendidopormes() {
 
         Query q;
         q = getEntityManager().createQuery(" select p.nombre, extract(month v.fecha), extract(year v.fecha), sum(dp.cantArt)"
@@ -79,6 +79,46 @@ public class ProductoFacade extends AbstractFacade<Producto> {
 
         return resultList;
     }
+      
+      public List<Object[]> toppormes(double mes, double año) {
+
+        List <Object[]> resultList = null;
+          
+         
+        resultList = (List<Object[]>) getEntityManager().
+                createQuery("select p.nombre, sum(dp.cantArt)"
+                                         + " from DetallePedido dp, Pedido pe, Venta v, Producto p "
+                                         + " where pe = dp.idPedido "
+                                         + " and pe = v.idPedido"
+                                         + " and dp.idProducto = p "
+                                         + " and extract(month v.fecha) = ?1 "
+                                         + " and extract(year v.fecha) =  ?2 "
+                                         + " group by p.idProducto "
+                                         + " order by sum(dp.cantArt) desc ").
+                setParameter(1, mes).
+                setParameter(2, año).
+                setMaxResults(3).
+                getResultList();
+
+        
+
+        return resultList;
+    }
+      
+      
+      
+         public List<Object> mesyaño() {
+
+        Query q;
+        q = getEntityManager().createQuery("SELECT extract(month v.fecha), extract(year v.fecha)"
+                + " FROM Venta v"
+                + " group by extract(month v.fecha), extract(year v.fecha)");
+
+        List<Object> resultList = q.getResultList();
+
+        return resultList;
+    }
+      
       
           public List<Producto> findProdCategoria(int idCategoria) {
 
@@ -96,13 +136,13 @@ public class ProductoFacade extends AbstractFacade<Producto> {
         }
     }
           
-              public List<Producto> findProdProveedor(int idProveedor) {
+         public List<Producto> findProdProveedor(int idProveedor) {
 
         try {
 
             Proveedor prod = pf.find(idProveedor);
-            
-            List<Producto> resultList = (List<Producto>)getEntityManager().createQuery("SELECT  p  FROM  Producto  p WHERE p.idProveedor = ?1 ")
+
+            List<Producto> resultList = (List<Producto>) getEntityManager().createQuery("SELECT  p  FROM  Producto  p WHERE p.idProveedor = ?1 ")
                     .setParameter(1, prod)
                     .getResultList();
 
@@ -111,7 +151,34 @@ public class ProductoFacade extends AbstractFacade<Producto> {
             return null;
         }
     }
-      
+
+    public int stockAcualProducto(int idProducto) {
+
+        Object result;
+
+        result = getEntityManager().
+                createQuery("SELECT p.stockActual FROM Producto p WHERE p.idProducto = ?1 ").
+                setParameter(1, idProducto).
+                getSingleResult();
+        int var = (int) result;
+
+        return var;
+    }
+    
+        public Producto findProducto(String nombre) {
+        try {
+            Producto result = (Producto) getEntityManager().
+                    createQuery("SELECT p FROM Producto p WHERE p.nombre = ?1 ")
+                    .setParameter(1, nombre)
+                    .getSingleResult();
+
+            return result;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+
   
     
 }

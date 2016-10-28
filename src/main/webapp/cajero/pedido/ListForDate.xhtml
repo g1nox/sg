@@ -1,0 +1,46 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedidos" url="#" />
+        <p:menuitem value="Listar" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces"
+                        target="head" />
+
+
+
+
+
+        <p:panel>
+
+
+            <h:form id="PedidoListDate" >
+
+
+
+                <p:outputLabel for="cal" value="Fecha:" />
+                <p:calendar id="cal"  value="#{pedidoController.fechaConsulta}" showOn="button" required="true" pattern="yyyy-mm-dd" />
+
+                <p:commandButton   value="Buscar" action="#{pedidoController.buscar}">
+                </p:commandButton>
+
+
+
+
+            </h:form>
+
+
+
+        </p:panel>
+
+
+
+
+    </ui:define>
+
+</ui:composition>

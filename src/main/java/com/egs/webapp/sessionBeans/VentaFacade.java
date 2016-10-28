@@ -18,6 +18,7 @@ public class VentaFacade extends AbstractFacade<Venta> {
     protected EntityManager getEntityManager() {
         return em;
     }
+    
 
     public VentaFacade() {
         super(Venta.class);
@@ -53,21 +54,22 @@ public class VentaFacade extends AbstractFacade<Venta> {
         }
     }
 
-    public List<Object[]> totalventapormes() {
+         public List<Object[]> totalventapormes() {
 
         Query q;
         q = getEntityManager().createQuery("select extract(month v.fecha) as mes,"
                 + " extract(year v.fecha) as año,"
                 + " sum(v.total)"
                 + " from Venta v "
-                + " group by año, mes"
+                + " group by mes, año"
                 + " order by año desc, mes desc ");
 
         List<Object[]> resultList = q.getResultList();
 
         return resultList;
     }
-
+         
+    
     public long findforParameter(double mes, double ano) {
 
         Object result;
@@ -103,22 +105,29 @@ public class VentaFacade extends AbstractFacade<Venta> {
 
     }
 
-    public List<Object> meserotopxmes() {
+    public List<Object[]> meserotopxmes(double mes, double año) {
 
-        Query q;
-        q = getEntityManager().createQuery(" SELECT u.username,"
-                + " EXTRACT(MONTH v.fecha),"
-                + " EXTRACT(YEAR v.fecha),"
-                + " SUM(v.total)"
-                + " FROM Venta v, Usuario u"
-                + " WHERE v.idUsuario = u"
-                + " GROUP BY u.idUsuario, EXTRACT(MONTH v.fecha), EXTRACT(YEAR v.fecha)"
-                + " ORDER BY EXTRACT(MONTH v.fecha) DESC, EXTRACT(YEAR v.fecha) DESC, SUM(v.total) DESC ");
+         List <Object[]> resultList = null;
+         
+         resultList = (List<Object[]>) getEntityManager().createQuery(" SELECT u.username,"
+              
+                + " SUM(v.total) "
+                + " FROM Venta v, Usuario u "
+                + " WHERE v.idUsuario = u "
+                + " AND EXTRACT(MONTH v.fecha) = ?1 "
+                + " AND EXTRACT(YEAR v.fecha) = ?2 "
+                + " GROUP BY u.idUsuario "
+                + " ORDER BY SUM(v.total) DESC ").
+                setParameter(1, mes).
+                setParameter(2, año).
+                setMaxResults(3).
+                getResultList();
 
-        List<Object> resultList = q.getResultList();
+        
 
         return resultList;
     }
+    
 
     public List<Object> meserotop() {
 

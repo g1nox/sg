@@ -34,6 +34,7 @@ public class PedidoController implements Serializable {
     private List<Pedido> itemsOrderBy = null;
     private List<Pedido> itemsFiltrados = null;
     private List<Pedido> itemsToday = null;
+    private List<Pedido> itemsTodayUsuario = null;
 
     private Pedido selected;
     
@@ -53,14 +54,14 @@ public class PedidoController implements Serializable {
     }
 
     @Inject
-    private UsuariosController contextUsuario;
+    private UsuariosController currentUsuario;
 
-    public UsuariosController getContextUsuario() {
-        return contextUsuario;
+    public UsuariosController getCurrentUsuario() {
+        return currentUsuario;
     }
 
-    public void setContextUsuario(UsuariosController contextUsuario) {
-        this.contextUsuario = contextUsuario;
+    public void setCurrentUsuario(UsuariosController currentUsuario) {
+        this.currentUsuario = currentUsuario;
     }
 
     @Inject
@@ -106,6 +107,7 @@ public class PedidoController implements Serializable {
     public void setCurrentingrediente(IngredienteController currentingrediente) {
         this.currentingrediente = currentingrediente;
     }
+  
 
     public PedidoController() {
     }
@@ -176,6 +178,20 @@ public class PedidoController implements Serializable {
         this.itemsToday = itemsToday;
     }
 
+    public List<Pedido> getItemsTodayUsuario() {
+        
+        long idUsuario = currentUsuario.getCurrentUser().getIdUsuario();
+        Date fechaActual = new Date();
+        
+        itemsTodayUsuario = ejbFacade.todayMesero(idUsuario, fechaActual);
+        
+        return itemsTodayUsuario;
+    }
+
+    public void setItemsTodayUsuario(List<Pedido> itemsTodayUsuario) {
+        this.itemsTodayUsuario = itemsTodayUsuario;
+    }
+    
     public Pedido getProductosPedido() {
         return productosPedido;
     }
@@ -194,12 +210,15 @@ public class PedidoController implements Serializable {
 
     public Pedido prepareCreate() {
         selected = new Pedido();
+        
         currentproducto.setSelectedProducto(null);
         currentproducto.reinit();
-       //currentDetallePedido.setCurrentItems(null);
+      
         currentDetallePedido.init();
-        
+       
+        currentmesa.setSelected(null);
         currentmesa.init();
+        
         return selected;
     }
 
@@ -215,54 +234,62 @@ public class PedidoController implements Serializable {
 
         return selected.getDetallepedidoList();
     }
+    
+  
+    public String create() {
 
-    public void addProducto() {
+        if (!currentDetallePedido.getCurrentItems().isEmpty()) {
 
-        if (currentproducto.getSelectedProducto().getCompuesto()) {
+            if (currentDetallePedido.comprobarStock() == true) {
 
-            JsfUtil.addSuccessMessage("buena es compuesto");
+                persist(JsfUtil.PersistAction.CREATE, "el pedido se creo");
+                if (!JsfUtil.isValidationFailed()) {
+                    itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
+                    FacesContext facesContext = FacesContext.getCurrentInstance();
+                    Flash flash = facesContext.getExternalContext().getFlash();
+                    flash.setKeepMessages(true);
+                    flash.setRedirect(true);
+                    prepareCreate();
+                    
+                    if(currentUsuario.getCurrentUser().getIdRol().getIdRol() == 1){
+
+                        return goPedidoListAdmin();
+                    }
+                     if(currentUsuario.getCurrentUser().getIdRol().getIdRol() == 3){
+
+                        return goPedidoTodayUser();
+                    }
+                    
+                }
+
+            }
+        }
+        
+        JsfUtil.addErrorMessage("Ingrese productos al pedido antes de finalizar");
+
+        return null;
+
+    }
+
+
+    public void update() {
+
+        if (!currentDetallePedido.getCurrentItems().isEmpty()) {
+
+            persist(JsfUtil.PersistAction.UPDATE, "alan tiwa");
+            if (!JsfUtil.isValidationFailed()) {
+                items = null;    // Invalidate list of items to trigger re-query.
+                FacesContext facesContext = FacesContext.getCurrentInstance();
+                Flash flash = facesContext.getExternalContext().getFlash();
+                flash.setKeepMessages(true);
+                flash.setRedirect(true);
+                prepareUpdate();
+
+            }
 
         } else {
 
-            currentDetallePedido.addShoppingCart();
-
-        }
-
-    }
-
-    public String create() {
-        
-        if( !currentDetallePedido.getCurrentItems().isEmpty()){
-            
-        persist(JsfUtil.PersistAction.CREATE, "el pedido se creo");
-        if (!JsfUtil.isValidationFailed()) {
-            itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Flash flash = facesContext.getExternalContext().getFlash();
-            flash.setKeepMessages(true);
-            flash.setRedirect(true);
-            prepareCreate();
-            currentmesa.setSelected(null);
-            return goPedidoList();
-        }
-        
-        
-        }else{
-        
             JsfUtil.addErrorMessage("Ingrese productos al pedido antes de finalizar");
-        }
-       return null;
-    }
-
-    public void update() {
-        persist(JsfUtil.PersistAction.UPDATE, "alan tiwa");
-        if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            Flash flash = facesContext.getExternalContext().getFlash();
-            flash.setKeepMessages(true);
-            flash.setRedirect(true);
-            prepareUpdate();
 
         }
 
@@ -280,13 +307,13 @@ public class PedidoController implements Serializable {
         if (selected != null) {
 
             try {
-                //  if (persistAction != JsfUtil.PersistAction.DELETE) {
+
                 if (persistAction == JsfUtil.PersistAction.CREATE) {
 
                     //fecha ingreso pedido
                     Date f = new Date();
                     selected.setFecha(f);
-                    //define hora de ingreso
+                    //define hora pedido
                     Date h = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                     selected.setHora(sdf.format(h));
@@ -298,48 +325,107 @@ public class PedidoController implements Serializable {
                     selected.setIdMesa(currentmesa.getSelected());
 
                     // ingresar usuario a bd
-                    selected.setIdUsuario(contextUsuario.getCurrentUser());
+                    selected.setIdUsuario(currentUsuario.getCurrentUser());
 
                     //modificar estado mesa
                     currentmesa.getSelected().setEstado(Boolean.TRUE);
                     currentmesa.llamarEditarMesa();
-
+                    
                     int total = 0;
                     for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
+                        
                         dv.setIdPedido(selected);
+                        
                         total += dv.getPrecioTotal();
+                     
+                        
                     }
                     selected.setTotal(total);
                     selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
 
                     getEjbFacade().edit(selected);
-
+                    
+                    //actualizar stock productos del carro
+                    updateStock();
+                    
                     currentDetallePedido.reinit();
+                    
                     JsfUtil.addSuccessMessage(successMessage);
 
                 }
 
                 if (persistAction == JsfUtil.PersistAction.UPDATE) {
-                    int total = selected.getTotal();
-                    for (DetallePedido dv : currentDetallePedido.getCurrentItems()) {
+                    
+                  List<DetallePedido> itemsOrders = new ArrayList<DetallePedido>();
+                  List<DetallePedido> nueva = new ArrayList<DetallePedido>();
+                  
+                 int total = selected.getTotal();
 
-                        dv.setIdPedido(selected);
-                        total += dv.getPrecioTotal();
-
-                    }
+                  
+                  itemsOrders = selected.getDetallepedidoList();
+                    
+                  for (DetallePedido ls : currentDetallePedido.getCurrentItems()){
+                  
+                      int idProducto = ls.getIdProducto().getIdProducto();
+                      int cantidad = ls.getCantArt();
+                      
+                      //ver si contiene un producto igual
+                      if (itemsOrders.contains(ls)){
+                          
+                          for ( DetallePedido obj: itemsOrders){
+                          
+                          if (idProducto == obj.getIdProducto().getIdProducto()){
+                            
+                              //sumar cantidad
+                              int sumaCant = cantidad + obj.getCantArt();
+                              int precioTotal = sumaCant * obj.getPrecioUni();
+                              
+                            obj.setCantArt(sumaCant);
+                            obj.setPrecioTotal(precioTotal);
+                            
+                            total+= ls.getCantArt() * ls.getPrecioUni();
+                            
+                            
+                            currentDetallePedido.getEjbFacade().edit(obj);
+                          
+                          } 
+                      
+                          
+                          }
+                          
+                          
+                      } else {
+                          
+                        total+= ls.getCantArt() * ls.getPrecioUni();
+                      
+                         // agrega obj a la lista
+                        ls.setIdPedido(selected);
+                        nueva.add(ls);
+                      
+                      }
+                   
+                  }
+                  
+                          for( DetallePedido old : itemsOrders){
+                      
+                          if(!nueva.contains(old)){
+                          
+                              nueva.add(old);
+                          
+                          }
+                      
+                      }
+                  
                     selected.setTotal(total);
-
-                    List<DetallePedido> detalleaux = new ArrayList<DetallePedido>();
-                    detalleaux = selected.getDetallepedidoList();
-                    for (DetallePedido dv : detalleaux) {
-                        currentDetallePedido.getCurrentItems().add(dv);
-                    }
-                    selected.setDetallepedidoList(currentDetallePedido.getCurrentItems());
+                    selected.setDetallepedidoList(nueva); 
 
                     getEjbFacade().edit(selected);
-                    JsfUtil.addSuccessMessage("Producto agregado correctamente al pedido");
-
+                    JsfUtil.addSuccessMessage("Mesa actualizada correctamente");
+                    
+                    
+           
                 }
+                
 
                 if (persistAction == JsfUtil.PersistAction.DELETE) {
 
@@ -354,8 +440,9 @@ public class PedidoController implements Serializable {
                             List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
 
                             for (Receta receta : recetas) {
+
                                 double stockActual = receta.getIdIngrediente().getStockActual();
-                                double cantidad = receta.getCantidad();
+                                double cantidad = (receta.getCantidad() * producto.getCantArt());
 
                                 receta.getIdIngrediente().setStockActual(stockActual + cantidad);
                                 currentingrediente.setSelected(receta.getIdIngrediente());
@@ -366,13 +453,12 @@ public class PedidoController implements Serializable {
                         } else {
 
                             int stockActual = producto.getIdProducto().getStockActual();
-                            int cantidad = producto.getCantArt();
 
-                            producto.getIdProducto().setStockActual(stockActual + cantidad);
+                            producto.getIdProducto().setStockActual(stockActual + producto.getCantArt());
+
                             currentproducto.setSelectedProducto(producto.getIdProducto());
-                            currentproducto.actualizarStock();
 
-                        }
+                            currentproducto.actualizarStock();
 
                     }
 
@@ -384,7 +470,7 @@ public class PedidoController implements Serializable {
                     getEjbFacade().remove(selected);
                     currentmesa.setSelected(null);
                     JsfUtil.addSuccessMessage(successMessage);
-
+                    }
                 }
 
             } catch (EJBException ex) {
@@ -404,6 +490,44 @@ public class PedidoController implements Serializable {
             }
         }
     }
+    
+    public void updateStock() {
+
+        for (DetallePedido producto : currentDetallePedido.getCurrentItems()) {
+
+            if (producto.getIdProducto().getCompuesto() == false) {
+            
+            int stockActual = producto.getIdProducto().getStockActual();
+            int cantidad = producto.getCantArt();
+
+            producto.getIdProducto().setStockActual(stockActual - cantidad);
+            currentproducto.setSelectedProducto(producto.getIdProducto());
+            currentproducto.actualizarStock();
+            
+            } else {
+                
+            // le pasa el id del producto seleccionado
+            
+             int idProducto = producto.getIdProducto().getIdProducto();
+
+            List<Receta> recetas = currentreceta.getRecetasPorProducto(idProducto);
+            
+            for (Receta receta : recetas) {
+                    
+                    double stockActual = receta.getIdIngrediente().getStockActual();
+                    double cantidad = (receta.getCantidad() * producto.getCantArt());
+
+                    receta.getIdIngrediente().setStockActual(stockActual - cantidad);
+                    currentingrediente.setSelected(receta.getIdIngrediente());
+                    currentingrediente.actualizarStock();
+
+                }
+            
+            }
+            
+        }
+    }
+ 
 
     public Pedido getPedido(java.lang.Long id) {
         return getEjbFacade().find(id);
@@ -466,14 +590,24 @@ public class PedidoController implements Serializable {
 
     }
 
-    public String goPedidoCreate() {
+    public String goPedidoCreateAdmin() {
         prepareCreate();
-        return "pedido-create";
+        return "pedido-create-admin";
+    }
+    
+     public String goPedidoCreateMesero() {
+        prepareCreate();
+        return "pedido-create-mesero";
     }
 
-    public String goPedidoList() {
-
-        return "pedido-list";
+    public String goPedidoListAdmin() {
+        
+        return "pedido-list-admin";
+    }
+    
+      public String goPedidoListMesero() {
+        
+        return "pedido-list-mesero";
     }
 
     public String goPedidoSearch() {
@@ -482,9 +616,15 @@ public class PedidoController implements Serializable {
 
     }
     
-     public String goPedidoToday() {
+     public String goPedidoTodayAdmin() {
 
-        return "pedido-today";
+        return "pedido-today-admin";
+
+    }
+     
+       public String goPedidoTodayUser() {
+
+        return "pedido-today-mesero";
 
     }
 
@@ -499,9 +639,5 @@ public class PedidoController implements Serializable {
         itemsFiltrados = ejbFacade.findDate(fechaConsulta);
 
     }
-    
-   
-    
-    
 
 }

@@ -1,0 +1,148 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Nuevo" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+
+            <h:form id="PedidoCreateForm">
+
+                <div class="ContainerIndent">
+                    <!-- First container -->
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-search-outline"></i> Buscar Producto
+                                </div>
+                                <div class="EmptyBox10" />
+
+                                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+
+
+                                    <p:selectOneMenu id="mesa" style="width: 90%" styleClass="Wid90"
+                                                     value="#{mesaController.selected}" 
+                                                     converter="mesaConverter" effect="blind"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     required="true" requiredMessage="Seleccione una mesa!"
+                                                     disabled="#{not empty detalleController.currentItems}">
+
+                                        <f:selectItem itemLabel="Seleccione Mesa" />
+                                        <f:selectItems value="#{mesaController.itemsDisponibles}"
+                                                       var="item"
+                                                       itemValue="#{item}"
+                                                       itemLabel="#{item.nombre.toString()}"/>  
+                                    </p:selectOneMenu>
+
+                                    
+                                        
+                                    
+                                    
+                                    <p:selectOneMenu id="producto" style="width: 90%" styleClass="Wid90"
+                                                     value="#{productoController.selectedProducto}" 
+                                                     converter="productoConverter" effect="blind"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                      >
+                                                     
+
+                                        <f:selectItem itemLabel="Seleccione Producto"/>
+                                        <f:selectItems value="#{productoController.itemsActivos}"
+                                                       var="item"
+                                                       itemValue="#{item}"
+                                                       itemLabel="#{item.nombre.toString().concat(' [').concat(item.stockActual.toString()).concat(']')}"/>  
+                                    </p:selectOneMenu>
+
+                                    
+                                    <p:spinner value="#{detalleController.currentDetallePedido.cantArt}" min="1"  
+                                               placeholder="Cantidad" styleClass="Wid90"/>
+                                </p:panelGrid>
+
+
+                                <p:commandButton id="boton_add" value="Add" update="PedidoCreateForm" action="#{detalleController.addShoppingCart()}" />
+                                
+                                
+
+                            </p:panel>
+                        </div>
+                    </div>
+
+                    <div class="Container100 Responsive">
+                        <div class="ContainerIndent">
+                            <p:panel>
+                                <!--title-->
+                                <div class="Container100 Responsive Fs20 hardblue">
+                                    <i class="icon-basket-1"></i> En orden
+                                </div>
+                                <div class="EmptyBox10" />
+
+
+                                <p:outputPanel id="outPanel">
+                                    <p:dataTable value="#{detalleController.currentItems}" var="currentItems" id="itemsCar">
+
+                                        <p:column headerText="Producto">
+                                            <h:outputText value="#{currentItems.idProducto.nombre}" />
+                                        </p:column>
+
+                                        <p:column headerText="Cantidad">
+                                                    <h:outputText value="#{currentItems.cantArt}"/> 
+                                        </p:column>
+
+                                        <p:column headerText="Precio uni">     
+
+                                            <h:outputText value="#{currentItems.precioUni}" />     
+
+                                        </p:column>
+                                        
+                                       <p:column headerText="Precio total">     
+
+                                           <h:outputText value="#{currentItems.precioTotal}" />     
+
+                                        </p:column>
+
+                                    <p:column headerText="Action">
+
+                                        <p:commandLink value="Eliminar" update="PedidoCreateForm"   action="#{detalleController.removeShoppingCart()}">
+                                                <f:setPropertyActionListener value="#{currentItems}" target="#{detalleController.selected}"/>
+                                                <p:collector value="#{currentItems}" removeFrom="#{detalleController.currentItems}" unique="true" />
+                                            </p:commandLink>
+
+                                        </p:column>
+                        
+                                    </p:dataTable>
+                                    
+
+                                    <br/>
+
+
+                                </p:outputPanel>
+
+                                
+
+                            </p:panel>
+                            
+              
+                            
+                            <br/>
+                            <p:commandButton id="btn_end" value="Terminar pedido"  action="#{pedidoController.create()}" update="PedidoCreateForm" />
+
+                            <br/>
+                        </div>
+                    </div>
+
+
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,6 +1,5 @@
 package com.egs.webapp.managedBeans;
 
-import com.egs.webapp.entities.Producto;
 import com.egs.webapp.entities.Receta;
 import com.egs.webapp.sessionBeans.RecetaFacade;
 import com.egs.webapp.util.JsfUtil;
@@ -20,7 +19,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 import javax.inject.Named;
-
+import org.primefaces.event.RowEditEvent;
 
 @Named(value = "recetaController")
 @SessionScoped
@@ -29,18 +28,18 @@ public class RecetaController implements Serializable {
     /**
      * Creates a new instance of RecetaController
      */
-    
     @EJB
     private com.egs.webapp.sessionBeans.RecetaFacade ejbFacade;
     private List<Receta> items = null;
     private List<Receta> recetas = null;
     private Receta selected;
     // This items are only available in shopping cart 
-    private Receta currentReceta; 
-    
+    private Receta currentReceta;
+
     private List<Receta> currentItems = null;
-    
-   
+
+    private double cant;
+
     @EJB
     private RecetaFacade recetaFacade;
 
@@ -51,8 +50,8 @@ public class RecetaController implements Serializable {
     public void setRecetaFacade(RecetaFacade recetaFacade) {
         this.recetaFacade = recetaFacade;
     }
-    
-    @Inject    
+
+    @Inject
     private ProductoController currentproducto;
 
     public ProductoController getCurrentproducto() {
@@ -62,7 +61,7 @@ public class RecetaController implements Serializable {
     public void setCurrentproducto(ProductoController currentproducto) {
         this.currentproducto = currentproducto;
     }
-    
+
     @Inject
     private CategoriaController currentcategoria;
 
@@ -73,8 +72,8 @@ public class RecetaController implements Serializable {
     public void setCurrentcategoria(CategoriaController currentcategoria) {
         this.currentcategoria = currentcategoria;
     }
-    
-    @Inject    
+
+    @Inject
     private IngredienteController currentingrediente;
 
     public IngredienteController getCurrentingrediente() {
@@ -84,18 +83,16 @@ public class RecetaController implements Serializable {
     public void setCurrentingrediente(IngredienteController currentingrediente) {
         this.currentingrediente = currentingrediente;
     }
-  
+
     public RecetaController() {
-        
+
     }
-        
+
     public RecetaFacade getEjbFacade() {
         return ejbFacade;
     }
-    
-  
-    
-     public List<Receta> getItems() {
+
+    public List<Receta> getItems() {
         if (items == null) {
             items = getEjbFacade().findAll();
         }
@@ -105,77 +102,99 @@ public class RecetaController implements Serializable {
     public void setCurrentItems(List<Receta> currentItems) {
         this.currentItems = currentItems;
     }
-    
-        
+
     public Receta getSelected() {
         return selected;
     }
-    
+
     public void setSelected(Receta selected) {
         this.selected = selected;
     }
-    
-    protected void initializeEmbeddableKey() {
-    }
-    
-    
-    public Receta prepareCreate() {
-           
-      this.currentItems=new ArrayList<Receta>();
-      this.currentReceta = new Receta();
-     // currentproducto.setSelectedProducto(null);
-     // currentcategoria.setSelected(null);
-      currentingrediente.setSelected(null);
-     // currentproducto.init();
-     //currentingrediente.init();
-      return currentReceta;
-    }
-    
-    public void init (){
-         
-        if (currentReceta == null){
-         currentReceta = new Receta();
-         }
-         if (currentItems == null){
-         currentItems = new ArrayList <Receta>();
-         }  
-     }
-    
-    public String reinit (){
-         currentItems = new ArrayList <Receta>();
-         currentReceta = new Receta(); // setea el objeto receta para usarlo de nuevo
-         currentingrediente.setSelected(null);
 
-         return null;
-     }
-     
-     
+    public double getCant() {
+        return cant;
+    }
+
+    public void setCant(double cant) {
+        this.cant = cant;
+    }
+
+    public Receta prepareCreate() {
+
+        this.currentItems = new ArrayList<Receta>();
+        this.currentReceta = new Receta();
+     // currentproducto.setSelectedProducto(null);
+        // currentcategoria.setSelected(null);
+        currentingrediente.setSelected(null);
+     // currentproducto.init();
+        //currentingrediente.init();
+        return currentReceta;
+    }
+
+    public void init() {
+
+        if (currentReceta == null) {
+            currentReceta = new Receta();
+        }
+        if (currentItems == null) {
+            currentItems = new ArrayList<Receta>();
+        }
+    }
+
+    public void reset() {
+
+        currentReceta = new Receta();
+        currentItems = new ArrayList<Receta>();
+
+    }
+
+    public String reinit() {
+        currentItems = new ArrayList<Receta>();
+        currentReceta = new Receta(); // setea el objeto receta para usarlo de nuevo
+        currentingrediente.setSelected(null);
+
+        return null;
+    }
+
     public void addIngrediente() {
-        
+
+        currentReceta.setIdProducto(currentproducto.getSelectedProducto());
+        currentReceta.setIdIngrediente(currentingrediente.getSelected());
+        currentReceta.setUmedida(currentingrediente.getSelected().getUmedida());
+
+        currentproducto.update();
+
+    }
+
+    public void addIngredienteReceta() {
+
         currentReceta.setIdIngrediente(currentingrediente.getSelected());
         currentReceta.setUmedida(currentingrediente.getSelected().getUmedida());
         
         currentItems.add(currentReceta);
-        currentReceta = new Receta();              
-          
+        currentReceta = new Receta();
+        
+       currentingrediente.setSelected(null);
+      
+
     }
-    
+
     public String create() {
-        persist(JsfUtil.PersistAction.CREATE,  "producto compuesto creado");
+        persist(JsfUtil.PersistAction.CREATE, "receta creada");
         if (!JsfUtil.isValidationFailed()) {
             items = null;    // Invalidate list of items to trigger re-query.
             FacesContext facesContext = FacesContext.getCurrentInstance();
-             Flash flash = facesContext.getExternalContext().getFlash();
-             flash.setKeepMessages(true);
-             flash.setRedirect(true);
-             prepareCreate();
-             return goRecetaCreate();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareCreate();
+            return goRecetaCreate();
         }
         return null;
     }
 
     public void update() {
-        persist(JsfUtil.PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("IngredienteUpdated"));
+        persist(JsfUtil.PersistAction.UPDATE, "");
     }
 
     public void destroy() {
@@ -185,21 +204,30 @@ public class RecetaController implements Serializable {
             items = null;    // Invalidate list of items to trigger re-query.
         }
     }
-    
+
     private void persist(JsfUtil.PersistAction persistAction, String successMessage) {
         if (selected != null) {
-           
+
             try {
-                if (persistAction != JsfUtil.PersistAction.DELETE) {
-                   currentproducto.getSelectedProducto().setRecetaList(currentItems);
-                   currentproducto.getSelectedProducto().setCompuesto(Boolean.TRUE);
-                   currentproducto.getSelectedProducto().setIdCategoria(currentcategoria.getSelected());
-                   
-                   getEjbFacade().edit(selected);
-                } else {
+                if (persistAction == JsfUtil.PersistAction.CREATE) {
+                    currentproducto.getSelectedProducto().setRecetaList(currentItems);
+                    currentproducto.getSelectedProducto().setCompuesto(Boolean.TRUE);
+                    currentproducto.getSelectedProducto().setIdCategoria(currentcategoria.getSelected());
+
+                    getEjbFacade().edit(selected);
+                    JsfUtil.addSuccessMessage(successMessage);
+                }
+
+                if (persistAction == JsfUtil.PersistAction.DELETE) {
                     getEjbFacade().remove(selected);
                 }
-               JsfUtil.addSuccessMessage(successMessage);
+
+                if (persistAction == JsfUtil.PersistAction.UPDATE) {
+
+                    currentItems.add(currentReceta);
+                    JsfUtil.addSuccessMessage("updateperro");
+                }
+
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -217,8 +245,7 @@ public class RecetaController implements Serializable {
             }
         }
     }
-    
-    
+
     public Receta getReceta(java.lang.Long id) {
         return getEjbFacade().find(id);
     }
@@ -269,11 +296,11 @@ public class RecetaController implements Serializable {
                 return null;
             }
         }
-   
+
     }
-    
+
     public List<Receta> getRecetasPorProducto(int idProducto) {
-        
+
         if (recetas == null) {
             recetas = getEjbFacade().recetaidProducto(idProducto);
         }
@@ -283,8 +310,6 @@ public class RecetaController implements Serializable {
     public void setRecetas(List<Receta> recetas) {
         this.recetas = recetas;
     }
-    
-    
 
     public Receta getCurrentReceta() {
         return currentReceta;
@@ -293,21 +318,43 @@ public class RecetaController implements Serializable {
     public List<Receta> getCurrentItems() {
         return currentItems;
     }
-    
-    
-    public String goRecetaCreate(){
-    prepareCreate();
-    return "ingrediente-new";
+
+    public String goRecetaCreate() {
+        prepareCreate();
+        return "ingrediente-new";
     }
-    
-    public String goRecetaList(){
-    prepareCreate();
-    return "pedido-list";
+
+    public String goRecetaList() {
+        prepareCreate();
+        return "pedido-list";
     }
-    
-    
-    
-    
+
+    public void editareceta(Receta currentreceta) {
+
+        getRecetaFacade().edit(currentreceta);
+
+    }
+
+    public void actualizar(RowEditEvent event) {
+
+        Receta r = (Receta) event.getObject();
+        cant = r.getCantidad();
+        r.setCantidad(cant);
+
+        getRecetaFacade().edit(r);
+        JsfUtil.addSuccessMessage("cantidad de ingrediente actualizada");
+    }
+
+    public void cancelar(RowEditEvent event) {
+
+    }
+
+    public void eliminaringrediente() {
+
+        getRecetaFacade().remove(selected);
+
+    }
+
 }
 
 

@@ -1,0 +1,125 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Pedido" url="#" />
+        <p:menuitem value="Buscar" url="#" disabled="true"/>
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Pedidos
+                        </div>
+                        <div class="EmptyBox10" />
+
+                        <h:form id="searchListForm">
+
+
+                            <h:panelGrid columns="2" cellpadding="5">
+
+                                <h:outputScript name="spanish.js" library="js"/>
+
+                                <p:calendar id="name" value="#{pedidoController.fechaConsulta}" pattern="yyyy-MM-dd" locale="es" />
+
+                                <p:commandButton value="Aceptar" update="searchListForm" icon="ui-icon-check" action="#{pedidoController.search()}" />
+
+                            </h:panelGrid>
+
+                            <p:panel>
+
+                                <p:dataTable id="datatable" var="current" value="#{pedidoController.itemsFiltrados}"
+                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+                                             selection="#{pedidoController.selected}" selectionMode="single"
+                                             rowKey="#{current.idPedido}"
+                                             emptyMessage="No se encontraron registros"
+                                             reflow="true">  
+
+
+                                    <p:column headerText="Mesa" 
+                                              filterMatchMode="contains">
+                                        <h:outputText value="#{current.idMesa.nombre}">
+                                        </h:outputText>
+                                    </p:column>
+
+
+
+                                    <p:column headerText="Usuario" filterBy="#{current.idUsuario.username}" 
+                                              filterMatchMode="contains" >
+                                        <h:outputText value="#{current.idUsuario.username}"/>
+                                    </p:column> 
+
+
+
+                                    <p:column headerText="Total">
+                                        <h:outputText value="#{current.total}">
+                                            <f:convertNumber currencySymbol="$"  pattern="¤###,###" type="currency"/>
+                                        </h:outputText>
+                                    </p:column> 
+
+                                    <p:column headerText="Fecha" filterBy="#{current.fecha}" 
+                                              filterMatchMode="contains">
+
+                                        <h:outputText value="#{current.fecha}">
+                                            <f:convertDateTime pattern="dd-MM-yyyy"/>
+                                        </h:outputText>
+                                    </p:column> 
+
+                                    
+                                    <p:column headerText="Hora">
+                                        <h:outputText value="#{current.hora}"/>
+                                    </p:column> 
+
+
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="Estado"/>
+                                        </f:facet>
+
+                                        <h:outputText value="Pagado" styleClass="clase-parto-no" rendered="#{current.estado == true}"/>
+
+                                        <h:outputText value="Pendiente" styleClass="clase-parto-si" rendered="#{current.estado == false}" />
+                                    </p:column>
+
+                                    
+                                    <f:facet name="{Exporters}">
+                                        <h:commandLink>
+                                            <p:graphicImage name="png/xls.png" width="24"/>
+                                            <p:dataExporter type="xls" target="datatable" fileName="exel" id="dt1"  />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage name="png/pdf.png" width="24"/>
+                                            <p:dataExporter type="pdf" target="datatable" fileName="pdf" id="dt2" />
+                                        </h:commandLink>
+                                    </f:facet>  
+
+                                </p:dataTable>
+                            </p:panel>
+
+                        </h:form>
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
+                </div>
+            </div>
+        </div>
+
+    </ui:define>
+</ui:composition>

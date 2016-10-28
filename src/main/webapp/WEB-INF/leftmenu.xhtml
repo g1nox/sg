@@ -15,10 +15,11 @@
             </div>
 
             <ps:menu id="sm_leftmenu">
+               
 
-                <p:menuitem id="sm_dashboard" value=" Dashboard" icon="icon-gauge"  containerStyleClass="layout-menubar-active"/>
+                <p:menuitem id="sm_dashboard" value=" Dashboard" icon="icon-gauge"  containerStyleClass="layout-menubar-active" rendered="#{usuariosController.currentUser.idRol.idRol == 1}" />
 
-                <p:submenu id="usuarios" label=" Usuarios" icon="icon-users-2">
+                <p:submenu id="usuarios" label=" Usuarios" icon="icon-users-2" rendered="#{usuariosController.currentUser.idRol.idRol == 1}">
                     <p:menuitem id="users_lnk1" value="Nuevo" icon="icon-user-add"
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuarios/new')?'active':'' } " 
                                 action="#{usuariosController.goUsuarioCreate()}" />
@@ -30,7 +31,7 @@
                 </p:submenu>
 
 
-                <p:submenu id="productos" label=" Productos" icon="icon-glass">
+                <p:submenu id="productos" label=" Productos" icon="icon-glass" rendered="#{usuariosController.currentUser.idRol.idRol == 1 or usuariosController.currentUser.idRol.idRol == 2 }">
                     <p:menuitem id="prod_lnk1" value="Nuevo" icon="icon-plus-circled" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/Create')?'active':'' } " 
                                 action="#{productoController.goProductoCreate()}" />
@@ -38,6 +39,10 @@
                     <p:menuitem id="prod_lnk2" value="Listar" icon="icon-list" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/List')?'active':'' } " 
                                 action="#{productoController.goProductoList()}" />
+                    
+                    <p:menuitem id="prod_lnk3" value="Producto compuesto" icon="icon-edit" 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/producto/CreateCompuesto')?'active':'' } " 
+                                action="#{productoController.goProductoCreateCompuesto()}" />
                     
                     <p:submenu id="stock" label=" Stock" icon="icon-sort-numeric">
                     
@@ -57,16 +62,13 @@
                 </p:submenu> 
 
 
-                <p:submenu id="ingredientes" label=" Ingredientes" icon="icon-apple">
+                <p:submenu id="ingredientes" label=" Ingredientes" icon="icon-apple" rendered="#{usuariosController.currentUser.idRol.idRol == 1 or usuariosController.currentUser.idRol.idRol == 2 }" >
                     <p:menuitem id="ingrediente_lnk1" value="Nuevo" icon="icon-plus-circled" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrendiente/Create')?'active':'' } "
                                 action="#{ingredienteController.goIngredienteCreate()}"/>
                     <p:menuitem id="ingrediente_lnk2" value="Listar" icon="icon-list" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/List')?'active':'' } " 
                                 action="#{ingredienteController.goIngredienteList()}" />
-                    <p:menuitem id="ingrediente_lnk3" value="Producto compuesto" icon="icon-edit" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/receta/Create')?'active':'' } " 
-                                action="#{productoController.goProductoCreateCompuesto()}" />
                     <p:menuitem id="ingrediente_lnk4" value="Actualizar ingrediente" icon="icon-edit" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/ingrediente/AddIngrediente')?'active':'' } " 
                                 action="#{intoingController.goIntoingCreate()}" />
@@ -76,7 +78,7 @@
                 </p:submenu> 
 
 
-                <p:submenu id="categorias" label=" Categorías" icon="icon-cubes">
+                <p:submenu id="categorias" label=" Categorías" icon="icon-cubes" rendered="#{usuariosController.currentUser.idRol.idRol == 1}">
                     <p:menuitem id="cat_lnk1" value="Nueva" icon="icon-plus-circled" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/categoria/Create')?'active':'' } "
                                 action="#{categoriaController.goCategoriaCreate()}"/>
@@ -86,7 +88,7 @@
                 </p:submenu>
 
 
-                <p:submenu id="proveedores" label=" Proveedores" icon="icon-truck">
+                <p:submenu id="proveedores" label=" Proveedores" icon="icon-truck" rendered="#{usuariosController.currentUser.idRol.idRol == 1}">
                     <p:menuitem id="prov_lnk1" value="Nueva" icon="icon-plus-circled" 
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/proveedor/Create')?'active':'' } "
                                 action="#{proveedorController.goProveedorCreate()}"/>
@@ -97,19 +99,27 @@
 
 
                 <p:submenu id="pedidos" label=" Pedidos" icon="icon-basket">
-                    <p:menuitem id="pedidos_lnk1" value="Nuevo" icon="icon-plus-circled"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Create')?'active':'' } " 
-                                action="#{pedidoController.goPedidoCreate()}"/>
-                    <p:menuitem id="pedidos_lnk2" value="Listar" icon="icon-list"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/List')?'active':'' } " 
-                                action="#{pedidoController.goPedidoList()}"/>
+                    <p:menuitem id="pedidos_lnk1" value="Nuevo para admin" icon="icon-plus-circled" rendered="#{usuariosController.currentUser.idRol.idRol == 1 or usuariosController.currentUser.idRol.idRol == 2 }"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedido/Create')?'active':'' } " 
+                                action="#{pedidoController.goPedidoCreateAdmin()}"/>
+                      <p:menuitem id="pedidos_lnk6" value="Nuevo para mesero" icon="icon-plus-circled" rendered="#{usuariosController.currentUser.idRol.idRol == 3}"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/mesero/pedido/Create')?'active':'' } " 
+                                action="#{pedidoController.goPedidoCreateMesero()}"/>
+                    <p:menuitem id="pedidos_lnk2" value="Listar" icon="icon-list" rendered="#{usuariosController.currentUser.idRol.idRol == 1}"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedido/List')?'active':'' } " 
+                                action="#{pedidoController.goPedidoListAdmin()}"/>
+                     <p:menuitem id="pedidos_lnk7" value="Listar" icon="icon-list" rendered="#{usuariosController.currentUser.idRol.idRol == 3}"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/mesero/pedido/List')?'active':'' } " 
+                                action="#{pedidoController.goPedidoListMesero()}"/>
                     <p:menuitem id="pedidos_lnk3" value="Buscar" icon="icon-search"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Search')?'active':'' } " 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedido/Search')?'active':'' } " 
                                 action="#{pedidoController.goPedidoSearch()}"/>
-
-                    <p:menuitem id="pedidos_lnk4" value="Hoy" icon="icon-search"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedidos/Today')?'active':'' } " 
-                                action="#{pedidoController.goPedidoToday()}"/>
+                    <p:menuitem id="pedidos_lnk4" value="Hoy" icon="icon-search" rendered="#{usuariosController.currentUser.idRol.idRol == 1 or usuariosController.currentUser.idRol.idRol == 2 }"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/pedido/Today')?'active':'' } " 
+                                action="#{pedidoController.goPedidoTodayAdmin()}"/>
+                    <p:menuitem id="pedidos_lnk5" value="Hoy Mesero" icon="icon-search" rendered="#{usuariosController.currentUser.idRol.idRol == 3}"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/mesero/pedido/Today')?'active':'' } " 
+                                action="#{pedidoController.goPedidoTodayUser()}"/>
 
                 </p:submenu>
 
@@ -123,7 +133,15 @@
                     <p:menuitem id="venta_lnk3" value="Por mes" icon="icon-search"
                                 styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/Ventapormes')?'active':'' } " 
                                 action="#{ventaController.goVentaSearchxmes()}"/>
-                    
+                    <p:menuitem id="venta_lnk4" value="Grafico venta ultimos meses" icon="icon-chart"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/graficoventas')?'active':'' } " 
+                                action="#{ventaController.goGraficoVentasMes()}"/>
+                    <p:menuitem id="venta_lnk5" value="Grafico venta usuario top" icon="icon-chart"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/meserotop')?'active':'' } " 
+                                action="#{ventaController.goGraficoVentasUsuario()}"/>
+                    <p:menuitem id="venta_lnk6" value="Grafico producto top" icon="icon-chart"
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/venta/graficoprodtop')?'active':'' } " 
+                                action="#{ventaController.goGraficoVentasProducto()}"/>
                 </p:submenu>
 
 
@@ -136,8 +154,8 @@
                                 action="#{mesaController.goMesaList()}"/>
                 </p:submenu>
 
+                </ps:menu>
 
-            </ps:menu>
 
         </div>
     </h:form>

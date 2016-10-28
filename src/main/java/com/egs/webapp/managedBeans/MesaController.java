@@ -1,6 +1,7 @@
 package com.egs.webapp.managedBeans;
 
 import com.egs.webapp.entities.Mesa;
+import com.egs.webapp.entities.Pedido;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
 import com.egs.webapp.sessionBeans.MesaFacade;
@@ -19,6 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 @Named("mesaController")
 @ApplicationScoped
@@ -29,7 +31,20 @@ public class MesaController implements Serializable {
     private List<Mesa> items = null;
     private List<Mesa> itemsDisponibles = null;
     private Mesa selected;
+    
+    private List<Pedido> mesaconpedido;
+    
+    @Inject
+    private PedidoController currentpedido;
 
+    public PedidoController getCurrentpedido() {
+        return currentpedido;
+    }
+
+    public void setCurrentpedido(PedidoController currentpedido) {
+        this.currentpedido = currentpedido;
+    }
+    
     @EJB
     private MesaFacade mesaFacade;
 
@@ -51,20 +66,22 @@ public class MesaController implements Serializable {
     public void setMesaFacade(MesaFacade mesaFacade) {
         this.mesaFacade = mesaFacade;
     }
-
-    protected void setEmbeddableKeys() {
-    }
-
-    protected void initializeEmbeddableKey() {
-    }
-
+    
     private MesaFacade getFacade() {
         return ejbFacade;
     }
 
+    public List<Pedido> getMesaconpedido() {
+        return mesaconpedido;
+    }
+
+    public void setMesaconpedido(List<Pedido> mesaconpedido) {
+        this.mesaconpedido = mesaconpedido;
+    }
+
     public Mesa prepareCreate() {
         selected = new Mesa();
-        initializeEmbeddableKey();
+        
         return selected;
     }
 
@@ -127,14 +144,24 @@ public class MesaController implements Serializable {
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
+            
             try {
                 if (persistAction != PersistAction.DELETE) {
                     getFacade().edit(selected);
                 } else {
-                    getFacade().remove(selected);
+                    
+                    int idMesa = getSelected().getIdMesa();
+                    
+                    mesaconpedido = currentpedido.getEjbFacade().findidmesa(idMesa);
+                    
+                    if(mesaconpedido.isEmpty()){
+                        getFacade().remove(selected);
+                         JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("No se puede eliminar ya que tiene registros asociados");
+                    }
                 }
-                JsfUtil.addSuccessMessage(successMessage);
+                
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();

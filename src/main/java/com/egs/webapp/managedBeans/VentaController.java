@@ -21,8 +21,6 @@ import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 
 @Named("ventaController")
@@ -34,13 +32,16 @@ public class VentaController implements Serializable {
     private List<Venta> items = null;
     private List<Venta> itemsFiltrados = null;
     private List<Object[]> totalpormes = null;
-    private List<Object> totalmesero = null;
+    
     private List<Venta> ventamesactual = null;
     private List<Venta> ventaxmes = null;
     
+    private List<Object[]> meserotop = null;
+    
     private BarChartModel barModel;
     
-    private List<Venta> totales;
+   
+    private List<Integer> totales;
     
     private List<Object> arqueolist = null;
     private List<Object> arqueototales = null;
@@ -48,13 +49,9 @@ public class VentaController implements Serializable {
     
    private Object seleccion;
     
-   private Double  currentSelectAño;
-   private Double  currentSelectMes;
+   private Double  currentAño;
+   private Double  currentMes;
    
-   
-   
-  // private double m = Double.parseDouble(currentSelectMes);
-  
    
     private Venta selected;
     
@@ -78,6 +75,9 @@ public class VentaController implements Serializable {
     public void setContextUsuario(UsuariosController contextUsuario) {
         this.contextUsuario = contextUsuario;
     }
+    
+    @Inject
+    private ProductoController currentproducto;
 
     @Inject
     private PedidoController currentpedido;
@@ -100,7 +100,18 @@ public class VentaController implements Serializable {
     public void setCurrentmesa(MesaController currentmesa) {
         this.currentmesa = currentmesa;
     }
+  
+    @Inject
+    private MeseroModel currentmtm;
 
+    public MeseroModel getCurrentmtm() {
+        return currentmtm;
+    }
+
+    public void setCurrentmtm(MeseroModel currentmtm) {
+        this.currentmtm = currentmtm;
+    }
+     
     @EJB
     private VentaFacade ventaFacade;
 
@@ -151,23 +162,22 @@ public class VentaController implements Serializable {
         this.seleccion = seleccion;
     }
 
-    public Double getCurrentSelectAño() {
-        return currentSelectAño;
+    public Double getCurrentAño() {
+        return currentAño;
     }
 
-    public void setCurrentSelectAño(Double currentSelectAño) {
-        this.currentSelectAño = currentSelectAño;
+    public void setCurrentAño(Double currentAño) {
+        this.currentAño = currentAño;
     }
 
-    public Double getCurrentSelectMes() {
-        return currentSelectMes;
+    public Double getCurrentMes() {
+        return currentMes;
     }
 
-    public void setCurrentSelectMes(Double currentSelectMes) {
-        this.currentSelectMes = currentSelectMes;
+    public void setCurrentMes(Double currentMes) {
+        this.currentMes = currentMes;
     }
-
-
+    
     public List<Object[]> getTotalpormes() {
         
         if (totalpormes == null) {
@@ -218,6 +228,7 @@ public class VentaController implements Serializable {
     }
 
     public List<Venta> getVentaxmes() {  
+        
         return ventaxmes;
     }
 
@@ -233,32 +244,40 @@ public class VentaController implements Serializable {
         this.barModel = barModel;
     }
 
-    public List<Venta> getTotales() {
+    public List<Integer> getTotales() {
         return totales;
     }
 
-    public void setTotales(List<Venta> totales) {
+    public void setTotales(List<Integer> totales) {
         this.totales = totales;
     }
+
+    public ProductoController getCurrentproducto() {
+        return currentproducto;
+    }
+
+    public void setCurrentproducto(ProductoController currentproducto) {
+        this.currentproducto = currentproducto;
+    }
+
+    public List<Object[]> getMeserotop() {
+        return meserotop;
+    }
+
+    public void setMeserotop(List<Object[]> meserotop) {
+        this.meserotop = meserotop;
+    }
     
-    protected void setEmbeddableKeys() {
-    }
-
-    protected void initializeEmbeddableKey() {
-    }
-
     public Venta prepareCreate() {
         selected = new Venta();
         //currentmesa.setSelected(null);
-        initializeEmbeddableKey();
+        
         return selected;
     }
 
     public void init() {
 
         totalpormes = getFacade().totalventapormes();
-        
-        
         
     }
 
@@ -274,10 +293,10 @@ public class VentaController implements Serializable {
                 flash.setRedirect(true);
                 prepareCreate();
                 init();
-                return currentpedido.goPedidoList();
+                return currentpedido.goPedidoListAdmin();
             }
         } else {
-            return currentpedido.goPedidoList();
+            return currentpedido.goPedidoListAdmin();
         }
 
         return null;
@@ -304,7 +323,7 @@ public class VentaController implements Serializable {
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
+            
             try {
                 if (persistAction != PersistAction.DELETE) {
 
@@ -425,12 +444,25 @@ public class VentaController implements Serializable {
         return "venta-searchxmes";
     }
      
+     public String goGraficoVentasMes() {
+        return "venta-graficoventas";
+     }
+     
+      public String goGraficoVentasUsuario() {
+        return "venta-usuariotop";
+     }
+      
+      public String goGraficoVentasProducto() {
+      return "venta-productotop";
+      }
+     
 
     public void search() {
 
         totalpormes = ejbFacade.totalventapormes();
 
     }
+    
     
      public void searchfordate() {
 
@@ -449,36 +481,22 @@ public class VentaController implements Serializable {
        
        public void consulta(){
        
-      ventaxmes = ejbFacade.ventaxmes(getCurrentSelectMes(), getCurrentSelectAño());
-           
-          
+      ventaxmes = ejbFacade.ventaxmes(getCurrentMes(), getCurrentAño());
+    
        }
        
-       private void convertir(){
        
-          
+      
+       public void metodo(){
+       
+      
+       meserotop = ejbFacade.meserotopxmes(getCurrentMes(), getCurrentAño());
+       
+       currentmtm.consulta();
        
        }
        
-//    private void graficar(List<Object> totalpormes) {
-//
-//        barModel = new BarChartModel();
-//
-//        barModel.setTitle("Bar Chart");
-//
-//        barModel.setTitle("Bar Chart");
-//        barModel.setLegendPosition("ne");
-//
-//        Axis xAxis = barModel.getAxis(AxisType.X);
-//        xAxis.setLabel("Gender");
-//
-//        Axis yAxis = barModel.getAxis(AxisType.Y);
-//        yAxis.setLabel("Births");
-//        yAxis.setMin(0);
-//        yAxis.setMax(200);
-//
-//    }
-
+ 
 
     public long getTotal() {
 
@@ -492,17 +510,6 @@ public class VentaController implements Serializable {
 
     public void setTotal(long total) {
         this.total = total;
-    }
-
-    public List<Object> getTotalmesero() {
-         if (totalmesero == null) {
-        totalmesero = getFacade().meserotopxmes();
-        }
-        return totalmesero; 
-    }
-
-    public void setTotalmesero(List<Object> totalmesero) {
-        this.totalmesero = totalmesero;
     }
 
     public List<Object> getArqueolist() {

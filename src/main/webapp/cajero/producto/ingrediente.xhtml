@@ -1,0 +1,109 @@
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Ingrediente" url="#" />
+        <p:menuitem value="Nueva" url="#" disabled="true"/>
+
+    </ui:define>
+    <ui:define name="content">
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+                    <h:form id="IngredienteCreateForm">
+
+                             
+                        <p:panel header="Descripción ingredientes">
+                        
+                        
+                        <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none">
+            
+        
+             <h:outputText value="Posee ingrediente?" />
+             <p:inputSwitch value="#{productoController.selectedProducto.compuesto}" >       
+                    <p:ajax  update="ing" />
+             </p:inputSwitch>
+                   
+                    
+                       <p:selectOneMenu id="ing" disabled="#{productoController.selectedProducto.compuesto == false}"
+                                                     style="width: 90%"   
+                                                     styleClass="Wid90"
+                                                     value="#{ingredienteController.selected}" 
+                                                     converter="ingredienteConverter"
+                                                     filter="true" filterMatchMode="startsWith"
+                                                     effect="blind"
+                                                     >
+
+                                        <f:selectItem itemLabel="Seleccione ingrediente" />
+                                        <f:selectItems value="#{ingredienteController.items}"
+                                                       var="item"
+                                                       itemValue="#{item}"
+                                                       itemLabel="#{item.nombre.toString()}" />  
+                                         <p:ajax  update="msg" />
+                                    </p:selectOneMenu>
+               
+             <h:outputText id="msg" value="#{ingredienteController.selected.umedida}"  />
+                   
+             <p:inputText value="#{recetaController.currentReceta.cantidad}" label="Cantidad" placeholder="cantidad" styleClass="Wid90"/>
+                   
+                   <p:commandButton id="botonAdd"  value="Add" update="outItems2" action="#{recetaController.addIngrediente()}"/>
+                       
+                       
+                  
+                               
+         
+                </p:panelGrid>
+                            
+                            
+                            
+                            <p:dataTable id="ItemsTable" value="#{recetaController.currentItems}" var="currentItems">
+                                
+                                <p:column headerText="nombre">
+                                    
+                                    <h:outputText value="#{currentItems.idIngrediente.nombre}"/>
+                                    
+                                </p:column>
+                                
+                                
+              
+                                
+                                <p:column headerText="cantidad">
+                                    
+                                    <h:outputText value="#{currentItems.cantidad}"/>
+
+                                    
+                                </p:column>
+                                
+                                <p:column headerText="Action">
+                                            
+                                            <p:commandLink value="Remover" update="ItemsTable">
+                                              <p:collector value="#{currentItems}" removeFrom="#{ingredienteController.currentItems}" unique="true" />
+                                           </p:commandLink>
+                                            
+                                        </p:column>
+                                
+                              </p:dataTable>
+                                
+                      
+                            
+                        </p:panel>   
+                   
+
+                    </h:form>
+                    <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+    </ui:define>
+   </ui:composition>

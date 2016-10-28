@@ -1,5 +1,6 @@
 package com.egs.webapp.managedBeans;
 
+import com.egs.webapp.entities.DetallePedido;
 import com.egs.webapp.entities.Producto;
 import com.egs.webapp.entities.Receta;
 import com.egs.webapp.util.JsfUtil;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -22,6 +24,10 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
 import javax.faces.context.FacesContext;
+import org.primefaces.model.chart.Axis;
+import org.primefaces.model.chart.AxisType;
+import org.primefaces.model.chart.BarChartModel;
+import org.primefaces.model.chart.ChartSeries;
 
 @Named("productoController")
 @SessionScoped
@@ -33,14 +39,33 @@ public class ProductoController implements Serializable {
     private List<Producto> itemsActivos = null;
     private Producto selectedProducto;
     
+    private Producto prodrepedido = null;
+    
+    private BarChartModel barModel;
+    
+    private List<Object> mesyaño = null;
+    
+    private Double currentMes;
+    private Double currentAño;
+    
+    
+    
+    private List<DetallePedido> productocondetalles = null;
+    
     private List<Object> itemsTop = null;
     private List<Object> itemspormes = null;
+    
+    private List<Object[]> productotop = null;
+    
+    // consulta stock producto en bd
+    private int stockActual;
 
     private boolean disponible;
+    
+    private boolean editable;
+    
+    private double cantidad;
 
-    @EJB
-
-    private ProductoFacade productoFacade;
 
     @Inject
 
@@ -99,19 +124,27 @@ public class ProductoController implements Serializable {
     public void setCurrentDetallePedido(DetalleController currentDetallePedido) {
         this.currentDetallePedido = currentDetallePedido;
     }
+    
+    @Inject
+    private ProductoTopModel currentptm;
+
+    public ProductoTopModel getCurrentptm() {
+        return currentptm;
+    }
+
+    public void setCurrentptm(ProductoTopModel currentptm) {
+        this.currentptm = currentptm;
+    }
+    
+    @PostConstruct
+    public void iniciar() {
+        createBarModel();
+    }
 
     // utility attributes
     private boolean checkbox;
 
     public ProductoController() {
-    }
-
-    public ProductoFacade getProductoFacade() {
-        return productoFacade;
-    }
-
-    public void setProductoFacade(ProductoFacade usuarioFacade) {
-        this.productoFacade = usuarioFacade;
     }
 
     public boolean isCheckbox() {
@@ -138,46 +171,136 @@ public class ProductoController implements Serializable {
         this.disponible = disponible;
     }
 
+    public ProductoFacade getEjbFacade() {
+        return ejbFacade;
+    }
+
+    public void setEjbFacade(ProductoFacade ejbFacade) {
+        this.ejbFacade = ejbFacade;
+    }
+
     public List<Object> getItemsTop() {
         
         if (itemsTop == null) {
             // no tiene que encontrarlos a todos   
-           itemsTop = getProductoFacade().productomasvendido();
+           itemsTop = getEjbFacade().productomasvendido();
         }
         return itemsTop;
     }
 
     public List<Object> getItemspormes() {
-        
-        itemspormes = getProductoFacade().productomasvendidopomes();
-        
         return itemspormes;
     }
 
     public void setItemspormes(List<Object> itemspormes) {
         this.itemspormes = itemspormes;
     }
+
+    public int getStockActual(int idProducto){
+  
+        stockActual = getEjbFacade().stockAcualProducto(idProducto);
+        
+        return stockActual;
+    }
+
+    public void setStockActual(int stockActual) {
+        this.stockActual = stockActual;
+    }
+
+    public List<DetallePedido> getProductocondetalles() {
+        return productocondetalles;
+    }
+
+    public void setProductocondetalles(List<DetallePedido> productocondetalles) {
+        this.productocondetalles = productocondetalles;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
+    public double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(double cantidad) {
+        this.cantidad = cantidad;
+    }
     
-
-    protected void setEmbeddableKeys() {
+    public Producto getProdrepedido() {
+        return prodrepedido;
     }
 
-    protected void initializeEmbeddableKey() {
+    public void setProdrepedido(Producto prodrepedido) {
+        this.prodrepedido = prodrepedido;
     }
 
-    private ProductoFacade getFacade() {
-        return ejbFacade;
+    public BarChartModel getBarModel() {
+        return barModel;
     }
 
+    public void setBarModel(BarChartModel barModel) {
+        this.barModel = barModel;
+    }
+
+    public Double getCurrentMes() {
+        return currentMes;
+    }
+
+    public void setCurrentMes(Double currentMes) {
+        this.currentMes = currentMes;
+    }
+
+    public Double getCurrentAño() {
+        return currentAño;
+    }
+
+    public void setCurrentAño(Double currentAño) {
+        this.currentAño = currentAño;
+    }
+
+    public List<Object[]> getProductotop() {
+        return productotop;
+    }
+
+    public void setProductotop(List<Object[]> productotop) {
+        this.productotop = productotop;
+    }
+
+    public List<Object> getMesyaño() {
+        
+        mesyaño = ejbFacade.mesyaño();
+        
+        return mesyaño;
+    }
+
+    public void setMesyaño(List<Object> mesyaño) {
+        this.mesyaño = mesyaño;
+    }
+    
     public Producto prepareCreate() {
         selectedProducto = new Producto();
-        //currentingrediente.setSelected(null);
+        
         currentcategoria.setSelected(null);
         currentproveedor.setSelected(null);
-        //currentreceta.setSelected(null);
+       
         currentreceta.init();
 
         return selectedProducto;
+    }
+    
+      public List<Receta> prepareUpdate() {
+         
+        currentreceta.reset();
+        currentingrediente.setSelected(null);
+        
+        
+        return selectedProducto.getRecetaList();
+        
     }
 
     public String create() {
@@ -210,11 +333,19 @@ public class ProductoController implements Serializable {
     }
 
     public void update() {
-        persist(PersistAction.UPDATE, ResourceBundle.getBundle("/Bundle").getString("ProductoUpdated"));
+        persist(PersistAction.UPDATE, "producto actualizado");
+         if (!JsfUtil.isValidationFailed()) {
+            items = null;    // Invalidate list of items to trigger re-query.
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            Flash flash = facesContext.getExternalContext().getFlash();
+            flash.setKeepMessages(true);
+            flash.setRedirect(true);
+            prepareUpdate();
+         }
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("ProductoDeleted"));
+        persist(PersistAction.DELETE, "el producto se ha eliminado correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selectedProducto = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
@@ -223,28 +354,53 @@ public class ProductoController implements Serializable {
 
     public List<Producto> getItems() {
         if (items == null) {
-            items = getFacade().findAll();
+            items = getEjbFacade().findAll();
         }
         return items;
     }
 
     public List<Producto> getItemsActivos() {
         if (itemsActivos == null) {
-            itemsActivos = getFacade().findbyActivo();
+            itemsActivos = getEjbFacade().findbyActivo();
         }
         return itemsActivos;
     }
     
-   
-
-
+ 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selectedProducto != null) {
-            setEmbeddableKeys();
-            try {
-                if (persistAction != PersistAction.DELETE) {
 
-                    if (selectedProducto.getCompuesto()) {
+            try {
+                if (persistAction == PersistAction.CREATE) {
+
+                    if (selectedProducto.getCompuesto() == false) {
+                        
+                         String nombre = getSelectedProducto().getNombre();
+                         prodrepedido = getEjbFacade().findProducto(nombre);
+                         
+                         if (prodrepedido == null) {
+                          selectedProducto.setIdCategoria(currentcategoria.getSelected());
+                        selectedProducto.setIdProveedor(currentproveedor.getSelected());
+
+                        selectedProducto.setStockActual(0);
+                        selectedProducto.setStockIdeal(0);
+                        selectedProducto.setStockMaximo(0);
+                        selectedProducto.setStockMinimo(0);
+                        selectedProducto.setPrecioVenta(0);
+
+                        getEjbFacade().edit(selectedProducto);
+                        JsfUtil.addSuccessMessage(successMessage);
+                         
+                         } else{
+                         
+                             JsfUtil.addErrorMessage("El producto ya existe");
+                         
+                         }
+                         
+                       
+
+                    } else {
+
                         selectedProducto.setRecetaList(currentreceta.getCurrentItems());
                         selectedProducto.setCompuesto(Boolean.TRUE);
                         selectedProducto.setIdCategoria(currentcategoria.getSelected());
@@ -252,21 +408,57 @@ public class ProductoController implements Serializable {
                         for (Receta dv : currentreceta.getCurrentItems()) {
                             dv.setIdProducto(selectedProducto);
                         }
-                    } else {
-                        this.selectedProducto.setIdCategoria(currentcategoria.getSelected());
-                        this.selectedProducto.setIdProveedor(currentproveedor.getSelected());
 
-                        selectedProducto.setStockActual(0);
-                        selectedProducto.setStockIdeal(0);
-                        selectedProducto.setStockMaximo(0);
-                        selectedProducto.setStockMinimo(0);
+                        getEjbFacade().edit(selectedProducto);
+                        JsfUtil.addSuccessMessage(successMessage);
                     }
-                    getFacade().edit(selectedProducto);
 
-                } else {
-                    getFacade().remove(selectedProducto);
                 }
-                JsfUtil.addSuccessMessage(successMessage);
+                
+                
+                if (persistAction == PersistAction.DELETE){
+                    
+                    int idProducto = getSelectedProducto().getIdProducto();
+                     
+                    productocondetalles = currentDetallePedido.getDetallepedidoFacade().findProdDetalle(idProducto);
+                    
+                    if (productocondetalles.isEmpty()){
+                    getEjbFacade().remove(selectedProducto);
+                    JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                    
+                        JsfUtil.addErrorMessage("No se puede eliminar el producto porque tiene registros asociados");
+                    
+                    }
+                    
+                    
+                }
+                
+                if (persistAction == PersistAction.UPDATE) {
+
+                    List<Receta> detalleaux = new ArrayList<Receta>();
+                    detalleaux = selectedProducto.getRecetaList();
+                   
+
+//                   for (Receta receta : detalleaux) {
+//                       if(currentreceta.getCurrentItems().contains(receta)){
+//                           JsfUtil.addErrorMessage("receta ya contiene este ingrediente");
+//                      } else {
+//                       currentreceta.getCurrentItems().add(receta);
+//                       }
+//                    }
+                    
+                   detalleaux.add(currentreceta.getCurrentReceta());
+                   selectedProducto.setRecetaList(detalleaux);
+                  
+                    //getFacade().edit(selectedProducto);
+                    currentreceta.getEjbFacade().edit(currentreceta.getCurrentReceta());
+                  
+
+                }
+                
+                
+                
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -286,22 +478,22 @@ public class ProductoController implements Serializable {
     }
 
     public Producto getProducto(java.lang.Integer id) {
-        return getFacade().find(id);
+        return getEjbFacade().find(id);
     }
 
     public List<Producto> getItemsAvailableSelectMany() {
-        return getFacade().findAll();
+        return getEjbFacade().findAll();
     }
 
     public List<Producto> getItemsAvailableSelectOne() {
-        return getFacade().findAll();
+        return getEjbFacade().findAll();
     }
 
     public List<Producto> productosActivos() {
 
         if (items == null) {
             // no tiene que encontrarlos a todos   
-            items = getProductoFacade().findbyActivo();
+            items = getEjbFacade().findbyActivo();
         }
         return items;
     }
@@ -346,6 +538,24 @@ public class ProductoController implements Serializable {
         }
 
     }
+    
+    public void UpdateIngredientesStock(){
+    
+          List<Receta> recetas = selectedProducto.getRecetaList();
+    
+           for (Receta receta : recetas) {
+                double stockActual = receta.getIdIngrediente().getStockActual();
+                double cantidad = receta.getCantidad();
+
+                receta.getIdIngrediente().setStockActual(stockActual + cantidad);
+                currentingrediente.setSelected(receta.getIdIngrediente());
+                currentingrediente.actualizarStock();
+
+            }
+    
+    }
+    
+    
 
     public String goProductoCreate() {
         prepareCreate();
@@ -392,12 +602,12 @@ public class ProductoController implements Serializable {
     public void editarProducto(Producto currentProducto) {
         try {
             if (currentProducto != null) {
-                getProductoFacade().edit(currentProducto);
-                //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                getEjbFacade().edit(currentProducto);
+                
                 JsfUtil.addSuccessMessage("Producto editado correctamente ");
             } else {
-                getProductoFacade().edit(selectedProducto);
-                //  FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info", "PrimeFaces Rocks."));
+                getEjbFacade().edit(selectedProducto);
+               
                 JsfUtil.addSuccessMessage("Producto editado correctamente ");
             }
         } catch (Exception ex) {
@@ -405,14 +615,13 @@ public class ProductoController implements Serializable {
             JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
         }
     }
+    
+
 
     public void actualizarStock() {
 
-//        int stockActual = getSelectedProducto().getStockActual();
-//            
-//        getSelectedProducto().setStockActual(stockActual - currentDetallePedido.getSelected().getCantArt());
         try {
-            getProductoFacade().edit(selectedProducto);
+            getEjbFacade().edit(selectedProducto);
             JsfUtil.addSuccessMessage("Stock de producto actualizado");
 
         } catch (Exception ex) {
@@ -432,15 +641,62 @@ public class ProductoController implements Serializable {
     }
 
     public void reinit() {
-        itemsActivos = getFacade().findbyActivo();
+        itemsActivos = getEjbFacade().findbyActivo();
 
     }
     
-    
-
- 
- 
-
+        private void createBarModel() {
+        barModel = initBarModel();
          
+        barModel.setTitle("Nombre del grafico");
+        //barModel.setLegendPosition("ne");
+         
+        Axis xAxis = barModel.getAxis(AxisType.X);
+        xAxis.setLabel("Meses");
+         
+        Axis yAxis = barModel.getAxis(AxisType.Y);
+        yAxis.setLabel("Ventas");
+        yAxis.setMin(0);
+        yAxis.setMax(100);
+    }
+       
+       private BarChartModel initBarModel() {
+        
+        BarChartModel model = new BarChartModel();
+ 
+        ChartSeries boys = new ChartSeries();
+       // boys.setLabel("Boys");
+        
+      getItemsActivos();
+        
+        for(Producto lista: itemsActivos){
+            
+            
+            boys.set(lista.getNombre(), lista.getStockActual());
+            
+        }
+        
+        
+//        boys.set(45, 120000);
+//        boys.set(300, 100000);
+       
+        
+        model.addSeries(boys);
+        
+      
+         
+        return model;
+    }
+       
+       public void consulta(){
+       
+           productotop = ejbFacade.toppormes(getCurrentMes(), getCurrentAño());
+           
+           currentptm.consulta();
+       }
+       
+       
+      
+   	
                
 }

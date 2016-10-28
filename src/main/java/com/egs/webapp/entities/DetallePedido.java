@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -15,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -39,9 +33,7 @@ public class DetallePedido implements Serializable {
     private Integer precioUni;
     @Column(name = "precio_total")
     private Integer precioTotal;
-    @Size(max = 2147483647)
-    @Column(name = "hora_ing")
-    private String horaIng;
+    
     @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")
     @ManyToOne
     private Pedido idPedido;
@@ -50,6 +42,9 @@ public class DetallePedido implements Serializable {
     private Producto idProducto;
 
     public DetallePedido() {
+       
+        this.cantArt = 1;
+        
     }
 
     public DetallePedido(Integer idDetalle) {
@@ -88,14 +83,6 @@ public class DetallePedido implements Serializable {
         this.precioTotal = precioTotal;
     }
 
-    public String getHoraIng() {
-        return horaIng;
-    }
-
-    public void setHoraIng(String horaIng) {
-        this.horaIng = horaIng;
-    }
-
     public Pedido getIdPedido() {
         return idPedido;
     }
@@ -119,14 +106,36 @@ public class DetallePedido implements Serializable {
         return hash;
     }
 
+    
+//    public boolean equals(Object object) {
+//        // TODO: Warning - this method won't work in the case the id fields are not set
+//        if (!(object instanceof DetallePedido)) {
+//            return false;
+//        }
+//        DetallePedido other = (DetallePedido) object;
+//        if ((this.idDetalle == null && other.idDetalle != null) || (this.idDetalle != null && !this.idDetalle.equals(other.idDetalle))) {
+//            return false;
+//        }
+//        return true;
+//    }
+
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof DetallePedido)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
             return false;
         }
-        DetallePedido other = (DetallePedido) object;
-        if ((this.idDetalle == null && other.idDetalle != null) || (this.idDetalle != null && !this.idDetalle.equals(other.idDetalle))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DetallePedido other = (DetallePedido) obj;
+        if (idProducto == null) {
+            if (other.idProducto != null) {
+                return false;
+            }
+        } else if (!idProducto.equals(other.idProducto)) {
             return false;
         }
         return true;

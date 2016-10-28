@@ -3,12 +3,16 @@
 <glassfish-web-app error-url="/util/error.xhtml">
   <context-root>/HABANA</context-root>
   <security-role-mapping>
-    <role-name>vendedor</role-name>
-    <group-name>vendedor</group-name>
-  </security-role-mapping>
-  <security-role-mapping>
     <role-name>administrador</role-name>
     <group-name>administrador</group-name>
+  </security-role-mapping>
+  <security-role-mapping>
+    <role-name>cajero</role-name>
+    <group-name>cajero</group-name>
+  </security-role-mapping>
+  <security-role-mapping>
+    <role-name>mesero</role-name>
+    <group-name>mesero</group-name>
   </security-role-mapping>
   <class-loader delegate="true"/>
   <jsp-config>

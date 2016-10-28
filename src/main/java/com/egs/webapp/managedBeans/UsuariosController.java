@@ -31,10 +31,6 @@ import javax.inject.Named;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-/**
- *
- * @author EduardoAlexis
- */
 @Named(value = "usuariosController")
 @SessionScoped
 public class UsuariosController implements Serializable {
@@ -126,19 +122,16 @@ public class UsuariosController implements Serializable {
      public List<Object> getItemsTop() {
         
         if (itemsTop == null) {
-            // no tiene que encontrarlos a todos   
            itemsTop = getUsuarioFacade().meseroTop();
         }
         return itemsTop;
     }
     
-
     
         public String login() {
 
         FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest request = (HttpServletRequest) context
-                                     .getExternalContext().getRequest();
+        HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
             request.login(username, pass);
 
@@ -154,22 +147,29 @@ public class UsuariosController implements Serializable {
 
         if (request.isUserInRole("administrador")) {
 
-//            FacesContext facesContext = FacesContext.getCurrentInstance();
-//            Flash flash = facesContext.getExternalContext().getFlash();
-//            flash.setKeepMessages(true);
-//            flash.setRedirect(true);
-//            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "HOLA " + usuario.toUpperCase() + "!", "¿ Por donde empiezas hoy ?"));
-             
             return "welcome-admin";
-        } else if (request.isUserInRole("vendedor")) {
-
-            return "login";
-        } else {
-
-            return "login";
         }
+        
+        if (request.isUserInRole("cajero")) {
+            
+            return "welcome-cajero";
+        } 
+        
+         if (request.isUserInRole("mesero")) {
+            
+            return "welcome-mesero";
+        } 
+        
+        return null;
+        
+        }
+        
+//        else {
+//
+//            return "login";
+//        }
 
-    }
+    
 
     public String logout() {
         String result = "login";

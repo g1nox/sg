@@ -190,7 +190,7 @@ public class IngredienteController implements Serializable {
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
+            
             try {
                 if (persistAction != PersistAction.DELETE) {
                     
@@ -298,13 +298,14 @@ public class IngredienteController implements Serializable {
 
     public String goIngredienteList() {
         init();
+        items = null;
         return "ingrediente-list";
     }
 
     public void actualizarStock() {
         try {
             getFacade().edit(selected);
-            JsfUtil.addSuccessMessage("Stock de ingrediente actualizado");
+            JsfUtil.addSuccessMessage("Stock de ingrediente(producto) actualizado");
 
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
@@ -312,15 +313,7 @@ public class IngredienteController implements Serializable {
         }
     }
     
-     public void actualizarStockReceta(){
-        
-         
-         
-//        for (currentReceta.getSelected().getIdProducto() : recetalist){                    
-//                           
-//                           JsfUtil.addSuccessMessage("paso por aqui");
-//        }                   
-   }
+   
     
           public void llamarEditarIngrediente(){
         

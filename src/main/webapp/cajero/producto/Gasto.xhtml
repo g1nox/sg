@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="breadcrumb">
+        <p:menuitem value="Productos" url="#" />
+        <p:menuitem value="Gasto entradas" url="#" disabled="true"/>
+
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:outputScript name="jquery/jquery.js" library="primefaces" target="head"/>
+
+
+        <div class="Container100">
+            <!--  second row -->
+            <div class="ContainerIndent">
+
+                <div class="Container100 Responsive">
+
+                    <p:panel>
+                        <div class="Container100 Responsive Fs20 hardblue">
+                            <i class="icon-table"></i> Entrada Productos
+                        </div>
+                        <div class="EmptyBox10" />
+
+                        <h:form id="search4">
+
+                            <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none" >
+
+                             
+                                <h:outputScript name="spanish.js" library="js"/>
+                                
+                                <p:calendar id="cal1" value="#{intoprodController.fechaConsulta}" pattern="yyyy-MM-dd" locale="es"/>
+                                <p:commandButton value="Aceptar" action="#{intoprodController.gastofordate()}" update="ingdiariop"/>
+                                
+                                <p:calendar id="cal2" value="#{intoingController.fechaConsulta}" pattern="yyyy-MM-dd" locale="es"/>
+                                <p:commandButton value="Aceptar" action="#{intoingController.gastofordate()}" update="gastoing"/>
+
+                            </p:panelGrid>
+                            
+
+                            
+                            
+                            
+                            <p:dataTable id="ingdiariop" var="current" value="#{intoprodController.gastolist}"
+                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+                                         paginatorPosition="bottom"
+                                         rowKey="#{current[0]}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+                            
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Usuario"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.idUsuario.username}"/>
+                                    <br />
+                                </p:column>
+                                
+                                 <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Producto"/>
+                                    </f:facet>
+                                     <h:outputText value="#{current.idProducto.nombre}"/>
+                                    <br />
+                                </p:column>
+                                
+
+                                         <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Cantidad"/>
+                                    </f:facet>
+                                             <h:outputText value="#{current.cantArt}"/>
+                          
+                                    <br />
+                                </p:column>
+                                
+                                   <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Gasto asociado"/>
+                                    </f:facet>
+                                       <h:outputText value="#{current.gasto}"/>
+                          
+                                    <br />
+                                </p:column>
+                                
+                            
+                            </p:dataTable> 
+                            
+                            <p:dataTable id="gastoing" var="current" value="#{intoingController.gastoing}"
+                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15"
+                                         paginatorPosition="bottom"
+                                         rowKey="#{current[0]}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+                            
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Usuario"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.idUsuario.username}"/>
+                                    <br />
+                                </p:column>
+                                
+                                 <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Producto"/>
+                                    </f:facet>
+                                     <h:outputText value="#{current.idIngrediente.nombre}"/>
+                                    <br />
+                                </p:column>
+                                
+
+                                
+                                   <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Gasto asociado"/>
+                                    </f:facet>
+                                       <h:outputText value="#{current.gasto}"/>
+                          
+                                    <br />
+                                </p:column>
+                                
+                            
+                            </p:dataTable> 
+                            
+           
+
+                        </h:form>
+                        
+                       
+            
+            
+            </p:panel>
+                 <div class="EmptyBox10" />
+                </div>
+
+            </div>
+
+
+        </div>
+          
+                    
+        </ui:define>
+    </ui:composition>
