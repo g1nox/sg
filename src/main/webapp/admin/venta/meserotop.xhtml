@@ -28,7 +28,7 @@
                         </div>
                         <div class="EmptyBox10" />
 
-                        <h:form id="search3">
+                        <h:form id="Graf2">
 
                            
 
@@ -66,7 +66,7 @@
                                     </p:column>
 
                                     <p:column>
-                                        <p:commandButton action="#{ventaController.metodo()}" update="meseroDetail" oncomplete="PF('meseroDialog').show()" icon="ui-icon-search" title="View">
+                                        <p:commandButton action="#{ventaController.metodo()}" update="Graf2:meseroDetail" oncomplete="PF('meseroDialog').show()" icon="ui-icon-search" title="View">
                                             <f:setPropertyActionListener value="#{current[0]}" target="#{ventaController.currentMes}"/>
                                             <f:setPropertyActionListener value="#{current[1]}" target="#{ventaController.currentAño}"/>
                                         </p:commandButton>
@@ -74,22 +74,39 @@
 
                                 </p:dataTable>
                             
+                             <div class="ui-fluid">
                             
-                            
-                             </h:form>
-                        
-                        <ui:include src="meserografico.xhtml"/>
-           
-            
-            </p:panel>
-                 <div class="EmptyBox10" />
+                            <p:dialog header="Mesero top en ventas" widgetVar="meseroDialog" height="350" width="600" modal="true" maximizable="true" position="center" >
+
+                                <p:outputPanel id="meseroDetail" >
+
+
+                                    <p:chart type="bar" model="#{meseroModel.barModel}" style="center" rendered="#{meseroModel.barModel != null}" />
+
+
+
+                                </p:outputPanel>
+
+
+                            </p:dialog>
+
+                            </div>
+
+
+                        </h:form>
+
+                        <!--                        <ui:include src="meserografico.xhtml"/>-->
+
+
+                    </p:panel>
+                    <div class="EmptyBox10" />
                 </div>
 
             </div>
 
 
         </div>
-          
-                    
-        </ui:define>
-    </ui:composition>
+
+
+    </ui:define>
+</ui:composition>

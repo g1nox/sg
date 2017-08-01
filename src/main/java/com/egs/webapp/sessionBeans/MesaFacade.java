@@ -29,4 +29,18 @@ public class MesaFacade extends AbstractFacade<Mesa> {
       
       }
     
+       public Mesa findMesa(String nombre) {
+        try {
+            Mesa result = (Mesa) getEntityManager().
+                    createQuery("SELECT m FROM Mesa m WHERE m.nombre = ?1 ")
+                    .setParameter(1, nombre)
+                    .getSingleResult();
+
+            return result;
+        } catch (Exception e) {
+
+            return null;
+        }
+    }
+    
 }

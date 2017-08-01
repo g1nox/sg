@@ -46,6 +46,15 @@ public class ProductoFacade extends AbstractFacade<Producto> {
         return pro;
 
     }
+    
+     public List<Producto> findNocompuesto() {
+
+        List<Producto> pro = null;
+        pro = (List<Producto>) getEntityManager().createQuery("SELECT  p  FROM  Producto  p WHERE p.compuesto = FALSE").getResultList();
+
+        return pro;
+
+    }
 
     public List<Object> productomasvendido() {
 

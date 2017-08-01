@@ -26,9 +26,10 @@ public class ProductoTopModel implements Serializable {
 
     private Bar2 obj;
     
+    long yMax = 0;
     
-    private Double currentMes;
-    private Double currentAño;
+    String mes;
+    String año;
     
     @Inject
     private ProductoController currentproducto;
@@ -61,36 +62,97 @@ public class ProductoTopModel implements Serializable {
         this.listagrafico = listagrafico;
     }
 
-    public Double getCurrentMes() {
-        return currentMes;
+
+    public long getyMax() {
+        return yMax;
     }
 
-    public void setCurrentMes(Double currentMes) {
-        this.currentMes = currentMes;
+    public void setyMax(long yMax) {
+        this.yMax = yMax;
     }
 
-    public Double getCurrentAño() {
-        return currentAño;
+    public String getMes() {
+        return mes;
     }
 
-    public void setCurrentAño(Double currentAño) {
-        this.currentAño = currentAño;
+    public void setMes(String mes) {
+        this.mes = mes;
+    }
+
+    public String getAño() {
+        return año;
+    }
+
+    public void setAño(String año) {
+        this.año = año;
+    }
+    
+    private void changemesaño(){
+        
+        double m = currentproducto.getCurrentMes();
+        double a = currentproducto.getCurrentAño();
+        
+        int i = (int)m;
+        int ii = (int)a;
+        
+        if (i == 1){
+            mes = "Enero";
+        }
+        if (i == 2){
+            mes = "Febrero";
+        }
+        if (i == 3){
+            mes = "Marzo";
+        }
+        if (i == 4){
+            mes = "Abril";
+        }
+        if (i == 5){
+            mes = "Mayo";
+        }
+        if (i == 6){
+            mes = "Junio";
+        }
+        if (i == 7){
+            mes = "Julio";
+        }
+        if (i == 8){
+            mes = "Agosto";
+        }
+        if (i == 9){
+            mes = "Septiembre";
+        }
+        if (i == 10){
+            mes = "Octubre";
+        }
+        if (i == 11){
+            mes = "Noviembre";
+        }
+        if (i == 12){
+            mes = "Diciembre";
+        }
+        
+        año = String.valueOf(ii);
+    
     }
     
      private void createBarModel() {
 
         barModel = initBarModel();
+        
+        changemesaño();
 
-        barModel.setTitle("Ventas últimos meses");
+        barModel.setTitle(mes+" "+año);
         barModel.setBarWidth(40);
 
         Axis xAxis = barModel.getAxis(AxisType.X);
         xAxis.setLabel("Producto");
 
         Axis yAxis = barModel.getAxis(AxisType.Y);
+        
         yAxis.setLabel("Unidades vendidas");
         yAxis.setMin(0);
-        yAxis.setMax(120);
+        yAxis.setMax(yMax);
     }
 
     private BarChartModel initBarModel() {
@@ -98,9 +160,17 @@ public class ProductoTopModel implements Serializable {
         BarChartModel model = new BarChartModel();
 
         ChartSeries productos = new ChartSeries();
+        
+        yMax = 0;
 
         for (Bar2 lista : listagrafico) {
 
+             if(lista.getTotal() > yMax ){
+                
+                yMax = lista.getTotal();
+            
+            }
+            
             productos.set(lista.getNombre(), lista.getTotal());
 
         }
@@ -112,7 +182,7 @@ public class ProductoTopModel implements Serializable {
         return model;
     }
     
-      public void consulta(){
+      public void creamodelo(){
        
    
    for (Object[] lista : currentproducto.getProductotop()) {

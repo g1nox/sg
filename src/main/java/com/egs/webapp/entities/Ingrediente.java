@@ -54,9 +54,6 @@ public class Ingrediente implements Serializable {
     @ManyToOne
     private Categoria idCategoria;
     
-    @JoinColumn(name = "id_proveedor", referencedColumnName = "id_proveedor")
-    @ManyToOne
-    private Proveedor idProveedor;
 
     public Ingrediente() {
     }
@@ -113,14 +110,7 @@ public class Ingrediente implements Serializable {
         this.idCategoria = idCategoria;
     }
 
-    public Proveedor getIdProveedor() {
-        return idProveedor;
-    }
 
-    public void setIdProveedor(Proveedor idProveedor) {
-        this.idProveedor = idProveedor;
-    }
-    
     @Override
     public int hashCode() {
         int hash = 0;

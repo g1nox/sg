@@ -7,35 +7,38 @@
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition>
+        
+        <div class="ui-fluid">
 
-        <p:dialog header="EDITAR USUARIOS" id="UsuarioEditDlg" widgetVar="UsuarioEditDialog" modal="true" resizable="false" appendTo="@(body)" >
+        <p:dialog header="EDITAR USUARIOS" id="UsuarioEditDlg" widgetVar="UsuarioEditDialog" resizable="false" responsive="true" width="350" modal="true" maximizable="true" >
            
 
                    <h:form id="UsuarioEditForm">
-                <h:panelGroup id="display">
-                    <p:panelGrid columns="2" rendered="#{usuariosController.selectedUser != null}">
+                
+                    <p:panelGrid  id="display" columns="2" rendered="#{usuariosController.selectedUser != null}">
                         
                         <p:outputLabel value="Nombre:" for="nombre"/>
-                        <p:inputText id="nombre" value="#{usuariosController.selectedUser.nombre}" title="#{bundle.EditUsuarioTitle_nombre}" />
+                        <p:inputText id="nombre" value="#{usuariosController.selectedUser.nombre}"  />
                         
                         <p:outputLabel value="Apellido Paterno:" for="apellidoPat" />
-                        <p:inputText id="apellidoPat" value="#{usuariosController.selectedUser.apellidoPat}" title="#{bundle.EditUsuarioTitle_apellidoPat}" />
+                        <p:inputText id="apellidoPat" value="#{usuariosController.selectedUser.apellidoPat}" />
                         
                         <p:outputLabel value="Apellido Materno:" for="apellidoMat" />
-                        <p:inputText id="apellidoMat" value="#{usuariosController.selectedUser.apellidoMat}" title="#{bundle.EditUsuarioTitle_apellidoMat}" />
+                        <p:inputText id="apellidoMat" value="#{usuariosController.selectedUser.apellidoMat}"  />
                        
                         <p:outputLabel value="Username:" for="username" />
-                        <p:inputText id="username" value="#{usuariosController.selectedUser.username}" title="#{bundle.EditUsuarioTitle_username}" />
+                        <p:inputText id="username" value="#{usuariosController.selectedUser.username}"  />
                         
                         <p:outputLabel value="Mail:" for="mail" />
-                        <p:inputText id="mail" value="#{usuariosController.selectedUser.mail}" title="#{bundle.EditUsuarioTitle_mail}" />
+                        <p:inputText id="mail" value="#{usuariosController.selectedUser.mail}"  />
                         
+                        <p:outputLabel value="Pass:" for="pass" />
+                        <p:password id="pass" value="#{usuariosController.selectedUser.pass}"  placeholder="Password" />
                         
                         <p:outputLabel value="Rol:" for="rol" />
                         <p:selectOneMenu         id="rol" 
                                                  value="#{usuariosController.selectedUser.idRol}"
-                                                 style="width: 90%"   
-                                                 styleClass="Wid90"
+                                                 
                                                  converter="rolConverter"
                                                  filter="true" filterMatchMode="startsWith"
                                                  effect="blind"
@@ -50,29 +53,34 @@
                                                    />  
                                     </p:selectOneMenu>
                         
+                        <p:outputLabel value="Estado" for="switch"
+                                       rendered="#{usuariosController.selectedUser.idRol.idRol == 2 or usuariosController.selectedUser.idRol.idRol == 3 }" />
+                        <p:inputSwitch id="switch"  value="#{usuariosController.selectedUser.estado}" 
+                                       rendered="#{usuariosController.selectedUser.idRol.idRol == 2 or usuariosController.selectedUser.idRol.idRol == 3 }" 
+                                       offLabel="Bloqueado" onLabel="Activo"
+                                        styleClass="Wid50">
+                            
+                        </p:inputSwitch>
+                        
                         
                                
                                 
                     </p:panelGrid>
                     
-                    <p:panel>
+                       <p:panelGrid columns="1">
                         
                         <p:commandButton actionListener="#{usuariosController.llamarEditarUsuario()}" 
                                         value="Guardar cambios"
                                         update="UsuarioEditForm,:userListForm:datatable,:growl"
                                         oncomplete="handleSubmit(args, 'UsuarioEditDialog')"/>
-                    </p:panel>
-                         
-                        
-                    
-                    
-                   
-                                    
-                   
-                </h:panelGroup>
+                    </p:panelGrid>
+                 
+           
             </h:form>
                         
         </p:dialog>
+            
+            </div>
 
     </ui:composition>
 </html>

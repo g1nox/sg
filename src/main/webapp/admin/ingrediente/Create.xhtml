@@ -40,7 +40,8 @@
                                          styleClass="wid90"
                                          required="true"
                                          requiredMessage="Ingrese unidad de medida!">
-                             <f:selectItem itemLabel="Unidad" itemValue="Unidad" />
+                                <f:selectItem itemLabel="Seleccione U.medida" itemValue="" />
+                                <f:selectItem itemLabel="Unidad" itemValue="Unidad" />
                              <f:selectItem itemLabel="Kilo" itemValue="Kilo" />
                             <f:selectItem itemLabel="Litro" itemValue="Litro" />
                             
@@ -57,17 +58,7 @@
                                        itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
                     </p:selectOneMenu>
                             
-                            
-                               <p:selectOneMenu id="proveedor" style="width: 90%"   
-                                     styleClass="Wid90" value="#{proveedorController.selected}"
-                                     converter="proveedorConverter" filter="true"       
-                                     filterMatchMode="startsWith" effect="blind"           
-                                     required="true" requiredMessage="Seleccione proveedor!">
-
-                        <f:selectItem itemLabel="Seleccione Proveedor"/>
-                        <f:selectItems value="#{proveedorController.items}" var="item"
-                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
-                    </p:selectOneMenu>
+                           
                         
                         
 <!--                           <p:selectOneMenu id="disp" value="#{ingredienteController.selected.disponibilidad}" 
@@ -94,7 +85,7 @@
 
                             <p:commandButton update="IngredienteCreateForm" 
                                              value="Aceptar" 
-                                             action="#{ingredienteController.create}"/>
+                                             action="#{ingredienteController.create()}"/>
 
 
                         </p:panelGrid>

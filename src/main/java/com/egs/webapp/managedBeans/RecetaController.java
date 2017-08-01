@@ -121,13 +121,11 @@ public class RecetaController implements Serializable {
 
     public Receta prepareCreate() {
 
-        this.currentItems = new ArrayList<Receta>();
-        this.currentReceta = new Receta();
-     // currentproducto.setSelectedProducto(null);
-        // currentcategoria.setSelected(null);
+        currentItems = new ArrayList<Receta>();
+        currentReceta = new Receta();
+    
         currentingrediente.setSelected(null);
-     // currentproducto.init();
-        //currentingrediente.init();
+    
         return currentReceta;
     }
 
@@ -139,6 +137,7 @@ public class RecetaController implements Serializable {
         if (currentItems == null) {
             currentItems = new ArrayList<Receta>();
         }
+
     }
 
     public void reset() {
@@ -167,6 +166,8 @@ public class RecetaController implements Serializable {
     }
 
     public void addIngredienteReceta() {
+        
+        if (currentingrediente.getSelected() != null ){
 
         currentReceta.setIdIngrediente(currentingrediente.getSelected());
         currentReceta.setUmedida(currentingrediente.getSelected().getUmedida());
@@ -176,7 +177,12 @@ public class RecetaController implements Serializable {
         
        currentingrediente.setSelected(null);
       
-
+        } else {
+        
+        JsfUtil.addErrorMessage("Seleccione un Ingrediente!");
+            
+        }
+       
     }
 
     public String create() {

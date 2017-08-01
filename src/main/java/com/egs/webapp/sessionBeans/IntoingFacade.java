@@ -33,5 +33,13 @@ public class IntoingFacade extends AbstractFacade<Intoing> {
           return i;
       
       }
+        
+         public List<Intoing> findOrderBy() {
+          
+          List <Intoing> p  = null;
+          p = (List<Intoing>)getEntityManager().createQuery ("SELECT  i  FROM  Intoing i ORDER BY i.idIntoing DESC ").getResultList();
+         return p;
+      
+      }
     
 }

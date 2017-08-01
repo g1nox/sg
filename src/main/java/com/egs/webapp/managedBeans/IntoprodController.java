@@ -1,6 +1,7 @@
 package com.egs.webapp.managedBeans;
 
 import com.egs.webapp.entities.Intoprod;
+import com.egs.webapp.entities.Producto;
 import com.egs.webapp.util.JsfUtil;
 import com.egs.webapp.util.JsfUtil.PersistAction;
 import com.egs.webapp.sessionBeans.IntoprodFacade;
@@ -30,23 +31,16 @@ public class IntoprodController implements Serializable {
     @EJB
     private com.egs.webapp.sessionBeans.IntoprodFacade ejbFacade;
     private List<Intoprod> items = null;
+    private List<Intoprod> itemsOrder = null;
     private List<Intoprod> gastolist = null;
     
     private Intoprod selected;
     
+    private Producto selectedProducto;
+    
     private Date fechaConsulta;
     
-    @EJB
-    private IntoprodFacade intoprodFacade;
-
-    public IntoprodFacade getIntoprodFacade() {
-        return intoprodFacade;
-    }
-
-    public void setIntoprodFacade(IntoprodFacade intoprodFacade) {
-        this.intoprodFacade = intoprodFacade;
-    }
-    
+  
     @Inject
     private UsuariosController contextUsuario;
     
@@ -76,6 +70,10 @@ public class IntoprodController implements Serializable {
         return selected;
     }
 
+    public void setSelected(Intoprod selected) {
+        this.selected = selected;
+    }
+    
     public Date getFechaConsulta() {
         return fechaConsulta;
     }
@@ -84,10 +82,17 @@ public class IntoprodController implements Serializable {
         this.fechaConsulta = fechaConsulta;
     }
 
-    public void setSelected(Intoprod selected) {
-        this.selected = selected;
+    public List<Intoprod> getItemsOrder() {
+         if (itemsOrder == null) {
+            itemsOrder = getEjbFacade().findOrderBy();
+        }
+        return itemsOrder;
     }
 
+    public void setItemsOrder(List<Intoprod> itemsOrder) {
+        this.itemsOrder = itemsOrder;
+    }
+    
     public List<Intoprod> getGastolist() {
         return gastolist;
     }
@@ -95,34 +100,42 @@ public class IntoprodController implements Serializable {
     public void setGastolist(List<Intoprod> gastolist) {
         this.gastolist = gastolist;
     }
-    
 
-    protected void setEmbeddableKeys() {
-    }
-
-    protected void initializeEmbeddableKey() {
-    }
-
-    private IntoprodFacade getFacade() {
+    public IntoprodFacade getEjbFacade() {
         return ejbFacade;
+    }
+
+    public void setEjbFacade(IntoprodFacade ejbFacade) {
+        this.ejbFacade = ejbFacade;
+    }
+
+    public Producto getSelectedProducto() {
+        return selectedProducto;
+    }
+
+    public void setSelectedProducto(Producto selectedProducto) {
+        this.selectedProducto = selectedProducto;
     }
 
     public Intoprod prepareCreate() {
         selected = new Intoprod();
-        initializeEmbeddableKey();
+        
         return selected;
     }
 
     public String create() {
             persist(PersistAction.CREATE,  "la entrada prod se ha creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
+            items = null;
+            currentproducto.setProductos(null);
+            itemsOrder = null;// Invalidate list of items to trigger re-query.
             FacesContext facesContext = FacesContext.getCurrentInstance();
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
              flash.setRedirect(true);
           
-             return currentproducto.goProductoStockList();
+             //return currentproducto.goProductoStockList();
+             return "intoprod-list";
         }
         return null;
     }
@@ -132,54 +145,103 @@ public class IntoprodController implements Serializable {
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("IntoprodDeleted"));
+        persist(PersistAction.DELETE, "Entrada elimindada correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsOrder = null;
+            currentproducto.setItemsActivos(null);
         }
     }
 
     public List<Intoprod> getItems() {
         if (items == null) {
-            items = getIntoprodFacade().findAll();
+            items = getEjbFacade().findAll();
         }
         return items;
     }
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
+
             try {
-                if (persistAction != PersistAction.DELETE) {
-                    
-                    
+                if (persistAction == PersistAction.CREATE) {
+
                     Date d = new Date();
                     selected.setFecha(d);
-                    
+
                     SimpleDateFormat hora = new SimpleDateFormat("HH:mm:ss");
                     selected.setHora(hora.format(d));
+
+                    //ingresar id_producto a bd
+                    selected.setIdProducto(currentproducto.getSelectedProducto());
+
+                    // ingresar usuario a bd
+                    selected.setIdUsuario(contextUsuario.getCurrentUser());
+
+                    int Actual = currentproducto.getSelectedProducto().getStockActual();
+                    selected.setStockAnterior(Actual);
                     
-                     //ingresar id_producto a bd
-                     selected.setIdProducto(currentproducto.getSelectedProducto());
+                    //Ingresos
+                    if (selected.getMovimiento() == true){
+
+                    selected.setStockFinal(Actual + selected.getCantArt());
+
+                    currentproducto.getSelectedProducto().setStockActual(Actual + selected.getCantArt());
+                    currentproducto.actualizarStock();
+
+                    getEjbFacade().edit(selected);
+                    JsfUtil.addSuccessMessage(successMessage);
                     
-                     // ingresar usuario a bd
-                     selected.setIdUsuario(contextUsuario.getCurrentUser());
-                      
-                     int Actual = currentproducto.getSelectedProducto().getStockActual();
-                        
-                        selected.setStockAnterior(Actual);
-                        selected.setStockActual(Actual + selected.getCantArt());
-                        
-                        currentproducto.getSelectedProducto().setStockActual(Actual + selected.getCantArt());
-                        currentproducto.actualizarStock();  
-                    
-                    
-                    
-                    getFacade().edit(selected);
-                } else {
-                    getFacade().remove(selected);
+                    //Egresos
+                    } if (selected.getMovimiento() == false) {
+
+                        selected.setStockFinal(Actual - selected.getCantArt());
+
+                        currentproducto.getSelectedProducto().setStockActual(Actual - selected.getCantArt());
+                        currentproducto.actualizarStock();
+
+                        getEjbFacade().edit(selected);
+
+                        JsfUtil.addSuccessMessage(successMessage);
+                    }
+
                 }
-                JsfUtil.addSuccessMessage(successMessage);
+                if (persistAction == PersistAction.DELETE) {
+
+                    int cantidad = selected.getCantArt();
+
+                    int producto = selected.getIdProducto().getIdProducto();
+
+                    selectedProducto = currentproducto.getEjbFacade().find(producto);
+
+                    int stockActual = selectedProducto.getStockActual();
+                    
+                    
+                    if (selected.getMovimiento() == true){
+                      
+                        selectedProducto.setStockActual(stockActual - cantidad);
+
+                    currentproducto.getEjbFacade().edit(selectedProducto);
+
+                    getEjbFacade().remove(selected);
+
+                    JsfUtil.addSuccessMessage(successMessage);
+                        
+                    }
+                    
+                    if (selected.getMovimiento() == false){
+
+                    selectedProducto.setStockActual(stockActual + cantidad);
+
+                    currentproducto.getEjbFacade().edit(selectedProducto);
+
+                    getEjbFacade().remove(selected);
+
+                    JsfUtil.addSuccessMessage(successMessage);
+                    }
+                }
+
             } catch (EJBException ex) {
                 String msg = "";
                 Throwable cause = ex.getCause();
@@ -199,16 +261,9 @@ public class IntoprodController implements Serializable {
     }
 
     public Intoprod getIntoprod(java.lang.Integer id) {
-        return getFacade().find(id);
+        return getEjbFacade().find(id);
     }
 
-    public List<Intoprod> getItemsAvailableSelectMany() {
-        return getFacade().findAll();
-    }
-
-    public List<Intoprod> getItemsAvailableSelectOne() {
-        return getFacade().findAll();
-    }
 
     @FacesConverter(forClass = Intoprod.class)
     public static class IntoprodControllerConverter implements Converter {

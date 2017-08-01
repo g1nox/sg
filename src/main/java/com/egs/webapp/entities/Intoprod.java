@@ -31,9 +31,9 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Intoprod.findByFecha", query = "SELECT i FROM Intoprod i WHERE i.fecha = :fecha"),
     @NamedQuery(name = "Intoprod.findByHora", query = "SELECT i FROM Intoprod i WHERE i.hora = :hora"),
     @NamedQuery(name = "Intoprod.findByStockAnterior", query = "SELECT i FROM Intoprod i WHERE i.stockAnterior = :stockAnterior"),
-    @NamedQuery(name = "Intoprod.findByStockActual", query = "SELECT i FROM Intoprod i WHERE i.stockActual = :stockActual"),
+    @NamedQuery(name = "Intoprod.findByStockFinal", query = "SELECT i FROM Intoprod i WHERE i.stockFinal = :stockFinal"),
     @NamedQuery(name = "Intoprod.findByCantArt", query = "SELECT i FROM Intoprod i WHERE i.cantArt = :cantArt"),
-    @NamedQuery(name = "Intoprod.findByGasto", query = "SELECT i FROM Intoprod i WHERE i.gasto = :gasto")})
+    @NamedQuery(name = "Intoprod.findByMovimiento", query = "SELECT i FROM Intoprod i WHERE i.movimiento = :movimiento")})
 public class Intoprod implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -51,12 +51,14 @@ public class Intoprod implements Serializable {
     private String hora;
     @Column(name = "stock_anterior")
     private Integer stockAnterior;
-    @Column(name = "stock_actual")
-    private Integer stockActual;
+    @Column(name = "stock_final")
+    private Integer stockFinal;
     @Column(name = "cant_art")
     private Integer cantArt;
     @Column(name = "gasto")
     private Integer gasto;
+    @Column(name = "movimiento")
+    private Boolean movimiento;
     @JoinColumn(name = "id_producto", referencedColumnName = "id_producto")
     @ManyToOne
     private Producto idProducto;
@@ -103,12 +105,12 @@ public class Intoprod implements Serializable {
         this.stockAnterior = stockAnterior;
     }
 
-    public Integer getStockActual() {
-        return stockActual;
+    public Integer getStockFinal() {
+        return stockFinal;
     }
 
-    public void setStockActual(Integer stockActual) {
-        this.stockActual = stockActual;
+    public void setStockFinal(Integer stockFinal) {
+        this.stockFinal = stockFinal;
     }
 
     public Integer getCantArt() {
@@ -125,6 +127,14 @@ public class Intoprod implements Serializable {
 
     public void setGasto(Integer gasto) {
         this.gasto = gasto;
+    }
+
+    public Boolean getMovimiento() {
+        return movimiento;
+    }
+
+    public void setMovimiento(Boolean movimiento) {
+        this.movimiento = movimiento;
     }
 
     public Producto getIdProducto() {

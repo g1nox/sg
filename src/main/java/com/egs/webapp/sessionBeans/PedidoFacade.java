@@ -9,10 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-/**
- *
- * @author EduardoAlexis
- */
+
 @Stateless
 public class PedidoFacade extends AbstractFacade<Pedido> {
     @PersistenceContext(unitName = "com.egs.webapp_HabanaSalsa_war_1.0-SNAPSHOTPU")

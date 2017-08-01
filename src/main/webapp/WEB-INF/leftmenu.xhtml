@@ -21,11 +21,11 @@
 
                 <p:submenu id="usuarios" label=" Usuarios" icon="icon-users-2" rendered="#{usuariosController.currentUser.idRol.idRol == 1}">
                     <p:menuitem id="users_lnk1" value="Nuevo" icon="icon-user-add"
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuarios/new')?'active':'' } " 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuario/new')?'active':'' } " 
                                 action="#{usuariosController.goUsuarioCreate()}" />
 
                     <p:menuitem id="users_lnk2" value="Listar" icon="icon-list" 
-                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuarios/list')?'active':'' } " 
+                                styleClass="#{fn:startsWith(request.pathInfo,'/admin/usuario/list')?'active':'' } " 
                                 action="#{usuariosController.goUsuariosList()}" />
                     <p:menuitem id="users_lnk3" value="Bloquear" icon="icon-user-delete" />
                 </p:submenu>

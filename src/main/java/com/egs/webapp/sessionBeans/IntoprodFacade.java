@@ -33,6 +33,14 @@ public class IntoprodFacade extends AbstractFacade<Intoprod> {
           return i;
       
       }
+      
+          public List<Intoprod> findOrderBy() {
+          
+          List <Intoprod> p  = null;
+          p = (List<Intoprod>)getEntityManager().createQuery ("SELECT  i  FROM  Intoprod i ORDER BY i.idIntoprod DESC ").getResultList();
+         return p;
+      
+      }
     
 }
 

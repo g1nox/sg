@@ -28,10 +28,12 @@
                                 </div>
                                 <div class="EmptyBox10" />
 
-                                <p:panelGrid columns="2" layout="grid" style="border:0px none;background:none"> 
+                                <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none"> 
 
 
-                                    <p:inputText value="#{productoController.selectedProducto.nombre}" required="true" label="Nombre" placeholder="Nombre" styleClass="Wid90"/>
+                                    <p:inputText value="#{productoController.selectedProducto.nombre}" 
+                                                 required="true" requiredMessage="Ingrese un nombre para el producto"
+                                                 label="Nombre" placeholder="Nombre" styleClass="Wid90"/>
 
                                     <p:inputText value="#{productoController.selectedProducto.precioVenta}" placeholder="Precio venta" styleClass="Wid90"/>
 
@@ -46,99 +48,94 @@
                                                        itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
 
-             
-                                    <p:selectOneMenu id="ingrediente" 
-                                                     style="width: 90%"   
-                                                     styleClass="Wid90"
-                                                     value="#{ingredienteController.selected}" 
-                                                     converter="ingredienteConverter"
-                                                     filter="true" filterMatchMode="startsWith">
-
-                                        <f:selectItem itemLabel="Seleccione ingrediente" />
-                                        <f:selectItems value="#{ingredienteController.items}"
-                                                       var="item"
-                                                       itemValue="#{item}"
-                                                       itemLabel="#{item.nombre.toString().concat(' [').concat(item.umedida.toString()).concat(']')}" />
-
-                                    </p:selectOneMenu>
-
-
-
-
-
-                                    <p:inputText value="#{recetaController.currentReceta.cantidad}" 
-                                                 placeholder="Cantidad" styleClass="Wid90"/>
-
                                 </p:panelGrid>
 
+                            </p:panel>
+                        </div>
 
-                                <p:commandButton id="add" value="Add" update="RecetaCreateForm" action="#{recetaController.addIngredienteReceta()}" >
+                    </div>
+
+                         </div>
+                         
+           
+
+                <div class="Container100 Responsive">
+                    <div class="ContainerIndent">
+                        <p:panel>
+                            <!--title-->
+                            <div class="Container100 Responsive Fs20 hardblue">
+                                <i class="icon-food"></i> Ingredientes
+                            </div>
+                            <div class="EmptyBox10" />
+
+                            <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none">
+
+                                <p:selectOneMenu id="ingrediente" 
+                                                 style="width: 90%"   
+                                                 styleClass="Wid90"
+                                                 value="#{ingredienteController.selected}" 
+                                                 converter="ingredienteConverter"
+                                                 filter="true" filterMatchMode="startsWith">
+
+                                    <f:selectItem itemLabel="Seleccione ingrediente" />
+                                    <f:selectItems value="#{ingredienteController.items}"
+                                                   var="item"
+                                                   itemValue="#{item}"
+                                                   itemLabel="#{item.nombre.toString().concat(' [').concat(item.umedida.toString()).concat(']')}" />
+
+                                </p:selectOneMenu>
+
+
+                                <p:inputText value="#{recetaController.currentReceta.cantidad}" 
+                                            required="true" requiredMessage="Ingrese cantidad de ingrediente" placeholder="Cantidad" styleClass="Wid90" />
+
+                                <p:commandButton id="add" value="Add" update="ItemsTable" action="#{recetaController.addIngredienteReceta()}" >
                                 </p:commandButton>
 
-                            </p:panel>
-                        </div>
-                    </div>
+                            </p:panelGrid>
 
-                    <div class="Container100 Responsive">
-                        <div class="ContainerIndent">
-                            <p:panel>
-                                <!--title-->
-                                <div class="Container100 Responsive Fs20 hardblue">
-                                    <i class="icon-food"></i> Ingredientes
-                                </div>
-                                <div class="EmptyBox10" />
+                            <p:dataTable id="ItemsTable" value="#{recetaController.currentItems}" var="Items"  editable="true" editMode="cell" >
 
 
-                                <p:outputPanel id="outItemsPanel">
-                                    <p:dataTable value="#{recetaController.currentItems}" var="Items" id="ItemsTable" editable="true" editMode="cell" >
-
-                                        
-                                        <p:column headerText="Ingrediente">
-                                            <h:outputText value="#{Items.idIngrediente.nombre}" />
-                                        </p:column>
-
-                                        
-                                        <p:column headerText="cantidad">
-                                            <h:outputText value="#{Items.cantidad}"/>
-                                        </p:column>
-
-                                        
-                                        <p:column headerText="Unidad">
-                                            <h:outputText value="#{Items.umedida}" />
-                                        </p:column>
+                                <p:column headerText="Ingrediente">
+                                    <h:outputText value="#{Items.idIngrediente.nombre}" />
+                                </p:column>
 
 
-                                        <p:column headerText="Action">
-
-                                            <p:commandLink value="Remover" update="ItemsTable">
-                                                <p:collector value="#{Items}" removeFrom="#{recetaController.currentItems}" unique="true" />
-                                            </p:commandLink>
-
-                                        </p:column>
+                                <p:column headerText="cantidad">
+                                    <h:outputText value="#{Items.cantidad}"/>
+                                </p:column>
 
 
+                                <p:column headerText="Unidad">
+                                    <h:outputText value="#{Items.umedida}" />
+                                </p:column>
 
 
-                                    </p:dataTable>
+                                <p:column headerText="Action">
 
-                                    <br/>
+                                    <p:commandLink value="Remover" update="ItemsTable">
+                                        <p:collector value="#{Items}" removeFrom="#{recetaController.currentItems}" unique="true" />
+                                    </p:commandLink>
 
+                                </p:column>
 
-                                </p:outputPanel>
-
-
-
-                            </p:panel>
-                            <br/>
-                            <p:commandButton value="Terminar producto" action="#{productoController.createCompuesto()}"/>
+                            </p:dataTable>
 
                             <br/>
-                        </div>
+
+                        </p:panel>
+                        <br/>
+                        <p:commandButton value="Terminar producto" action="#{productoController.createCompuesto()}"/>
+
+                        <br/>
                     </div>
-
-
                 </div>
+
             </h:form>
-        </div>
+
+       </div>
+
+        
     </ui:define>
 </ui:composition>

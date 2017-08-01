@@ -32,6 +32,20 @@
                             
                             </p:selectOneMenu>
                         
+                        <p:outputLabel value="Categoria:" for="categoria"/>
+                         <p:selectOneMenu id="categoria"  style="width: 90%"   
+                                          styleClass="Wid90" value="#{ingredienteController.selected.idCategoria}" 
+                                     converter="categoriaConverter" filter="true" 
+                                     filterMatchMode="startsWith" effect="blind"
+                                     required="true" requiredMessage="Seleccione categoría!">
+
+                        <f:selectItem itemLabel="Seleccione Categoria" />
+                        <f:selectItems value="#{categoriaController.items}" var="item"
+                                       itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
+                    </p:selectOneMenu>
+                            
+                            
+                        
                        
                     </p:panelGrid>
                     

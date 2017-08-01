@@ -217,7 +217,7 @@ public class PedidoController implements Serializable {
         currentDetallePedido.init();
        
         currentmesa.setSelected(null);
-        currentmesa.init();
+        //currentmesa.init();
         
         return selected;
     }
@@ -245,6 +245,7 @@ public class PedidoController implements Serializable {
                 persist(JsfUtil.PersistAction.CREATE, "el pedido se creo");
                 if (!JsfUtil.isValidationFailed()) {
                     itemsOrderBy = null;    // Invalidate list of items to trigger re-query.
+                    currentmesa.setItemsDisponibles(null); //actualiza las mesas disponibles
                     FacesContext facesContext = FacesContext.getCurrentInstance();
                     Flash flash = facesContext.getExternalContext().getFlash();
                     flash.setKeepMessages(true);
@@ -462,7 +463,9 @@ public class PedidoController implements Serializable {
 
                     }
 
-                    //modificar estado mesa
+                    }
+                    
+                     //modificar estado mesa
                     currentmesa.setSelected(selected.getIdMesa());
                     currentmesa.getSelected().setEstado(Boolean.FALSE);
                     currentmesa.llamarEditarMesa();
@@ -470,7 +473,7 @@ public class PedidoController implements Serializable {
                     getEjbFacade().remove(selected);
                     currentmesa.setSelected(null);
                     JsfUtil.addSuccessMessage(successMessage);
-                    }
+                    
                 }
 
             } catch (EJBException ex) {

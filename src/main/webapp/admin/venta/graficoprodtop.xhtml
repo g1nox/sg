@@ -74,19 +74,20 @@
 
                                 </p:dataTable>
                         
-                           
+                            <div class="ui-fluid">
                             
-                                 <p:dialog header="Producto mas vendido" widgetVar="prodDialog" resizable="false" responsive="true" width="450" modal="true" maximizable="true" >
+                                <p:dialog header="Producto mas vendido" widgetVar="prodDialog" resizable="false"  height="350" width="600" modal="true" maximizable="true" position="center"  >
                   
+                                     
                                     <p:outputPanel id="prodDetail" >
                                       
-                                         <p:chart type="bar" model="#{productoTopModel.barModel}"  rendered="#{productoTopModel.barModel != null}" />
+                                        <p:chart type="bar" model="#{productoTopModel.barModel}"  rendered="#{productoTopModel.barModel != null}" style="center" />
                             
                                     </p:outputPanel>
                  
                                 </p:dialog>
                                 
-                          
+                          </div>
                         
                         </h:form>
                     

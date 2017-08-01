@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -65,6 +60,8 @@ public class Intoing implements Serializable {
     @Size(max = 2147483647)
     @Column(name = "nota")
     private String nota;
+     @Column(name = "movimiento")
+    private Boolean movimiento;
     @JoinColumn(name = "id_ingrediente", referencedColumnName = "id_ingrediente")
     @ManyToOne
     private Ingrediente idIngrediente;
@@ -146,6 +143,14 @@ public class Intoing implements Serializable {
         this.nota = nota;
     }
 
+    public Boolean getMovimiento() {
+        return movimiento;
+    }
+
+    public void setMovimiento(Boolean movimiento) {
+        this.movimiento = movimiento;
+    }
+    
     public Ingrediente getIdIngrediente() {
         return idIngrediente;
     }

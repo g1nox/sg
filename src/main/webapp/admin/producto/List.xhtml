@@ -32,9 +32,9 @@
 
                         <h:form id="ProductoListForm">
 
-                            <p:dataTable id="datatableList" var="current" value="#{productoController.items}" 
+                            <p:dataTable id="datatableList" var="current" value="#{productoController.itemsActivos}" 
                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                                         selection="#{productoController.selectedProducto}" selectionMode="single"
+                                         
                                          rowKey="#{current.idProducto}"
                                          emptyMessage="No se encontraron registros"
                                          reflow="true">

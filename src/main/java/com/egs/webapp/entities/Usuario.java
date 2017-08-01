@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package com.egs.webapp.entities;
 
 import java.io.Serializable;
@@ -25,10 +19,7 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author EduardoAlexis
- */
+
 @Entity
 @Table(name = "usuario")
 @XmlRootElement
@@ -48,14 +39,9 @@ public class Usuario implements Serializable {
     private List<Intoprod> intoprodList;
     @OneToMany(mappedBy = "idUsuario")
     
-   
-    
- 
-   
     private List<Venta> ventaList;
     @OneToMany(mappedBy = "idUsuario")
    
-    
     private List<Pedido> pedidoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUsuario")
     private List<Log> logList;
@@ -83,12 +69,12 @@ public class Usuario implements Serializable {
     @Size(max = 255)
     @Column(name = "mail")
     private String mail;
+    @Column(name = "estado")
+    private Boolean estado;
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol")
     @ManyToOne
     private Rol idRol;
-    @JoinColumn(name = "id_estado", referencedColumnName = "id_estado")
-    @ManyToOne
-    private Estado idEstado;
+    
 
     public Usuario() {
     }
@@ -153,20 +139,20 @@ public class Usuario implements Serializable {
         this.mail = mail;
     }
 
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
+    
     public Rol getIdRol() {
         return idRol;
     }
 
     public void setIdRol(Rol idRol) {
         this.idRol = idRol;
-    }
-
-    public Estado getIdEstado() {
-        return idEstado;
-    }
-
-    public void setIdEstado(Estado idEstado) {
-        this.idEstado = idEstado;
     }
 
     @Override

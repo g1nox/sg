@@ -31,6 +31,7 @@ public class MesaController implements Serializable {
     private List<Mesa> items = null;
     private List<Mesa> itemsDisponibles = null;
     private Mesa selected;
+    private Mesa nombremesa;
     
     private List<Pedido> mesaconpedido;
     
@@ -45,8 +46,6 @@ public class MesaController implements Serializable {
         this.currentpedido = currentpedido;
     }
     
-    @EJB
-    private MesaFacade mesaFacade;
 
     public MesaController() {
     }
@@ -59,12 +58,12 @@ public class MesaController implements Serializable {
         this.selected = selected;
     }
 
-    public MesaFacade getMesaFacade() {
-        return mesaFacade;
+    public Mesa getNombremesa() {
+        return nombremesa;
     }
 
-    public void setMesaFacade(MesaFacade mesaFacade) {
-        this.mesaFacade = mesaFacade;
+    public void setNombremesa(Mesa nombremesa) {
+        this.nombremesa = nombremesa;
     }
     
     private MesaFacade getFacade() {
@@ -129,10 +128,8 @@ public class MesaController implements Serializable {
     public List<Mesa> getItemsDisponibles() {
 
         if (itemsDisponibles == null) {
-
             // no tiene que encontrarlos a todas las mesas  
             itemsDisponibles = getFacade().findbyDisponible();
-
         }
 
         return itemsDisponibles;
@@ -146,11 +143,25 @@ public class MesaController implements Serializable {
         if (selected != null) {
             
             try {
-                if (persistAction != PersistAction.DELETE) {
-                    getFacade().edit(selected);
-                } else {
+                if (persistAction == PersistAction.CREATE) {
                     
-                    int idMesa = getSelected().getIdMesa();
+                    
+                    String nombre = getSelected().getNombre();
+                    nombremesa = ejbFacade.findMesa(nombre);
+                    
+                    if (nombremesa == null) {
+                        
+                        getFacade().edit(selected);
+                        
+                        JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                        JsfUtil.addErrorMessage("El nombre de mesa ya existe");
+                    }              
+                } 
+                
+                if (persistAction == PersistAction.DELETE){
+                    
+                    int idMesa = selected.getIdMesa();
                     
                     mesaconpedido = currentpedido.getEjbFacade().findidmesa(idMesa);
                     
@@ -263,7 +274,7 @@ public class MesaController implements Serializable {
         if (currentMesa != null) {
 
             try {
-                getMesaFacade().edit(currentMesa);
+                getFacade().edit(currentMesa);
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));

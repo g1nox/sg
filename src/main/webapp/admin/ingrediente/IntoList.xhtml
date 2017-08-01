@@ -32,9 +32,9 @@
                 
                  
                        
-                       <p:dataTable id="datatable" var="current" value="#{intoingController.items}" 
+                <p:dataTable id="table" var="current" value="#{intoingController.itemsOrder}" widgetVar="table" 
                                     paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                                    selection="#{intoingController.selected}" selectionMode="single"
+                                    
                                     rowKey="#{current.idIngrediente}"
                                     emptyMessage="No se encontraron registros"
                                     reflow="true">
@@ -49,20 +49,12 @@
                            
                            <p:column>
                             <f:facet name="header">
-                                <h:outputText value="cantidad art"/>
+                                <h:outputText value="Ingrediente"/>
                             </f:facet>
                                <h:outputText value="#{current.idIngrediente.nombre}"/>
                             <br />
                         </p:column>
                        
-                           <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Stock actual"/>
-                            </f:facet>
-                            <h:outputText value="#{current.stockActual}"/>
-                            <br />
-                        </p:column>
-                           
                             <p:column>
                             <f:facet name="header">
                                 <h:outputText value="Stock anterior"/>
@@ -70,8 +62,23 @@
                                 <h:outputText value="#{current.stockAnterior}"/>
                             <br />
                         </p:column>
-                           
-                           
+                    
+                         <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Cantidad ingreso"/>
+                            </f:facet>
+                             <h:outputText value="#{current.cantArt}"/>
+                            <br />
+                        </p:column>
+                    
+                      <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Stock actual"/>
+                            </f:facet>
+                            <h:outputText value="#{current.stockActual}"/>
+                            <br />
+                        </p:column>
+                    
                              <p:column>
                             <f:facet name="header">
                                 <h:outputText  value="Fecha"/>
@@ -104,9 +111,40 @@
                                      <h:outputText value="#{current.nota}"/>
                             <br />
                         </p:column>
-                  
-                   
-                   
+                    
+                    <p:column headerText="Movimiento" filterBy="#{current.movimiento}" 
+                                          filterMatchMode="equals">
+                                    <f:facet name="filter">
+                                        <p:selectOneButton onchange="PF('table').filter()">
+                                            <f:converter converterId="javax.faces.Boolean" />
+                                            <f:selectItem itemLabel="Ingreso" itemValue="true"  />
+                                            <f:selectItem itemLabel="Egreso" itemValue="false" />
+                                        </p:selectOneButton>
+                                    </f:facet>
+
+                        <h:outputText value="Ingreso" styleClass="clase-parto-no" rendered="#{current.movimiento == true}"/>
+
+                        <h:outputText value="Egreso" styleClass="clase-parto-si" rendered="#{current.movimiento == false}" />
+
+                                </p:column> 
+                    
+                      <p:column>
+
+                                    <p:commandButton id="delete"  icon="fa fa-times-circle" 
+                                                     action="#{intoingController.destroy()}" update="table">
+
+                                        <f:setPropertyActionListener value="#{current}" target="#{intoingController.selected}"/>
+                                        <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                                    </p:commandButton>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                                    </p:confirmDialog>
+
+                                </p:column>
+                    
+                
                    </p:dataTable>
                   
                 

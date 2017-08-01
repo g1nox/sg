@@ -138,6 +138,9 @@ public class IngredienteController implements Serializable {
     public Ingrediente prepareCreate() {
         selected = new Ingrediente();
         currentReceta.init();
+        
+        currentcategoria.setSelected(null);
+        
 
         return selected;
     }
@@ -192,7 +195,7 @@ public class IngredienteController implements Serializable {
         if (selected != null) {
             
             try {
-                if (persistAction != PersistAction.DELETE) {
+                if (persistAction == PersistAction.CREATE) {
                     
                     String nombre = getSelected().getNombre();
                     nombreing = ejbFacade.findIngrediente(nombre);
@@ -200,7 +203,6 @@ public class IngredienteController implements Serializable {
                     if (nombreing == null) {
                         
                         selected.setIdCategoria(currentcategoria.getSelected());
-                        selected.setIdProveedor(currentproveedor.getSelected());
                         
                         getFacade().edit(selected);
                         
@@ -208,7 +210,8 @@ public class IngredienteController implements Serializable {
                     } else {
                         JsfUtil.addErrorMessage("El ingrediente ya existe");
                     }
-                } else {
+                } if (persistAction == PersistAction.DELETE) {
+                    
                     int iding = getSelected().getIdIngrediente();
                     recetaconingrediente = currentReceta.getRecetaFacade().findIngReceta(iding);
                     
@@ -305,7 +308,7 @@ public class IngredienteController implements Serializable {
     public void actualizarStock() {
         try {
             getFacade().edit(selected);
-            JsfUtil.addSuccessMessage("Stock de ingrediente(producto) actualizado");
+            JsfUtil.addSuccessMessage("Stock de ingrediente actualizado");
 
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

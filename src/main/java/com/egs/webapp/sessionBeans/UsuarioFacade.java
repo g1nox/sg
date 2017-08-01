@@ -1,25 +1,20 @@
 package com.egs.webapp.sessionBeans;
 
-import com.egs.webapp.entities.Estado;
+
 import com.egs.webapp.entities.Usuario;
 import java.util.List;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-/**
- *
- * @author EduardoAlexis
- */
+
 @Stateless
 public class UsuarioFacade extends AbstractFacade<Usuario> {
     @PersistenceContext(unitName = "com.egs.webapp_HabanaSalsa_war_1.0-SNAPSHOTPU")
     private EntityManager em;
-    @Inject
-    EstadoFacade ef;
+    
 
     @Override
     protected EntityManager getEntityManager() {
@@ -34,37 +29,22 @@ public class UsuarioFacade extends AbstractFacade<Usuario> {
      public Usuario findUsuarioByUsername(String username) {
 
         try {
-            Usuario usuario = (Usuario) getEntityManager().createNamedQuery("Usuario.findByUsername").setParameter("username", username).getSingleResult();
+            Usuario usuario = (Usuario) getEntityManager().createNamedQuery("Usuario.findByUsername").
+                    setParameter("username", username).
+                    getSingleResult();
+          
             return usuario;
+       
         } catch (NoResultException nre) {
 
             return null;
 
         }
-
     }
     
-     public List<Usuario> usuariosActivos(String usuario) {
-        // me tiene que devolver una lista con los usuarios activos
-        final Estado estado = ef.find(1);
-        final String admin = "admin";
-        return getEntityManager().createQuery("Select u FROM Usuario u Where u.username <> ?1 AND u.username <> ?2 AND u.idEstado = ?3")
-                .setParameter(1, usuario)
-                .setParameter(2, admin)
-                .setParameter(3, estado)
-                .getResultList();
-
-    }
-     
      public List<Object> meseroTop() {
 
         Query q;
-//        q = getEntityManager().createQuery("SELECT p, sum(dp.cantArt) as total"
-//                + " FROM Producto p, DetallePedido dp, Pedido pe, Venta v "
-//                + " where p = dp.idProducto"
-//                + " and dp.idPedido = pe"
-//                + " and pe = v.idPedido  "
-//                + " group by p.idProducto order by total desc ");
         
         q = getEntityManager().createQuery("select u, sum(v.total) as total"
                                           +  " from Venta v, Usuario u"

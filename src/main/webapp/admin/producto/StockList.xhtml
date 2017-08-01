@@ -39,10 +39,7 @@
                                          rowKey="#{v.idProducto}" emptyMessage="No se encontraron registros" reflow="true"
                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                                             paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                                         rowStyleClass="#{v.stockActual lt v.stockMinimo ? 'rojo' : null}
-                                         #{v.stockActual gt v.stockMinimo and v.stockActual lt v.stockIdeal ? 'amarillo' : null} 
-                                         #{v.stockActual gt v.stockIdeal and v.stockActual lt v.stockMaximo ? 'verde' : null}
-                                         #{v.stockActual gt v.stockMaximo ? 'azul' : null}">
+                                      
 
                                 <f:facet name="{Exporters}">
                                     <h:commandLink>

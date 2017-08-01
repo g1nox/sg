@@ -55,18 +55,35 @@
                                         <f:selectItems value="#{proveedorController.items}" var="item"
                                                        itemValue="#{item}" itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
+                                    
+                                    
 
                                     <p:inputText value="#{intoingController.selected.cantArt}" 
                                                  styleClass="Wid90"
                                                  style="width: 90%" 
                                                  required="true"
                                                  placeholder="Cantidad"/>
+                                    
+                                       <p:selectOneMenu id="movimiento" value="#{intoingController.selected.movimiento}" 
+                                         style="width: 90%"
+                                         styleClass="wid90"
+                                         effect="blind"
+                                         required="true"
+                                         requiredMessage="Seleccione tipo movimiento!">
+                             <f:selectItem itemLabel="Seleccione" itemValue="" />
+                             <f:selectItem itemLabel="Ingreso" itemValue="True" />
+                            <f:selectItem itemLabel="Egreso" itemValue="False" />
+                                           
+                    </p:selectOneMenu> 
 
                                     <p:inputText value="#{intoingController.selected.gasto}"
                                                  styleClass="Wid90"
                                                  required="true"
                                                  requiredMessage="Ingrese gasto asociado!"
                                                  placeholder="Gasto del ingrediente"/>
+                                    
+                                    
+                                    <p:inputTextarea value="#{intoingController.selected.nota}" rows="2" cols="70" placeholder="Añadir descrpción del movimiento" />
 
 
                                 </p:panelGrid>

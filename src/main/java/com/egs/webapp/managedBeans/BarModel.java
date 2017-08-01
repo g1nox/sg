@@ -29,6 +29,8 @@ public class BarModel implements Serializable {
     private Bar obj;
 
     private BarChartModel barModel;
+    
+    long yMax = 0;
 
     @PostConstruct
     public void iniciar() {
@@ -79,6 +81,14 @@ public class BarModel implements Serializable {
         this.listagrafico = listagrafico;
     }
 
+    public long getyMax() {
+        return yMax;
+    }
+
+    public void setyMax(long yMax) {
+        this.yMax = yMax;
+    }
+
     private void createBarModel() {
 
         barModel = initBarModel();
@@ -92,7 +102,7 @@ public class BarModel implements Serializable {
         Axis yAxis = barModel.getAxis(AxisType.Y);
         yAxis.setLabel("Total");
         yAxis.setMin(0);
-        yAxis.setMax(223400);
+        yAxis.setMax(yMax);
     }
 
     private BarChartModel initBarModel() {
@@ -100,12 +110,23 @@ public class BarModel implements Serializable {
         BarChartModel model = new BarChartModel();
 
         ChartSeries meses = new ChartSeries();
+        
+        yMax = 0;
 
         for (Bar lista : listagrafico) {
+            
+            
+            
+            if(lista.getTotal() > yMax ){
+                
+                yMax = lista.getTotal();
+            
+            }
 
             meses.set(lista.getMes(), lista.getTotal());
 
         }
+     
 
         model.addSeries(meses);
 

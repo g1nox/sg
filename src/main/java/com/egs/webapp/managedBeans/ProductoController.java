@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.inject.Named;
@@ -24,10 +23,7 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
 
 import javax.faces.context.FacesContext;
-import org.primefaces.model.chart.Axis;
-import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
-import org.primefaces.model.chart.ChartSeries;
 
 @Named("productoController")
 @SessionScoped
@@ -37,6 +33,9 @@ public class ProductoController implements Serializable {
     private com.egs.webapp.sessionBeans.ProductoFacade ejbFacade;
     private List<Producto> items = null;
     private List<Producto> itemsActivos = null;
+    
+    private List<Producto> productos = null;
+    
     private Producto selectedProducto;
     
     private Producto prodrepedido = null;
@@ -48,8 +47,6 @@ public class ProductoController implements Serializable {
     private Double currentMes;
     private Double currentAño;
     
-    
-    
     private List<DetallePedido> productocondetalles = null;
     
     private List<Object> itemsTop = null;
@@ -59,12 +56,6 @@ public class ProductoController implements Serializable {
     
     // consulta stock producto en bd
     private int stockActual;
-
-    private boolean disponible;
-    
-    private boolean editable;
-    
-    private double cantidad;
 
 
     @Inject
@@ -136,24 +127,11 @@ public class ProductoController implements Serializable {
         this.currentptm = currentptm;
     }
     
-    @PostConstruct
-    public void iniciar() {
-        createBarModel();
-    }
+//    @PostConstruct
+//    public void iniciar() {
+//        createBarModel();
+//    }
 
-    // utility attributes
-    private boolean checkbox;
-
-    public ProductoController() {
-    }
-
-    public boolean isCheckbox() {
-        return checkbox;
-    }
-
-    public void setCheckbox(boolean checkbox) {
-        this.checkbox = checkbox;
-    }
 
     public Producto getSelectedProducto() {
         return selectedProducto;
@@ -163,12 +141,38 @@ public class ProductoController implements Serializable {
         this.selectedProducto = selectedProducto;
     }
 
-    public boolean isDisponible() {
-        return disponible;
+    public List<Producto> getItems() {
+        return items;
     }
 
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible;
+    public void setItems(List<Producto> items) {
+        this.items = items;
+    }
+
+    public List<Producto> getProductos() {
+               if (productos == null) {
+            // no tiene que encontrarlos a todos   
+            productos = getEjbFacade().findNocompuesto();
+        }
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
+    
+
+    public List<Producto> getItemsActivos() {
+          if (itemsActivos == null) {
+            // no tiene que encontrarlos a todos   
+            itemsActivos = getEjbFacade().findbyActivo();
+        }
+        return itemsActivos;
+   
+    }
+
+    public void setItemsActivos(List<Producto> itemsActivos) {
+        this.itemsActivos = itemsActivos;
     }
 
     public ProductoFacade getEjbFacade() {
@@ -213,22 +217,6 @@ public class ProductoController implements Serializable {
 
     public void setProductocondetalles(List<DetallePedido> productocondetalles) {
         this.productocondetalles = productocondetalles;
-    }
-
-    public boolean isEditable() {
-        return editable;
-    }
-
-    public void setEditable(boolean editable) {
-        this.editable = editable;
-    }
-
-    public double getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(double cantidad) {
-        this.cantidad = cantidad;
     }
     
     public Producto getProdrepedido() {
@@ -293,6 +281,17 @@ public class ProductoController implements Serializable {
         return selectedProducto;
     }
     
+     public Producto prepareCreateCompuesto() {
+        selectedProducto = new Producto();
+        
+        currentcategoria.setSelected(null);
+        currentingrediente.setSelected(null);
+       
+        currentreceta.reset();
+
+        return selectedProducto;
+    }
+    
       public List<Receta> prepareUpdate() {
          
         currentreceta.reset();
@@ -326,7 +325,7 @@ public class ProductoController implements Serializable {
             Flash flash = facesContext.getExternalContext().getFlash();
             flash.setKeepMessages(true);
             flash.setRedirect(true);
-            prepareCreate();
+            prepareCreateCompuesto();
             return goProductoCreateCompuesto();
         }
         return null;
@@ -352,26 +351,13 @@ public class ProductoController implements Serializable {
         }
     }
 
-    public List<Producto> getItems() {
-        if (items == null) {
-            items = getEjbFacade().findAll();
-        }
-        return items;
-    }
 
-    public List<Producto> getItemsActivos() {
-        if (itemsActivos == null) {
-            itemsActivos = getEjbFacade().findbyActivo();
-        }
-        return itemsActivos;
-    }
     
  
     private void persist(PersistAction persistAction, String successMessage) {
-        if (selectedProducto != null) {
-
+   
             try {
-                if (persistAction == PersistAction.CREATE) {
+                if (persistAction == PersistAction.CREATE ) {
 
                     if (selectedProducto.getCompuesto() == false) {
                         
@@ -379,7 +365,7 @@ public class ProductoController implements Serializable {
                          prodrepedido = getEjbFacade().findProducto(nombre);
                          
                          if (prodrepedido == null) {
-                          selectedProducto.setIdCategoria(currentcategoria.getSelected());
+                        selectedProducto.setIdCategoria(currentcategoria.getSelected());
                         selectedProducto.setIdProveedor(currentproveedor.getSelected());
 
                         selectedProducto.setStockActual(0);
@@ -394,12 +380,20 @@ public class ProductoController implements Serializable {
                          } else{
                          
                              JsfUtil.addErrorMessage("El producto ya existe");
+                             goProductoCreate();
                          
                          }
                          
                        
 
                     } else {
+                        
+                        if (!currentreceta.getCurrentItems().isEmpty()) {
+                        
+                         String nombre = getSelectedProducto().getNombre();
+                         prodrepedido = getEjbFacade().findProducto(nombre);
+                         
+                         if (prodrepedido == null) {
 
                         selectedProducto.setRecetaList(currentreceta.getCurrentItems());
                         selectedProducto.setCompuesto(Boolean.TRUE);
@@ -411,6 +405,19 @@ public class ProductoController implements Serializable {
 
                         getEjbFacade().edit(selectedProducto);
                         JsfUtil.addSuccessMessage(successMessage);
+                    } else {
+                           
+                              JsfUtil.addErrorMessage("El producto compuesto ya existe");
+                             goProductoCreateCompuesto();
+                             
+                         }
+                         
+                    } else {
+                        
+                        JsfUtil.addErrorMessage("Se necesita al menos 1 ingrediente para crear un producto compuesto");
+                        
+                        }
+                         
                     }
 
                 }
@@ -451,7 +458,7 @@ public class ProductoController implements Serializable {
                    detalleaux.add(currentreceta.getCurrentReceta());
                    selectedProducto.setRecetaList(detalleaux);
                   
-                    //getFacade().edit(selectedProducto);
+                  
                     currentreceta.getEjbFacade().edit(currentreceta.getCurrentReceta());
                   
 
@@ -474,28 +481,11 @@ public class ProductoController implements Serializable {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
                 JsfUtil.addErrorMessage(ex, ResourceBundle.getBundle("/Bundle").getString("PersistenceErrorOccured"));
             }
-        }
+    
     }
 
     public Producto getProducto(java.lang.Integer id) {
         return getEjbFacade().find(id);
-    }
-
-    public List<Producto> getItemsAvailableSelectMany() {
-        return getEjbFacade().findAll();
-    }
-
-    public List<Producto> getItemsAvailableSelectOne() {
-        return getEjbFacade().findAll();
-    }
-
-    public List<Producto> productosActivos() {
-
-        if (items == null) {
-            // no tiene que encontrarlos a todos   
-            items = getEjbFacade().findbyActivo();
-        }
-        return items;
     }
 
     @FacesConverter(forClass = Producto.class)
@@ -563,7 +553,7 @@ public class ProductoController implements Serializable {
     }
 
     public String goProductoCreateCompuesto() {
-        prepareCreate();
+        prepareCreateCompuesto();
         selectedProducto.setCompuesto(true);
         return "receta-create";
     }
@@ -583,7 +573,6 @@ public class ProductoController implements Serializable {
     }
 
     public String goProductoStockList() {
-        //items = getFacade().findAll();
         reinit();
         return "stock-list";
     }
@@ -642,57 +631,15 @@ public class ProductoController implements Serializable {
 
     public void reinit() {
         itemsActivos = getEjbFacade().findbyActivo();
+        productos = getEjbFacade().findNocompuesto();
 
     }
-    
-        private void createBarModel() {
-        barModel = initBarModel();
-         
-        barModel.setTitle("Nombre del grafico");
-        //barModel.setLegendPosition("ne");
-         
-        Axis xAxis = barModel.getAxis(AxisType.X);
-        xAxis.setLabel("Meses");
-         
-        Axis yAxis = barModel.getAxis(AxisType.Y);
-        yAxis.setLabel("Ventas");
-        yAxis.setMin(0);
-        yAxis.setMax(100);
-    }
-       
-       private BarChartModel initBarModel() {
-        
-        BarChartModel model = new BarChartModel();
- 
-        ChartSeries boys = new ChartSeries();
-       // boys.setLabel("Boys");
-        
-      getItemsActivos();
-        
-        for(Producto lista: itemsActivos){
-            
-            
-            boys.set(lista.getNombre(), lista.getStockActual());
-            
-        }
-        
-        
-//        boys.set(45, 120000);
-//        boys.set(300, 100000);
-       
-        
-        model.addSeries(boys);
-        
       
-         
-        return model;
-    }
-       
        public void consulta(){
        
            productotop = ejbFacade.toppormes(getCurrentMes(), getCurrentAño());
            
-           currentptm.consulta();
+           currentptm.creamodelo();
        }
        
        

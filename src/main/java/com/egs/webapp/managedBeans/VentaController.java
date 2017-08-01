@@ -21,6 +21,7 @@ import javax.faces.context.Flash;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
+import org.primefaces.event.RowEditEvent;
 import org.primefaces.model.chart.BarChartModel;
 
 @Named("ventaController")
@@ -30,6 +31,8 @@ public class VentaController implements Serializable {
     @EJB
     private com.egs.webapp.sessionBeans.VentaFacade ejbFacade;
     private List<Venta> items = null;
+    private List<Venta> itemsOrderBy = null;
+    
     private List<Venta> itemsFiltrados = null;
     private List<Object[]> totalpormes = null;
     
@@ -111,9 +114,7 @@ public class VentaController implements Serializable {
     public void setCurrentmtm(MeseroModel currentmtm) {
         this.currentmtm = currentmtm;
     }
-     
-    @EJB
-    private VentaFacade ventaFacade;
+ 
 
     public VentaController() {
     }
@@ -121,22 +122,30 @@ public class VentaController implements Serializable {
     public Venta getSelected() {
         return selected;
     }
-
+ 
     public void setSelected(Venta selected) {
         this.selected = selected;
     }
-
-    public VentaFacade getVentaFacade() {
-        return ventaFacade;
+    
+      public List<Venta> getItems() {
+        if (items == null) {
+            items = getEjbFacade().findAll();
+        }
+        return items;
+    }
+    
+    public void setItems(List<Venta> items) {
+        this.items = items;
     }
 
-    private VentaFacade getFacade() {
+    public VentaFacade getEjbFacade() {
         return ejbFacade;
     }
 
-    public void setVentaFacade(VentaFacade ventaFacade) {
-        this.ventaFacade = ventaFacade;
+    public void setEjbFacade(VentaFacade ejbFacade) {
+        this.ejbFacade = ejbFacade;
     }
+    
 
     public List<Venta> getItemsFiltrados() {
         return itemsFiltrados;
@@ -181,7 +190,7 @@ public class VentaController implements Serializable {
     public List<Object[]> getTotalpormes() {
         
         if (totalpormes == null) {
-        totalpormes = getFacade().totalventapormes();
+        totalpormes = getEjbFacade().totalventapormes();
         }
         return totalpormes;
     }
@@ -267,6 +276,18 @@ public class VentaController implements Serializable {
     public void setMeserotop(List<Object[]> meserotop) {
         this.meserotop = meserotop;
     }
+
+    public List<Venta> getItemsOrderBy() {
+        if (itemsOrderBy == null) {
+        itemsOrderBy = getEjbFacade().findOrderBy();
+        }
+       
+        return itemsOrderBy;
+    }
+
+    public void setItemsOrderBy(List<Venta> itemsOrderBy) {
+        this.itemsOrderBy = itemsOrderBy;
+    }
     
     public Venta prepareCreate() {
         selected = new Venta();
@@ -277,7 +298,7 @@ public class VentaController implements Serializable {
 
     public void init() {
 
-        totalpormes = getFacade().totalventapormes();
+        totalpormes = getEjbFacade().totalventapormes();
         
     }
 
@@ -314,12 +335,7 @@ public class VentaController implements Serializable {
         }
     }
 
-    public List<Venta> getItems() {
-        if (items == null) {
-            items = getFacade().findAll();
-        }
-        return items;
-    }
+  
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
@@ -339,7 +355,7 @@ public class VentaController implements Serializable {
                     selected.setTotal(currentpedido.getSelected().getTotal());
                     selected.setIdPedido(currentpedido.getSelected());
 
-                    getFacade().edit(selected);
+                    getEjbFacade().edit(selected);
 
                     //modificar estado pedido
                     currentpedido.getSelected().setEstado(Boolean.TRUE);
@@ -351,7 +367,7 @@ public class VentaController implements Serializable {
                     currentmesa.llamarEditarMesa();
 
                 } else {
-                    getFacade().remove(selected);
+                    getEjbFacade().remove(selected);
                 }
                 JsfUtil.addSuccessMessage(successMessage);
             } catch (EJBException ex) {
@@ -373,15 +389,15 @@ public class VentaController implements Serializable {
     }
 
     public Venta getVenta(java.lang.Integer id) {
-        return getFacade().find(id);
+        return getEjbFacade().find(id);
     }
 
     public List<Venta> getItemsAvailableSelectMany() {
-        return getFacade().findAll();
+        return getEjbFacade().findAll();
     }
 
     public List<Venta> getItemsAvailableSelectOne() {
-        return getFacade().findAll();
+        return getEjbFacade().findAll();
     }
 
 
@@ -432,7 +448,7 @@ public class VentaController implements Serializable {
     }
 
     public String goVentaList() {
-        prepareCreate();
+       // prepareCreate();
         return "venta-list";
     }
     
@@ -495,6 +511,21 @@ public class VentaController implements Serializable {
        currentmtm.consulta();
        
        }
+       
+        public void actualizar(RowEditEvent event) {
+
+        Venta v = (Venta) event.getObject();
+        String mPago = v.getMedioPago();
+        v.setMedioPago(mPago);
+
+        getEjbFacade().edit(v);
+        
+        JsfUtil.addSuccessMessage("Medio de pago actualizado");
+    }
+
+    public void cancelar(RowEditEvent event) {
+
+    }
        
  
 

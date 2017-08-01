@@ -36,6 +36,14 @@ public class VentaFacade extends AbstractFacade<Venta> {
         return v;
 
     }
+    
+       public List<Venta> findOrderBy() {
+          
+          List <Venta> p  = null;
+          p = (List<Venta>)getEntityManager().createQuery ("SELECT  v  FROM  Venta v ORDER BY v.idVenta DESC ").getResultList();
+         return p;
+      
+      }
 
     public long totalventadiaria(Date fechaActual) {
 

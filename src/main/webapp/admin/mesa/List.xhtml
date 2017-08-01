@@ -78,11 +78,11 @@
                         </p:commandButton>
                             
                             
-                            <p:commandButton id="delete" value="Eliminar"  icon="fa fa-times-circle" 
+                            <p:commandButton id="delete"  icon="fa fa-times-circle" 
                                          action="#{mesaController.destroy()}" update="datatable">
                             
                             <f:setPropertyActionListener value="#{current}" target="#{mesaController.selected}"/>
-                             <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                            <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
                         </p:commandButton>
                             
                              

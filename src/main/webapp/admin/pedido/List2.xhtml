@@ -29,6 +29,7 @@
 
                             <p:dataTable id="datatable" var="current"  value="#{pedidoController.itemsOrderBy}"
                                          widgetVar="table"
+                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15" 
                                          selectionMode="single" selection="#{pedidoController.selected}"
                                          rowKey="#{current.idPedido}"
                                          emptyMessage="No se encontraron registros"
@@ -55,17 +56,7 @@
                                     </h:outputText>
                                 </p:column> 
 
-<!--                                <p:column headerText="Fecha" filterBy="#{current.fecha}" 
-                                          filterMatchMode="contains">
-                                    <h:outputText value="#{current.fecha}">
-                                        <f:convertDateTime pattern="dd-MM-yyyy"/>
-                                    </h:outputText>
 
-                                </p:column> 
-
-                                <p:column headerText="Hora">
-                                    <h:outputText value="#{current.hora}"/>
-                                </p:column> -->
                                 
                                  <p:column headerText="Fecha" filterBy="#{current.fecha}"
                                            filterMatchMode="contains">
@@ -119,10 +110,17 @@
                                     </p:menuButton>
                                 </p:column>-->
                                 
-                                <p:column>
-                                 <p:commandButton process="datatable" update="DetalleForm" icon="ui-icon-search" value="View" oncomplete="PF('dlg2').show('#{pedidoController.selected}')" />
-               
-                            </p:column>
+                                <p:column style="text-align: left; width:135px;">
+                                    
+                                    
+                                    
+                                 <p:commandButton id="detail" title="Ver detalle" process="datatable" update="DetalleForm" icon="ui-icon-search" oncomplete="PF('dlg2').show('#{pedidoController.selected}')" style="width: 20px; height:20px"/>
+                                 <p:commandButton id="mesa" title="Abrir mesa" process="datatable"  action="#{detalleController.goDetalleEdit()}" rendered="#{current.estado == false}" icon="ui-icon-clipboard"/>
+                                 <p:commandButton  title="Realizar pago" process="datatable" action="#{ventaController.goVentaCreate()}" rendered="#{current.estado == false}" icon="ui-icon-disk"/>     
+                                 <p:commandButton title="Eliminar" process="datatable" action="#{pedidoController.destroy()}" rendered="#{current.estado == false}" update="datatable" icon="ui-icon-deleted"/>      
+                            
+                               
+                                </p:column>
 
                         </p:dataTable>
                                 

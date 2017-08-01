@@ -28,94 +28,111 @@
                             <i class="icon-table"></i> Ultimas entradas
                         </div>
                         <div class="EmptyBox10" />
-                        
-   <h:form id="ListForm">
-    
-       
- 
-       <p:dataTable id="table" var="current" value="#{intoprodController.items}" 
-                 paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                 selection="#{intoprodController.selected}" selectionMode="single"
-                 rowKey="#{current.idIntoprod}"
-                 emptyMessage="No se encontraron registros"
-                 reflow="true">
-        
-           
-                         <p:column>
-                            <f:facet name="header">
-                                <h:outputText  value="Usuario"/>
-                            </f:facet>
-                             <h:outputText value="#{current.idUsuario.username}"/>
-                          </p:column>
-                      
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Producto"/>
-                            </f:facet>
-                            <h:outputText value="#{current.idProducto.nombre}"/>
-                        </p:column>
-           
-                          <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Gasto"/>
-                            </f:facet>
-                              <h:outputText value="#{current.gasto}"/>
-                        </p:column>
-           
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Stock anterior"/>
-                            </f:facet>
-                            <h:outputText value="#{current.stockAnterior}"/>    
-                        </p:column>
-           
-           
-                        <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Cantidad ingresada"/>
-                            </f:facet>
-                            <h:outputText value="#{current.cantArt}"/>
-                        </p:column>
-                        
-           
-                          <p:column>
-                            <f:facet name="header">
-                                <h:outputText value="Stock actual"/>
-                            </f:facet>
-                              <h:outputText value="#{current.stockActual}"/>
-                          </p:column>
-                        
-                     
-                          <p:column>
-                            <f:facet name="header">
-                                <h:outputText  value="Unidad"/>
-                            </f:facet>
-                              <h:outputText value="#{current.idProducto.unidadCompra}"/>
-                          </p:column>
-                          
-                           <p:column>
-                            <f:facet name="header">
-                                <h:outputText  value="Fecha"/>
-                            </f:facet>
-                               <h:outputText value="#{current.fecha}">
-                               <f:convertDateTime pattern="dd-MM-yyyy" />
-                               </h:outputText>
-                          </p:column>
-           
-                         <p:column>
-                            <f:facet name="header">
-                                <h:outputText  value="Hora"/>
-                            </f:facet>
-                             <h:outputText value="#{current.hora}"/> 
-                             
-                         </p:column>
-                       
-                      
-    
-    
-    </p:dataTable>
-                
-            </h:form>
+
+                        <h:form id="ListForm">
+
+
+
+                            <p:dataTable id="table" var="current" value="#{intoprodController.itemsOrder}" widgetVar="table" 
+                                         paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
+
+                                         rowKey="#{current.idIntoprod}"
+                                         emptyMessage="No se encontraron registros"
+                                         reflow="true">
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Usuario"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.idUsuario.username}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Producto"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.idProducto.nombre}"/>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Stock anterior"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.stockAnterior}"/>    
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Cantidad"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.cantArt}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Stock Final"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.stockFinal}"/>
+                                </p:column>
+
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Fecha"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.fecha}">
+                                        <f:convertDateTime pattern="dd-MM-yyyy" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Hora"/>
+                                    </f:facet>
+                                    <h:outputText value="#{current.hora}"/> 
+                                </p:column>
+                                
+                                   <p:column headerText="Movimiento" filterBy="#{current.movimiento}" 
+                                          filterMatchMode="equals">
+                                    <f:facet name="filter">
+                                        <p:selectOneButton onchange="PF('table').filter()">
+                                            <f:converter converterId="javax.faces.Boolean" />
+                                            <f:selectItem itemLabel="Ingreso" itemValue="true"  />
+                                            <f:selectItem itemLabel="Egreso" itemValue="false" />
+                                        </p:selectOneButton>
+                                    </f:facet>
+
+                                    <h:outputText value="Ingreso" styleClass="clase-parto-no" rendered="#{current.movimiento == true}"/>
+
+                                    <h:outputText value="Egreso" styleClass="clase-parto-si" rendered="#{current.movimiento == false}" />
+
+                                </p:column> 
+
+                               
+                                <p:column>
+
+                                    <p:commandButton id="delete"  icon="fa fa-times-circle" 
+                                                     action="#{intoprodController.destroy()}" update="table">
+
+                                        <f:setPropertyActionListener value="#{current}" target="#{intoprodController.selected}"/>
+                                        <p:confirm header="Confirmación" message="¿Esta seguro de eliminar" icon="ui-icon-alert"/> 
+                                    </p:commandButton>
+
+                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+                                    </p:confirmDialog>
+
+                                </p:column>
+
+
+
+                            </p:dataTable>
+
+                        </h:form>
                         
                        
                       

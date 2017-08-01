@@ -26,6 +26,10 @@ public class MeseroModel implements Serializable {
 
     private Bar2 obj;
     
+    long yMax =0;
+    
+    String mes;
+    String año;
     
     private Double currentMes;
     private Double currentAño;
@@ -77,11 +81,86 @@ public class MeseroModel implements Serializable {
         this.currentAño = currentAño;
     }
 
+    public long getyMax() {
+        return yMax;
+    }
+
+    public void setyMax(long yMax) {
+        this.yMax = yMax;
+    }
+
+    public String getMes() {
+        return mes;
+    }
+
+    public void setMes(String mes) {
+        this.mes = mes;
+    }
+
+    public String getAño() {
+        return año;
+    }
+
+    public void setAño(String año) {
+        this.año = año;
+    }
+    
+     private void changemesaño(){
+        
+        double m = currentventa.getCurrentMes();
+        double a = currentventa.getCurrentAño();
+        
+        int i = (int)m;
+        int ii = (int)a;
+        
+        if (i == 1){
+            mes = "Enero";
+        }
+        if (i == 2){
+            mes = "Febrero";
+        }
+        if (i == 3){
+            mes = "Marzo";
+        }
+        if (i == 4){
+            mes = "Abril";
+        }
+        if (i == 5){
+            mes = "Mayo";
+        }
+        if (i == 6){
+            mes = "Junio";
+        }
+        if (i == 7){
+            mes = "Julio";
+        }
+        if (i == 8){
+            mes = "Agosto";
+        }
+        if (i == 9){
+            mes = "Septiembre";
+        }
+        if (i == 10){
+            mes = "Octubre";
+        }
+        if (i == 11){
+            mes = "Noviembre";
+        }
+        if (i == 12){
+            mes = "Diciembre";
+        }
+        
+        año = String.valueOf(ii);
+    
+    }
+    
      private void createBarModel() {
 
         barModel = initBarModel();
+        
+        changemesaño();
 
-        barModel.setTitle("Mesero top ventas");
+        barModel.setTitle(mes+" "+año);
         barModel.setBarWidth(40);
 
         Axis xAxis = barModel.getAxis(AxisType.X);
@@ -90,7 +169,7 @@ public class MeseroModel implements Serializable {
         Axis yAxis = barModel.getAxis(AxisType.Y);
         yAxis.setLabel("Total ventas");
         yAxis.setMin(0);
-        yAxis.setMax(200000);
+        yAxis.setMax(yMax);
     }
 
     private BarChartModel initBarModel() {
@@ -98,8 +177,16 @@ public class MeseroModel implements Serializable {
         BarChartModel model = new BarChartModel();
 
         ChartSeries productos = new ChartSeries();
+        
+        yMax = 0;
 
         for (Bar2 lista : listagrafico) {
+            
+             if(lista.getTotal() > yMax ){
+                
+                yMax = lista.getTotal();
+            
+            }
 
             productos.set(lista.getNombre(), lista.getTotal());
 

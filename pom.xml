@@ -15,11 +15,11 @@
     </properties>
     
     <dependencies>
-        <dependency>
+<!--        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>4.1.8.Final</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
@@ -55,11 +55,11 @@
          
                         
         <!--hibernate-->
-        <dependency>
+<!--        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>4.3.8.Final</version>
-        </dependency>                                
+        </dependency>                                -->
               
         <!-- http://mvnrepository.com/artifact/org.webjars/font-awesome -->
         <dependency>

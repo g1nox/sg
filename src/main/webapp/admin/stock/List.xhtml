@@ -31,14 +31,17 @@
 
                         <h:form id="StockFormList">
 
-                            <p:dataTable id="table2" var="v" value="#{productoController.itemsActivos}"
-                                         selection="#{productoController.selectedProducto}" selectionMode="single"
+                            <p:dataTable id="table2" var="v" value="#{productoController.productos}"
+                                         
                                          rowKey="#{v.idProducto}" emptyMessage="No se encontraron registros" reflow="true"
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
                                          paginator="true" rows="5" rowsPerPageTemplate="5,10,15" paginatorPosition="bottom"
-                                         rowStyleClass="#{v.stockActual lt v.stockMinimo ? 'rojo' : null}
+                                         rowStyleClass="#{v.stockActual le v.stockMinimo ? 'rojo' : null}
                                          #{v.stockActual gt v.stockMinimo and v.stockActual lt v.stockIdeal ? 'amarillo' : null} 
                                          #{v.stockActual gt v.stockIdeal and v.stockActual lt v.stockMaximo ? 'verde' : null}
+                                         
+                                         #{v.stockActual eq v.stockMaximo ? 'verde' : null}
+                                         #{v.stockActual eq v.stockIdeal ? 'amarillo' : null}
                                          #{v.stockActual gt v.stockMaximo ? 'azul' : null}">
 
                                 <f:facet name="{Exporters}">
@@ -60,12 +63,20 @@
                                     <h:outputText value="#{v.nombre}"/>
 
                                 </p:column>
-
+  
                                 <p:column>
                                     <f:facet name="header">
-                                        <h:outputText value="Disponibilidad"/>
+                                        <h:outputText value="Stock mínimo"/>
                                     </f:facet>
-                                    <h:outputText value="#{v.disponible}"/>    
+                                    <h:outputText value="#{v.stockMinimo}"/>
+                                </p:column>
+
+   
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText  value="Stock ideal"/>
+                                    </f:facet>
+                                    <h:outputText value="#{v.stockIdeal}"/>
                                 </p:column>
 
 
@@ -79,27 +90,12 @@
 
                                 <p:column>
                                     <f:facet name="header">
-                                        <h:outputText value="Stock mínimo"/>
-                                    </f:facet>
-                                    <h:outputText value="#{v.stockMinimo}"/>
-                                </p:column>
-
-
-                                <p:column>
-                                    <f:facet name="header">
                                         <h:outputText  value="Stock actual"/>
                                     </f:facet>
                                     <h:outputText value="#{v.stockActual}"/>
                                 </p:column>
 
-                                <p:column>
-                                    <f:facet name="header">
-                                        <h:outputText  value="Stock ideal"/>
-                                    </f:facet>
-                                    <h:outputText value="#{v.stockIdeal}"/>
-                                </p:column>
-
-
+                             
                                 <p:column headerText="Acción" exportable="false">
                                     <p:menuButton value="Opciones">
 

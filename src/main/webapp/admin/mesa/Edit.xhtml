@@ -27,7 +27,7 @@
 
                     <p:panel>
 
-                        <p:commandButton actionListener="#{mesaController.llamarEditarMesa()}" 
+                        <p:commandButton action="#{mesaController.llamarEditarMesa()}" 
                                          value="Guardar cambios"
                                          update="MesaEditForm,:mesaListForm:datatable,:growl" 
                                          oncomplete="handleSubmit(args, 'MesaEditDialog')">

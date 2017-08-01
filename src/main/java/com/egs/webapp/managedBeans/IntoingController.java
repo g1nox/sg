@@ -1,5 +1,6 @@
 package com.egs.webapp.managedBeans;
 
+import com.egs.webapp.entities.Ingrediente;
 import com.egs.webapp.entities.Intoing;
 import com.egs.webapp.sessionBeans.IntoingFacade;
 import com.egs.webapp.util.JsfUtil;
@@ -29,29 +30,14 @@ public class IntoingController implements Serializable {
     @EJB
     private com.egs.webapp.sessionBeans.IntoingFacade ejbFacade;
     private List<Intoing> items = null;
+    private List<Intoing> itemsOrder = null;
     private Intoing selected;
+    
+    private Ingrediente selectedIngrediente;
     
     private List<Intoing> gastoing = null;
     private Date fechaConsulta;
     
-    @EJB
-    private IntoingFacade intoingFacade;
-
-    public IntoingFacade getIntoingFacade() {
-        return intoingFacade;
-    }
-
-    public void setIntoingFacade(IntoingFacade intoingFacade) {
-        this.intoingFacade = intoingFacade;
-    }
-
-    public IntoingFacade getEjbFacade() {
-        return ejbFacade;
-    }
-
-    public void setEjbFacade(IntoingFacade ejbFacade) {
-        this.ejbFacade = ejbFacade;
-    }
     
     @Inject
     private UsuariosController contextUsuario;
@@ -79,12 +65,28 @@ public class IntoingController implements Serializable {
     public IntoingController() {
     }
 
+    public IntoingFacade getEjbFacade() {
+        return ejbFacade;
+    }
+
+    public void setEjbFacade(IntoingFacade ejbFacade) {
+        this.ejbFacade = ejbFacade;
+    }
+    
     public Intoing getSelected() {
         return selected;
     }
 
     public void setSelected(Intoing selected) {
         this.selected = selected;
+    }
+
+    public Ingrediente getSelectedIngrediente() {
+        return selectedIngrediente;
+    }
+
+    public void setSelectedIngrediente(Ingrediente selectedIngrediente) {
+        this.selectedIngrediente = selectedIngrediente;
     }
 
     public List<Intoing> getGastoing() {
@@ -102,26 +104,29 @@ public class IntoingController implements Serializable {
     public void setFechaConsulta(Date fechaConsulta) {
         this.fechaConsulta = fechaConsulta;
     }
-    
-  
-    protected void setEmbeddableKeys() {
+
+    public List<Intoing> getItemsOrder() {
+          if (itemsOrder == null) {
+            itemsOrder = getEjbFacade().findOrderBy();
+        }
+        return itemsOrder;
     }
 
-    protected void initializeEmbeddableKey() {
+    public void setItemsOrder(List<Intoing> itemsOrder) {
+        this.itemsOrder = itemsOrder;
     }
-
-  
 
     public Intoing prepareCreate() {
         selected = new Intoing();
-        initializeEmbeddableKey();
+        
         return selected;
     }
 
     public String create() {
             persist(PersistAction.CREATE,  "la entrada se ha creado correctamente");
         if (!JsfUtil.isValidationFailed()) {
-            items = null;    // Invalidate list of items to trigger re-query.
+            items = null;
+            itemsOrder = null;// Invalidate list of items to trigger re-query.
             FacesContext facesContext = FacesContext.getCurrentInstance();
              Flash flash = facesContext.getExternalContext().getFlash();
              flash.setKeepMessages(true);
@@ -137,51 +142,107 @@ public class IntoingController implements Serializable {
     }
 
     public void destroy() {
-        persist(PersistAction.DELETE, ResourceBundle.getBundle("/Bundle").getString("EntradaDeleted"));
+        persist(PersistAction.DELETE, "Entrada eliminada correctamente");
         if (!JsfUtil.isValidationFailed()) {
             selected = null; // Remove selection
             items = null;    // Invalidate list of items to trigger re-query.
+            itemsOrder = null;
         }
     }
 
     public List<Intoing> getItems() {
         if (items == null) {
-            items = getIntoingFacade().findAll();
+            items = getEjbFacade().findAll();
         }
         return items;
     }
 
     private void persist(PersistAction persistAction, String successMessage) {
         if (selected != null) {
-            setEmbeddableKeys();
+            
             try {
-                if (persistAction != PersistAction.DELETE) {
+                if (persistAction == PersistAction.CREATE) {
 
                     Date d = new Date();
                     selected.setFecha(d);
-                    
+
                     SimpleDateFormat hora = new SimpleDateFormat("HH:mm:ss");
-                    selected.setHora(hora.format(d));    
-                    
+                    selected.setHora(hora.format(d));
+
                     //ingresar id_producto a bd
                     selected.setIdIngrediente(currentingrediente.getSelected());
                     // ingresar usuario a bd
                     selected.setIdUsuario(contextUsuario.getCurrentUser());
-                     
+
                     double Actual = currentingrediente.getSelected().getStockActual();
-                       
-                       selected.setStockAnterior(Actual);
-                       selected.setStockActual(Actual + selected.getCantArt());
-                       
-                       currentingrediente.getSelected().setStockActual(Actual + selected.getCantArt());
-                        currentingrediente.actualizarStock();  
-                   
-                    getIntoingFacade().edit(selected);
+
+                    selected.setStockAnterior(Actual);
+                    
+                    if (selected.getMovimiento() == true ){
+                     
+                    selected.setStockActual(Actual + selected.getCantArt());
+
+                    currentingrediente.getSelected().setStockActual(Actual + selected.getCantArt());
+                    currentingrediente.actualizarStock();
+
+                    getEjbFacade().edit(selected);
                 
-                } else {
-                    getIntoingFacade().remove(selected);
+                    }
+                    
+                    if (selected.getMovimiento() == false ){
+                     
+                    selected.setStockActual(Actual - selected.getCantArt());
+
+                    currentingrediente.getSelected().setStockActual(Actual - selected.getCantArt());
+                    currentingrediente.actualizarStock();
+
+                    getEjbFacade().edit(selected);
+                   
+                    }
+                    
+                    JsfUtil.addSuccessMessage(successMessage);
+                   
+                    //programar eliminar entradas
+                } if (persistAction == PersistAction.DELETE){
+                    
+                    int ingrediente = selected.getIdIngrediente().getIdIngrediente();
+                    
+                    double cantidad = selected.getCantArt();
+                    
+                    selectedIngrediente = currentingrediente.getEjbFacade().find(ingrediente);
+                    
+                    double stockActual = selectedIngrediente.getStockActual();
+                    
+                    //elimina ingreso
+                    if (selected.getMovimiento() == true ){
+                     
+                    selectedIngrediente.setStockActual(stockActual - cantidad);
+
+                    currentingrediente.getEjbFacade().edit(selectedIngrediente);
+
+                    getEjbFacade().remove(selected);
+
+                    
+                
+                    }
+                    
+                    //elimina egreso
+                    if (selected.getMovimiento() == false ){
+                     
+                    selectedIngrediente.setStockActual(stockActual + cantidad);
+
+                    currentingrediente.getEjbFacade().edit(selectedIngrediente);
+
+                    getEjbFacade().remove(selected);
+                   
+                   
+                    }
+                    JsfUtil.addSuccessMessage("stock ingrediente actualizado");
+                    JsfUtil.addSuccessMessage(successMessage);
                 }
-                JsfUtil.addSuccessMessage(successMessage);
+                
+              
+                
             } catch (EJBException ex) {
             
                 String msg = "";
@@ -202,19 +263,11 @@ public class IntoingController implements Serializable {
     }
 
     public Intoing getEntrada(java.lang.Integer id) {
-        return getIntoingFacade().find(id);
-    }
-
-    public List<Intoing> getItemsAvailableSelectMany() {
-        return getIntoingFacade().findAll();
-    }
-
-    public List<Intoing> getItemsAvailableSelectOne() {
-        return getIntoingFacade().findAll();
+        return getEjbFacade().find(id);
     }
 
     @FacesConverter(forClass = Intoing.class)
-    public static class EntradaControllerConverter implements Converter {
+    public static class IntoingControllerConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {

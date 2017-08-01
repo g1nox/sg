@@ -7,8 +7,10 @@
       xmlns:p="http://primefaces.org/ui">
 
     <ui:composition>
+        
+        <div class="ui-fluid">
 
-        <p:dialog id="ProductoEditDlg" widgetVar="ProductoEditDialog" resizable="false" responsive="true" width="450" height="400" modal="true" maximizable="true" header="EDITAR PRODUCTO">
+            <p:dialog id="ProductoEditDlg" widgetVar="ProductoEditDialog" resizable="false" width="500" height="550" responsive="true" modal="true" maximizable="true" header="EDITAR PRODUCTO">
             <h:form id="ProductoEditForm">
 
                 <div class="ContainerIndent">
@@ -22,17 +24,17 @@
 
 
                                 <p:panelGrid columns="2" rendered="#{productoController.selectedProducto != null}"
-                                             layout="grid" style="border:0px none;background:none">
+                                             styleClass="Wid90" >
 
+                                    <p:outputLabel value="Nombre:"/>
+                                    <p:inputText id="nombre" value="#{productoController.selectedProducto.nombre}"  />
+                                    
+                                    <p:outputLabel value="Precio:"/>
+                                    <p:inputText id="precio" value="#{productoController.selectedProducto.precioVenta}" />
 
-                                    <p:inputText id="nombre" value="#{productoController.selectedProducto.nombre}" styleClass="Wid90" />
-
-                                    <p:inputText id="precio" value="#{productoController.selectedProducto.precioVenta}" styleClass="Wid90" />
-
+                                    <p:outputLabel value="Proveedor:"/>
                                     <p:selectOneMenu id="proveedor"
                                                      value="#{productoController.selectedProducto.idProveedor}"
-                                                     
-                                                     styleClass="Wid80"
                                                      converter="proveedorConverter"
                                                      filter="true" filterMatchMode="startsWith"
                                                      effect="blind"
@@ -47,11 +49,9 @@
                                     </p:selectOneMenu>
 
 
-
+                                    <p:outputLabel value="Categoría:"/>
                                     <p:selectOneMenu id="categoria"
                                                      value="#{productoController.selectedProducto.idCategoria}"
-                                                     
-                                                     styleClass="Wid80"
                                                      converter="categoriaConverter"
                                                      filter="true" filterMatchMode="startsWith"
                                                      effect="blind"
@@ -64,19 +64,21 @@
                                                        itemValue="#{item}"
                                                        itemLabel="#{item.nombre.toString()}"/>  
                                     </p:selectOneMenu>
-
-                                
-                                  <p:commandButton action="#{productoController.llamarEditarProducto()}" 
-                                             value="Guardar cambios"  oncomplete="handleSubmit(args, 'ProductoEditDialog')"
-                                             update="ProductoEditForm,:ProductoListForm:datatableList"/>
-                                
+                                    
+                                    <p:outputLabel value="Disponible:" for="switch" />
+                                    <p:inputSwitch id="switch" value="#{productoController.selectedProducto.disponible}" offLabel="NO" onLabel="SI"/>
+                                 
                                 </p:panelGrid>
                                 
-                                   
-                          
-
-                       
-
+                                  <p:panelGrid columns="1"  styleClass="Wid90">
+                                        
+                                          <p:commandButton action="#{productoController.llamarEditarProducto()}"
+                                             value="Guardar cambios" oncomplete="handleSubmit(args, 'ProductoEditDialog')"
+                                             update="ProductoEditForm,:ProductoListForm:datatableList"/>
+                                
+                                   </p:panelGrid>
+                           
+                                
                             </p:panel>
 
                         </div>
@@ -85,7 +87,7 @@
 
                 <div class="Container100 Responsive">
                     <div class="ContainerIndent">
-                        <p:panel>
+                        <p:panel rendered="#{productoController.selectedProducto.compuesto != false}">
                             <!--title-->
                             <div class="Container100 Responsive Fs20 hardblue">
                                 <i class="icon-food"></i> Receta  
@@ -93,9 +95,9 @@
                             
                             <div class="EmptyBox10" />
 
-                            <p:outputPanel id="outItemsPanel" rendered="#{productoController.selectedProducto.compuesto != false}">
+                            <p:outputPanel id="outItemsPanel">
                                 
-                                <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none">
+                                <p:panelGrid columns="3" layout="grid">
                                     
                                          <p:selectOneMenu id="ingrediente" 
                                                     
@@ -177,6 +179,8 @@
 
             </h:form>
         </p:dialog>
+            
+            </div>
 
     </ui:composition>
 </html>

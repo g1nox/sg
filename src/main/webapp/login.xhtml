@@ -42,7 +42,8 @@
         <h:form id="form">        
             <p:inputText required="true" 
                          requiredMessage="Ingrese usuario!"
-                         placeholder="Usuario" 
+                         placeholder="Usuario"
+                         rendered="#{usuariosController.currentUser == null}"
                          value="#{usuariosController.username}" 
                          styleClass="Container80 Fnone MarAuto Fs18"/>
              
@@ -50,6 +51,7 @@
             
             <p:password value="#{usuariosController.pass}" 
                         placeholder="Password" 
+                        rendered="#{usuariosController.currentUser == null}"
                         required="true" 
                         requiredMessage="Ingrese password!"
                         styleClass="Container80 Fnone MarAuto Fs18"/>

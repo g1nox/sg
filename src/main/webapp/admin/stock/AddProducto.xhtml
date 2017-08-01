@@ -1,4 +1,3 @@
-
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:h="http://java.sun.com/jsf/html"
                 xmlns:f="http://java.sun.com/jsf/core"
@@ -30,9 +29,6 @@
 
                                 <p:panelGrid columns="3" layout="grid" style="border:0px none;background:none"> 
 
-                                 
-                                       
-                                    
                                   
                                     <p:selectOneMenu id="producto" 
                                                      style="width: 90%"   
@@ -44,13 +40,23 @@
                                                      >
 
                                         <f:selectItem itemLabel="Seleccione Producto" />
-                                        <f:selectItems value="#{productoController.items}"
+                                        <f:selectItems value="#{productoController.itemsActivos}"
                                                        var="items"
                                                        itemValue="#{items}"
                                                        itemLabel="#{items.nombre.toString()}"/>  
                                     </p:selectOneMenu>
 
-
+                                    <p:selectOneMenu id="movimiento" value="#{intoprodController.selected.movimiento}" 
+                                         style="width: 90%"
+                                         styleClass="wid90"
+                                         effect="blind"
+                                         required="true"
+                                         requiredMessage="Seleccione tipo movimiento!">
+                             <f:selectItem itemLabel="Seleccione" itemValue="" />
+                             <f:selectItem itemLabel="Ingreso" itemValue="True" />
+                            <f:selectItem itemLabel="Egreso" itemValue="False" />
+                                           
+                    </p:selectOneMenu> 
                                     
 
                                     <p:spinner value="#{intoprodController.selected.cantArt}" min="1"
@@ -64,12 +70,11 @@
                                          required="true"
                                          requiredMessage="Ingrese gasto asociado!"
                                          placeholder="Gasto del producto"/>
+                                   
+                                  
+                                   <p:inputTextarea value="" rows="2" cols="5" />
                                     
                                 </p:panelGrid>
-
-                                
-                                
-                                    
 
                             </p:panel>
                             
